@@ -7,7 +7,7 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 
 ## Phase 1 — Setup (PRIORITÉ 1)
 - [x] Initialiser projet Expo avec TypeScript : `pnpm create expo-app . --template blank-typescript`
-- [ ] Installer et configurer NativeWind v4
+- [x] Installer et configurer NativeWind v4
 - [ ] Installer React Navigation v7 (Bottom Tabs + Stack)
 - [ ] Configurer la structure de dossiers : `app/`, `components/`, `hooks/`, `services/`, `types/`
 - [ ] Créer le Bottom Tab Navigator avec 4 onglets (Home, Workout, Learn, Profile)
