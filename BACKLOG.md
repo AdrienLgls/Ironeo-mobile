@@ -16,7 +16,7 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 - [x] Implémenter l'écran Register (POST /api/auth/register)
 - [x] Google OAuth via Expo Auth Session
 - [x] Stockage du JWT via expo-secure-store
-- [ ] Navigation auth : si non connecté → stack Auth, si connecté → Tab Navigator
+- [x] Navigation auth : si non connecté → stack Auth, si connecté → Tab Navigator
 
 ## Phase 2 — Home Dashboard (PRIORITÉ 2)
 - [ ] Écran Home : stats rapides (streak, workouts cette semaine, dernière session)
