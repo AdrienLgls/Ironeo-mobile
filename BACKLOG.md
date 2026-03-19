@@ -9,7 +9,7 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 - [x] Initialiser projet Expo avec TypeScript : `pnpm create expo-app . --template blank-typescript`
 - [x] Installer et configurer NativeWind v4
 - [x] Installer React Navigation v7 (Bottom Tabs + Stack)
-- [ ] Configurer la structure de dossiers : `app/`, `components/`, `hooks/`, `services/`, `types/`
+- [x] Configurer la structure de dossiers : `app/`, `components/`, `hooks/`, `services/`, `types/`
 - [ ] Créer le Bottom Tab Navigator avec 4 onglets (Home, Workout, Learn, Profile)
 - [ ] Configurer axios avec base URL ironeo.com/api et intercepteur JWT
 - [ ] Implémenter l'écran Login (email/password → POST /api/auth/login)
