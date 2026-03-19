@@ -11,7 +11,7 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 - [x] Installer React Navigation v7 (Bottom Tabs + Stack)
 - [x] Configurer la structure de dossiers : `app/`, `components/`, `hooks/`, `services/`, `types/`
 - [x] Créer le Bottom Tab Navigator avec 4 onglets (Home, Workout, Learn, Profile)
-- [ ] Configurer axios avec base URL ironeo.com/api et intercepteur JWT
+- [x] Configurer axios avec base URL ironeo.com/api et intercepteur JWT
 - [ ] Implémenter l'écran Login (email/password → POST /api/auth/login)
 - [ ] Implémenter l'écran Register (POST /api/auth/register)
 - [ ] Google OAuth via Expo Auth Session

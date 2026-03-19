@@ -1,0 +1,23 @@
+import * as SecureStore from 'expo-secure-store';
+import api, { TOKEN_KEY } from './api';
+import type { AuthResponse, LoginRequest, RegisterRequest } from '../types/auth';
+
+export async function login(credentials: LoginRequest): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>('/auth/login', credentials);
+  await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+  return data;
+}
+
+export async function register(payload: RegisterRequest): Promise<AuthResponse> {
+  const { data } = await api.post<AuthResponse>('/auth/register', payload);
+  await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+  return data;
+}
+
+export async function logout(): Promise<void> {
+  await SecureStore.deleteItemAsync(TOKEN_KEY);
+}
+
+export async function getStoredToken(): Promise<string | null> {
+  return SecureStore.getItemAsync(TOKEN_KEY);
+}
