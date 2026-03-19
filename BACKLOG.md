@@ -12,8 +12,8 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 - [x] Configurer la structure de dossiers : `app/`, `components/`, `hooks/`, `services/`, `types/`
 - [x] Créer le Bottom Tab Navigator avec 4 onglets (Home, Workout, Learn, Profile)
 - [x] Configurer axios avec base URL ironeo.com/api et intercepteur JWT
-- [ ] Implémenter l'écran Login (email/password → POST /api/auth/login)
-- [ ] Implémenter l'écran Register (POST /api/auth/register)
+- [x] Implémenter l'écran Login (email/password → POST /api/auth/login)
+- [x] Implémenter l'écran Register (POST /api/auth/register)
 - [ ] Google OAuth via Expo Auth Session
 - [ ] Stockage du JWT via expo-secure-store
 - [ ] Navigation auth : si non connecté → stack Auth, si connecté → Tab Navigator

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from './AuthNavigator';
 import { login } from '../services/authService';
+import { useGoogleAuth, exchangeGoogleToken } from '../services/googleAuth';
 import { useNavigation } from '@react-navigation/native';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
@@ -20,7 +21,22 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { request, response: googleResponse, promptAsync } = useGoogleAuth();
+
+  useEffect(() => {
+    if (googleResponse?.type === 'success') {
+      const idToken = googleResponse.authentication?.idToken;
+      if (idToken) {
+        setGoogleLoading(true);
+        exchangeGoogleToken(idToken)
+          .catch(() => setError('Google sign-in failed. Please try again.'))
+          .finally(() => setGoogleLoading(false));
+      }
+    }
+  }, [googleResponse]);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
@@ -72,15 +88,28 @@ export default function LoginScreen() {
         />
 
         <TouchableOpacity
-          className="bg-accent rounded-xl py-4 items-center mb-4"
+          className="bg-accent rounded-xl py-4 items-center mb-3"
           onPress={handleLogin}
-          disabled={loading}
+          disabled={loading || googleLoading}
           activeOpacity={0.8}
         >
           {loading ? (
             <ActivityIndicator color="#121212" />
           ) : (
             <Text className="text-background font-bold text-base">Sign In</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-white/[0.06] rounded-xl py-4 items-center mb-6"
+          onPress={() => promptAsync()}
+          disabled={!request || loading || googleLoading}
+          activeOpacity={0.8}
+        >
+          {googleLoading ? (
+            <ActivityIndicator color="#EFBF04" />
+          ) : (
+            <Text className="text-white font-semibold text-base">Continue with Google</Text>
           )}
         </TouchableOpacity>
 
