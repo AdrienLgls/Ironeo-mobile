@@ -14,8 +14,8 @@ Backend : ironeo.com/api — NE PAS MODIFIER.
 - [x] Configurer axios avec base URL ironeo.com/api et intercepteur JWT
 - [x] Implémenter l'écran Login (email/password → POST /api/auth/login)
 - [x] Implémenter l'écran Register (POST /api/auth/register)
-- [ ] Google OAuth via Expo Auth Session
-- [ ] Stockage du JWT via expo-secure-store
+- [x] Google OAuth via Expo Auth Session
+- [x] Stockage du JWT via expo-secure-store
 - [ ] Navigation auth : si non connecté → stack Auth, si connecté → Tab Navigator
 
 ## Phase 2 — Home Dashboard (PRIORITÉ 2)

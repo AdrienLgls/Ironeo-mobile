@@ -13,11 +13,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from './AuthNavigator';
 import { register } from '../services/authService';
 import { useNavigation } from '@react-navigation/native';
+import { useAuthContext } from '../hooks/AuthContext';
 
 type RegisterScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Register'>;
 
 export default function RegisterScreen() {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
+  const { onAuthSuccess } = useAuthContext();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +38,8 @@ export default function RegisterScreen() {
     setLoading(true);
     setError(null);
     try {
-      await register({ name: name.trim(), email: email.trim(), password });
+      const res = await register({ name: name.trim(), email: email.trim(), password });
+      onAuthSuccess(res.token);
     } catch {
       setError('Registration failed. Please try again.');
     } finally {

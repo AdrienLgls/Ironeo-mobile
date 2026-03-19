@@ -13,11 +13,13 @@ import type { AuthStackParamList } from './AuthNavigator';
 import { login } from '../services/authService';
 import { useGoogleAuth, exchangeGoogleToken } from '../services/googleAuth';
 import { useNavigation } from '@react-navigation/native';
+import { useAuthContext } from '../hooks/AuthContext';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>();
+  const { onAuthSuccess } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,11 +34,12 @@ export default function LoginScreen() {
       if (idToken) {
         setGoogleLoading(true);
         exchangeGoogleToken(idToken)
+          .then((res) => onAuthSuccess(res.token))
           .catch(() => setError('Google sign-in failed. Please try again.'))
           .finally(() => setGoogleLoading(false));
       }
     }
-  }, [googleResponse]);
+  }, [googleResponse, onAuthSuccess]);
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
@@ -46,7 +49,8 @@ export default function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      await login({ email: email.trim(), password });
+      const res = await login({ email: email.trim(), password });
+      onAuthSuccess(res.token);
     } catch {
       setError('Invalid credentials. Please try again.');
     } finally {
