@@ -30,6 +30,7 @@ module.exports = {
         h3: ['22.36px', { lineHeight: '1.60', letterSpacing: '0.025em', fontWeight: '600' }],
         h4: ['20px', { lineHeight: '1.60', letterSpacing: '0.025em', fontWeight: '500' }],
         h5: ['18.91px', { lineHeight: '1.60', letterSpacing: '0.03em', fontWeight: '500' }],
+        h6: ['17.89px', { lineHeight: '1.60', letterSpacing: '0.03em', fontWeight: '500' }],
         'body-xl': ['16.92px', { lineHeight: '1.60', letterSpacing: '0.03em' }],
         body: ['16px', { lineHeight: '1.60', letterSpacing: '0.03em' }],
         'body-sm': ['15.13px', { lineHeight: '1.65', letterSpacing: '0.03em' }],

@@ -19,11 +19,11 @@ export default function RecentSessionCard({ session, onPress }: Props) {
       activeOpacity={0.7}
       className="bg-white/[0.05] rounded-2xl p-4"
     >
-      <Text className="text-white/50 text-xs mb-1">Last session</Text>
-      <Text className="text-white font-semibold text-base">{session.programName}</Text>
+      <Text className="text-white/50 text-caption font-body mb-1">Last session</Text>
+      <Text className="text-white text-body font-heading">{session.programName}</Text>
       <View className="flex-row justify-between mt-2">
-        <Text className="text-white/40 text-xs">{formatDate(session.date)}</Text>
-        <Text className="text-accent text-xs font-medium">{session.durationMinutes} min</Text>
+        <Text className="text-white/40 text-caption font-body">{formatDate(session.date)}</Text>
+        <Text className="text-accent text-caption font-body">{session.durationMinutes} min</Text>
       </View>
     </TouchableOpacity>
   );

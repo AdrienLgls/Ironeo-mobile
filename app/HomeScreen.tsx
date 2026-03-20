@@ -26,29 +26,29 @@ export default function HomeScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-6">
-      <Text className="text-white text-2xl font-bold mb-6">Dashboard</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Dashboard</Text>
 
       {loading && (
         <ActivityIndicator color="#EFBF04" size="large" className="mt-8" />
       )}
 
       {error && (
-        <Text className="text-red-400 text-sm text-center mt-4">{error}</Text>
+        <Text className="text-red-400 text-body-sm font-body text-center mt-4">{error}</Text>
       )}
 
       {stats && (
         <View className="flex-row gap-4 mb-6">
           <View className="flex-1 bg-white/[0.05] rounded-2xl p-4">
-            <Text className="text-accent text-3xl font-bold">{stats.streak}</Text>
-            <Text className="text-white/60 text-xs mt-1">Day streak</Text>
+            <Text className="text-accent text-h2 font-heading">{stats.streak}</Text>
+            <Text className="text-white/60 text-caption font-body mt-1">Day streak</Text>
           </View>
           <View className="flex-1 bg-white/[0.05] rounded-2xl p-4">
-            <Text className="text-accent text-3xl font-bold">{stats.workoutsThisWeek}</Text>
-            <Text className="text-white/60 text-xs mt-1">This week</Text>
+            <Text className="text-accent text-h2 font-heading">{stats.workoutsThisWeek}</Text>
+            <Text className="text-white/60 text-caption font-body mt-1">This week</Text>
           </View>
           <View className="flex-1 bg-white/[0.05] rounded-2xl p-4">
-            <Text className="text-accent text-3xl font-bold">{stats.totalWorkouts}</Text>
-            <Text className="text-white/60 text-xs mt-1">Total</Text>
+            <Text className="text-accent text-h2 font-heading">{stats.totalWorkouts}</Text>
+            <Text className="text-white/60 text-caption font-body mt-1">Total</Text>
           </View>
         </View>
       )}
@@ -67,7 +67,7 @@ export default function HomeScreen() {
 
       {!loading && !recentSession && !error && (
         <View className="bg-white/[0.03] rounded-2xl p-4">
-          <Text className="text-white/40 text-sm text-center">No recent workout</Text>
+          <Text className="text-white/40 text-body-sm font-body text-center">No recent workout</Text>
         </View>
       )}
     </ScrollView>

@@ -53,8 +53,8 @@ export default function RestTimer({ durationSeconds, exerciseName = 'Workout', o
 
   return (
     <View className="bg-white/[0.05] rounded-2xl p-6 items-center mb-6">
-      <Text className="text-white/50 text-xs uppercase tracking-wider mb-3">Rest</Text>
-      <Text className="text-accent text-5xl font-bold mb-4">{label}</Text>
+      <Text className="text-white/50 text-overline font-body uppercase tracking-wider mb-3">Rest</Text>
+      <Text className="text-accent text-h1 font-heading mb-4">{label}</Text>
       <View className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden mb-4">
         <View
           className="h-full bg-accent rounded-full"
@@ -62,7 +62,7 @@ export default function RestTimer({ durationSeconds, exerciseName = 'Workout', o
         />
       </View>
       <TouchableOpacity onPress={onSkip} activeOpacity={0.7}>
-        <Text className="text-white/40 text-sm">Skip rest →</Text>
+        <Text className="text-white/40 text-body-sm font-body">Skip rest →</Text>
       </TouchableOpacity>
     </View>
   );

@@ -32,27 +32,27 @@ export default function PostSessionScreen({ route, navigation }: Props) {
       ) : (
         <>
           <Text className="text-5xl mb-4">🏆</Text>
-          <Text className="text-white text-2xl font-bold mb-1">Session complete!</Text>
-          <Text className="text-white/40 text-sm mb-10">
+          <Text className="text-white text-h2 font-heading mb-1">Session complete!</Text>
+          <Text className="text-white/40 text-body-sm font-body mb-10">
             {session?.programName ?? 'Workout'}
           </Text>
 
           <View className="flex-row gap-4 w-full mb-8">
             <View className="flex-1 bg-white/[0.05] rounded-2xl p-4 items-center">
-              <Text className="text-accent text-2xl font-bold">{completedSets}</Text>
-              <Text className="text-white/50 text-xs mt-1">Sets done</Text>
+              <Text className="text-accent text-h4 font-heading">{completedSets}</Text>
+              <Text className="text-white/50 text-caption font-body mt-1">Sets done</Text>
             </View>
             <View className="flex-1 bg-white/[0.05] rounded-2xl p-4 items-center">
-              <Text className="text-accent text-2xl font-bold">
+              <Text className="text-accent text-h4 font-heading">
                 {session?.durationMinutes ?? '—'}
               </Text>
-              <Text className="text-white/50 text-xs mt-1">Minutes</Text>
+              <Text className="text-white/50 text-caption font-body mt-1">Minutes</Text>
             </View>
             <View className="flex-1 bg-white/[0.05] rounded-2xl p-4 items-center">
-              <Text className="text-accent text-2xl font-bold">
+              <Text className="text-accent text-h4 font-heading">
                 {totalSets > 0 ? Math.round((completedSets / totalSets) * 100) : 0}%
               </Text>
-              <Text className="text-white/50 text-xs mt-1">Completion</Text>
+              <Text className="text-white/50 text-caption font-body mt-1">Completion</Text>
             </View>
           </View>
 
@@ -61,7 +61,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
             activeOpacity={0.8}
             onPress={() => navigation.navigate('ProgramsList')}
           >
-            <Text className="text-black font-bold text-base">Back to programs</Text>
+            <Text className="text-black text-body font-heading">Back to programs</Text>
           </TouchableOpacity>
         </>
       )}

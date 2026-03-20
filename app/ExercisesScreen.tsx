@@ -55,9 +55,9 @@ export default function ExercisesScreen({ navigation }: Props) {
         ListHeaderComponent={
           <View className="pt-12 mb-4">
             <TouchableOpacity onPress={() => navigation.goBack()} className="mb-3">
-              <Text className="text-accent text-sm">← Back</Text>
+              <Text className="text-accent text-body-sm font-body">← Back</Text>
             </TouchableOpacity>
-            <Text className="text-white text-2xl font-bold mb-4">Exercises</Text>
+            <Text className="text-white text-h2 font-heading mb-4">Exercises</Text>
             <TextInput
               value={search}
               onChangeText={setSearch}
@@ -73,7 +73,7 @@ export default function ExercisesScreen({ navigation }: Props) {
                   onPress={() => setActiveGroup(activeGroup === group ? null : group)}
                   className={`mr-2 px-3 py-1.5 rounded-full ${activeGroup === group ? 'bg-accent' : 'bg-white/[0.08]'}`}
                 >
-                  <Text className={`text-xs capitalize font-medium ${activeGroup === group ? 'text-black' : 'text-white/60'}`}>
+                  <Text className={`text-caption font-body capitalize ${activeGroup === group ? 'text-black' : 'text-white/60'}`}>
                     {group}
                   </Text>
                 </TouchableOpacity>
@@ -82,7 +82,7 @@ export default function ExercisesScreen({ navigation }: Props) {
           </View>
         }
         ListEmptyComponent={
-          <Text className="text-white/40 text-sm text-center mt-8">
+          <Text className="text-white/40 text-body-sm font-body text-center mt-8">
             {error ?? 'No exercises found'}
           </Text>
         }
@@ -93,14 +93,14 @@ export default function ExercisesScreen({ navigation }: Props) {
             className="flex-row items-center py-4 border-b border-white/[0.05]"
           >
             <View className="flex-1">
-              <Text className="text-white text-sm font-medium">{item.name}</Text>
+              <Text className="text-white text-body-sm font-body">{item.name}</Text>
               {item.muscleGroups.length > 0 && (
-                <Text className="text-white/40 text-xs mt-0.5">
+                <Text className="text-white/40 text-caption font-body mt-0.5">
                   {item.muscleGroups.join(' · ')}
                 </Text>
               )}
             </View>
-            <Text className="text-white/20 text-xs">›</Text>
+            <Text className="text-white/20 text-caption font-body">›</Text>
           </TouchableOpacity>
         )}
       />

@@ -52,19 +52,19 @@ function ProfileHomeScreen({
 
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
-      <Text className="text-white text-2xl font-bold mb-6">Profile</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Profile</Text>
 
       <View className="bg-white/[0.04] rounded-2xl p-4 mb-4 items-center">
         <View className="w-16 h-16 rounded-full bg-accent/20 items-center justify-center mb-3">
-          <Text className="text-accent text-2xl font-bold">
+          <Text className="text-accent text-h4 font-heading">
             {profile?.name?.charAt(0)?.toUpperCase() ?? '?'}
           </Text>
         </View>
-        <Text className="text-white text-base font-semibold">{profile?.name ?? '—'}</Text>
-        <Text className="text-white/40 text-xs mt-0.5">{profile?.email ?? '—'}</Text>
+        <Text className="text-white text-body font-heading">{profile?.name ?? '—'}</Text>
+        <Text className="text-white/40 text-caption font-body mt-0.5">{profile?.email ?? '—'}</Text>
         {profile?.subscriptionStatus != null && (
           <View className="bg-accent/20 rounded-full px-3 py-1 mt-2">
-            <Text className="text-accent text-xs capitalize">{profile.subscriptionStatus}</Text>
+            <Text className="text-accent text-caption font-body capitalize">{profile.subscriptionStatus}</Text>
           </View>
         )}
       </View>
@@ -74,8 +74,8 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('EditProfile')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-sm">Edit profile</Text>
-        <Text className="text-white/30 text-sm">›</Text>
+        <Text className="text-white text-body-sm font-body">Edit profile</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -83,8 +83,8 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('NotificationSettings')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-sm">Notifications</Text>
-        <Text className="text-white/30 text-sm">›</Text>
+        <Text className="text-white text-body-sm font-body">Notifications</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -92,8 +92,8 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('Paywall')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-sm">Subscription</Text>
-        <Text className="text-white/30 text-sm">›</Text>
+        <Text className="text-white text-body-sm font-body">Subscription</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -101,8 +101,8 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('Settings')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4"
       >
-        <Text className="text-white text-sm">Settings</Text>
-        <Text className="text-white/30 text-sm">›</Text>
+        <Text className="text-white text-body-sm font-body">Settings</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -151,10 +151,10 @@ function EditProfileScreen({
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-2xl font-bold mb-6">Edit profile</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Edit profile</Text>
 
       {([
         { label: 'Name', value: name, setter: setName, placeholder: 'Your name' },
@@ -163,7 +163,7 @@ function EditProfileScreen({
         { label: 'Goal', value: goal, setter: setGoal, placeholder: 'e.g. lose weight, build muscle' },
       ] as const).map(({ label, value, setter, placeholder }) => (
         <View key={label} className="mb-4">
-          <Text className="text-white/50 text-xs mb-1 uppercase tracking-wider">{label}</Text>
+          <Text className="text-white/50 text-overline font-body mb-1 uppercase tracking-wider">{label}</Text>
           <TextInput
             value={value}
             onChangeText={setter as (v: string) => void}
@@ -183,7 +183,7 @@ function EditProfileScreen({
         {saving ? (
           <ActivityIndicator color="#000" size="small" />
         ) : (
-          <Text className="text-black font-bold text-base">Save</Text>
+          <Text className="text-black text-body font-heading">Save</Text>
         )}
       </TouchableOpacity>
     </ScrollView>
@@ -226,17 +226,17 @@ function NotificationSettingsScreen({
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-2xl font-bold mb-6">Notifications</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Notifications</Text>
 
       {loading ? (
         <ActivityIndicator color="#EFBF04" className="mt-8" />
       ) : (
         <>
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2">
-            <Text className="text-white text-sm">Workout reminders</Text>
+            <Text className="text-white text-body-sm font-body">Workout reminders</Text>
             <Switch
               value={settings.workoutReminders}
               onValueChange={() => toggle('workoutReminders')}
@@ -247,7 +247,7 @@ function NotificationSettingsScreen({
           </View>
 
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4">
-            <Text className="text-white text-sm">Rest day reminders</Text>
+            <Text className="text-white text-body-sm font-body">Rest day reminders</Text>
             <Switch
               value={settings.restDayReminders}
               onValueChange={() => toggle('restDayReminders')}
@@ -301,17 +301,17 @@ function SettingsScreen({
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-2xl font-bold mb-6">Settings</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Settings</Text>
 
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={handleLogout}
         className="bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-sm">Log out</Text>
+        <Text className="text-white text-body-sm font-body">Log out</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -319,7 +319,7 @@ function SettingsScreen({
         onPress={handleDeleteAccount}
         className="bg-white/[0.04] rounded-2xl px-4 py-4"
       >
-        <Text className="text-red-400 text-sm">Delete account</Text>
+        <Text className="text-red-400 text-body-sm font-body">Delete account</Text>
       </TouchableOpacity>
     </ScrollView>
   );

@@ -22,10 +22,10 @@ export default function ProgressWidget({ currentWeight, goalWeight }: Props) {
 
   return (
     <View className="bg-white/[0.05] rounded-2xl p-4 mb-4">
-      <Text className="text-white/50 text-xs mb-3">Weight goal</Text>
+      <Text className="text-white/50 text-caption font-body mb-3">Weight goal</Text>
       <View className="flex-row justify-between mb-2">
-        <Text className="text-white font-semibold">{currentWeight} kg</Text>
-        <Text className="text-white/40 text-sm">→ {goalWeight} kg</Text>
+        <Text className="text-white text-body font-heading">{currentWeight} kg</Text>
+        <Text className="text-white/40 text-body-sm font-body">→ {goalWeight} kg</Text>
       </View>
       <View className="h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
         <View
@@ -33,7 +33,7 @@ export default function ProgressWidget({ currentWeight, goalWeight }: Props) {
           style={{ width: `${pct}%` }}
         />
       </View>
-      <Text className="text-white/40 text-xs mt-2">{pct}% to goal</Text>
+      <Text className="text-white/40 text-caption font-body mt-2">{pct}% to goal</Text>
     </View>
   );
 }

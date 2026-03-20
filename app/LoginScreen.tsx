@@ -64,12 +64,12 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 justify-center px-6">
-        <Text className="text-accent text-4xl font-bold mb-2">Ironeo</Text>
-        <Text className="text-white/60 text-base mb-10">Train smarter. Live better.</Text>
+        <Text className="text-accent text-h1 font-heading mb-2">Ironeo</Text>
+        <Text className="text-white/60 text-body font-body mb-10">Train smarter. Live better.</Text>
 
         {error !== null && (
           <View className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-4">
-            <Text className="text-red-400 text-sm">{error}</Text>
+            <Text className="text-red-400 text-body-sm font-body">{error}</Text>
           </View>
         )}
 
@@ -100,7 +100,7 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="#121212" />
           ) : (
-            <Text className="text-background font-bold text-base">Sign In</Text>
+            <Text className="text-background text-body font-heading">Sign In</Text>
           )}
         </TouchableOpacity>
 
@@ -113,7 +113,7 @@ export default function LoginScreen() {
           {googleLoading ? (
             <ActivityIndicator color="#EFBF04" />
           ) : (
-            <Text className="text-white font-semibold text-base">Continue with Google</Text>
+            <Text className="text-white text-body font-heading">Continue with Google</Text>
           )}
         </TouchableOpacity>
 
@@ -121,9 +121,9 @@ export default function LoginScreen() {
           className="items-center py-2"
           onPress={() => navigation.navigate('Register')}
         >
-          <Text className="text-white/50 text-sm">
+          <Text className="text-white/50 text-body-sm font-body">
             No account yet?{' '}
-            <Text className="text-accent font-semibold">Sign up</Text>
+            <Text className="text-accent font-heading">Sign up</Text>
           </Text>
         </TouchableOpacity>
       </View>

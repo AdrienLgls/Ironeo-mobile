@@ -57,12 +57,12 @@ export default function RegisterScreen() {
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24 }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text className="text-accent text-4xl font-bold mb-2">Ironeo</Text>
-        <Text className="text-white/60 text-base mb-10">Create your account.</Text>
+        <Text className="text-accent text-h1 font-heading mb-2">Ironeo</Text>
+        <Text className="text-white/60 text-body font-body mb-10">Create your account.</Text>
 
         {error !== null && (
           <View className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-4">
-            <Text className="text-red-400 text-sm">{error}</Text>
+            <Text className="text-red-400 text-body-sm font-body">{error}</Text>
           </View>
         )}
 
@@ -101,7 +101,7 @@ export default function RegisterScreen() {
           {loading ? (
             <ActivityIndicator color="#121212" />
           ) : (
-            <Text className="text-background font-bold text-base">Create Account</Text>
+            <Text className="text-background text-body font-heading">Create Account</Text>
           )}
         </TouchableOpacity>
 
@@ -109,9 +109,9 @@ export default function RegisterScreen() {
           className="items-center py-2"
           onPress={() => navigation.navigate('Login')}
         >
-          <Text className="text-white/50 text-sm">
+          <Text className="text-white/50 text-body-sm font-body">
             Already have an account?{' '}
-            <Text className="text-accent font-semibold">Sign in</Text>
+            <Text className="text-accent font-heading">Sign in</Text>
           </Text>
         </TouchableOpacity>
       </ScrollView>

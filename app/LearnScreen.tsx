@@ -49,10 +49,10 @@ function ArticlesListScreen({
         keyExtractor={(item) => item.id}
         contentContainerClassName="px-4 pb-6"
         ListHeaderComponent={
-          <Text className="text-white text-2xl font-bold pt-12 mb-6">Learn</Text>
+          <Text className="text-white text-h2 font-heading pt-12 mb-6">Learn</Text>
         }
         ListEmptyComponent={
-          <Text className="text-white/40 text-sm text-center mt-8">
+          <Text className="text-white/40 text-body-sm font-body text-center mt-8">
             {error ?? 'No articles available'}
           </Text>
         }
@@ -64,13 +64,13 @@ function ArticlesListScreen({
           >
             <View className="flex-row items-start justify-between mb-2">
               <View className="bg-accent/20 rounded-full px-2 py-0.5">
-                <Text className="text-accent text-xs capitalize">{item.category}</Text>
+                <Text className="text-accent text-caption font-body capitalize">{item.category}</Text>
               </View>
-              <Text className="text-white/30 text-xs">{item.readTimeMinutes} min</Text>
+              <Text className="text-white/30 text-caption font-body">{item.readTimeMinutes} min</Text>
             </View>
-            <Text className="text-white text-sm font-semibold leading-snug">{item.title}</Text>
+            <Text className="text-white text-body-sm font-heading leading-snug">{item.title}</Text>
             {item.summary != null && (
-              <Text className="text-white/40 text-xs mt-1" numberOfLines={2}>
+              <Text className="text-white/40 text-caption font-body mt-1" numberOfLines={2}>
                 {item.summary}
               </Text>
             )}
@@ -108,7 +108,7 @@ function ArticleDetailScreen({
   if (error || !article) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-red-400 text-sm">{error ?? 'Article not found'}</Text>
+        <Text className="text-red-400 text-body-sm font-body">{error ?? 'Article not found'}</Text>
       </View>
     );
   }
@@ -116,22 +116,22 @@ function ArticleDetailScreen({
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
       <View className="flex-row items-center gap-3 mb-3">
         <View className="bg-accent/20 rounded-full px-2 py-0.5">
-          <Text className="text-accent text-xs capitalize">{article.category}</Text>
+          <Text className="text-accent text-caption font-body capitalize">{article.category}</Text>
         </View>
-        <Text className="text-white/30 text-xs">{article.readTimeMinutes} min read</Text>
+        <Text className="text-white/30 text-caption font-body">{article.readTimeMinutes} min read</Text>
       </View>
 
-      <Text className="text-white text-2xl font-bold mb-6 leading-tight">{article.title}</Text>
+      <Text className="text-white text-h2 font-heading mb-6 leading-tight">{article.title}</Text>
 
       {article.content != null ? (
-        <Text className="text-white/70 text-sm leading-relaxed">{article.content}</Text>
+        <Text className="text-white/70 text-body-sm font-body leading-relaxed">{article.content}</Text>
       ) : (
-        <Text className="text-white/30 text-sm italic">Content unavailable</Text>
+        <Text className="text-white/30 text-body-sm font-body italic">Content unavailable</Text>
       )}
     </ScrollView>
   );
@@ -183,8 +183,8 @@ function QuizScreen({
     return (
       <View className="flex-1 bg-background items-center justify-center px-6">
         <Text className="text-5xl mb-4">🎯</Text>
-        <Text className="text-white text-2xl font-bold mb-2">Quiz complete!</Text>
-        <Text className="text-white/50 text-sm mb-8">
+        <Text className="text-white text-h2 font-heading mb-2">Quiz complete!</Text>
+        <Text className="text-white/50 text-body-sm font-body mb-8">
           {score} / {quiz.questions.length} correct
         </Text>
         <TouchableOpacity
@@ -192,7 +192,7 @@ function QuizScreen({
           activeOpacity={0.8}
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-black font-bold text-base">Back to articles</Text>
+          <Text className="text-black text-body font-heading">Back to articles</Text>
         </TouchableOpacity>
       </View>
     );
@@ -201,13 +201,13 @@ function QuizScreen({
   return (
     <View className="flex-1 bg-background px-4 pt-12">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white/40 text-xs mb-2">
+      <Text className="text-white/40 text-caption font-body mb-2">
         Question {currentIndex + 1} of {quiz.questions.length}
       </Text>
-      <Text className="text-white text-lg font-semibold mb-6 leading-snug">{question.text}</Text>
+      <Text className="text-white text-h6 font-heading mb-6 leading-snug">{question.text}</Text>
 
       <View className="gap-3">
         {question.options.map((option, idx) => (
@@ -221,7 +221,7 @@ function QuizScreen({
                 : 'bg-white/[0.04] border-white/[0.08]'
             }`}
           >
-            <Text className={`text-sm font-medium ${selected === idx ? 'text-black' : 'text-white/80'}`}>
+            <Text className={`text-body-sm font-body ${selected === idx ? 'text-black' : 'text-white/80'}`}>
               {option}
             </Text>
           </TouchableOpacity>
@@ -234,7 +234,7 @@ function QuizScreen({
           activeOpacity={0.8}
           onPress={handleNext}
         >
-          <Text className="text-black font-bold text-base">{isLast ? 'Finish' : 'Next'}</Text>
+          <Text className="text-black text-body font-heading">{isLast ? 'Finish' : 'Next'}</Text>
         </TouchableOpacity>
       )}
     </View>

@@ -52,22 +52,22 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
         contentContainerClassName="px-4 pt-12 pb-6"
         ListHeaderComponent={
           <View className="flex-row items-center justify-between mb-6">
-            <Text className="text-white text-2xl font-bold">Programs</Text>
+            <Text className="text-white text-h2 font-heading">Programs</Text>
             <View className="flex-row gap-4">
               <TouchableOpacity onPress={() => navigation.navigate('History')} activeOpacity={0.7}>
-                <Text className="text-white/50 text-sm">History</Text>
+                <Text className="text-white/50 text-body-sm font-body">History</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('ExercisesList')} activeOpacity={0.7}>
-                <Text className="text-accent text-sm">Exercises</Text>
+                <Text className="text-accent text-body-sm font-body">Exercises</Text>
               </TouchableOpacity>
             </View>
           </View>
         }
         ListEmptyComponent={
           error ? (
-            <Text className="text-red-400 text-sm text-center mt-8">{error}</Text>
+            <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
           ) : (
-            <Text className="text-white/40 text-sm text-center mt-8">No programs available</Text>
+            <Text className="text-white/40 text-body-sm font-body text-center mt-8">No programs available</Text>
           )
         }
         renderItem={({ item }) => (
@@ -107,7 +107,7 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   if (error || !program) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-red-400 text-sm">{error ?? 'Program not found'}</Text>
+        <Text className="text-red-400 text-body-sm font-body">{error ?? 'Program not found'}</Text>
       </View>
     );
   }
@@ -115,17 +115,17 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-6">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
-        <Text className="text-accent text-sm">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-2xl font-bold mb-1">{program.name}</Text>
-      <Text className="text-white/40 text-xs mb-6">
+      <Text className="text-white text-h2 font-heading mb-1">{program.name}</Text>
+      <Text className="text-white/40 text-caption font-body mb-6">
         {program.daysPerWeek}×/week · {program.durationWeeks} weeks
       </Text>
 
       {program.days.map((day: ProgramDay) => (
         <View key={day.dayNumber} className="mb-6">
-          <Text className="text-accent text-xs font-semibold uppercase tracking-wider mb-2">
+          <Text className="text-accent text-overline font-body uppercase tracking-wider mb-2">
             {day.label}
           </Text>
           <View className="bg-white/[0.04] rounded-2xl px-4">
@@ -141,7 +141,7 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
         activeOpacity={0.8}
         onPress={() => navigation.navigate('ActiveSession', { program })}
       >
-        <Text className="text-black font-bold text-base">Start Session</Text>
+        <Text className="text-black text-body font-heading">Start Session</Text>
       </TouchableOpacity>
     </ScrollView>
   );
