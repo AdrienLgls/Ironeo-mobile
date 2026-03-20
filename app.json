@@ -12,7 +12,8 @@
       "backgroundColor": "#121212"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.adrienlgls.ironeo"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +28,8 @@
         "android.permission.FOREGROUND_SERVICE_HEALTH",
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.WAKE_LOCK"
-      ]
+      ],
+      "package": "com.adrienlgls.ironeo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -39,6 +41,12 @@
           "sounds": []
         }
       ]
-    ]
+    ],
+    "scheme": "ironeo",
+    "extra": {
+      "googleAndroidClientId": "",
+      "googleIosClientId": "",
+      "googleWebClientId": ""
+    }
   }
 }

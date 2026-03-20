@@ -24,7 +24,7 @@ export type WorkoutStackParamList = {
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
 
-function ProgramsListScreen({ navigation }: { navigation: { navigate: (screen: string, params?: Record<string, unknown>) => void } }) {
+function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackParamList, "ProgramsList">) {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

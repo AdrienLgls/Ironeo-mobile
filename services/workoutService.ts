@@ -35,3 +35,8 @@ export async function getProgramDetail(id: string): Promise<import('../types/wor
   const { data } = await api.get<import('../types/workout').ProgramDetail>(`/programs/${id}`);
   return data;
 }
+
+export async function getWorkoutSessions(): Promise<WorkoutSession[]> {
+  const { data } = await api.get<WorkoutSession[]>('/workout-sessions');
+  return data;
+}

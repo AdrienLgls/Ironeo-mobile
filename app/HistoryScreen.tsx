@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
-import api from '../services/api';
+import { getWorkoutSessions } from '../services/workoutService';
 import type { WorkoutSession } from '../types/workout';
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-async function getWorkoutSessions(): Promise<WorkoutSession[]> {
-  const { data } = await api.get<WorkoutSession[]>('/workout-sessions');
-  return data;
 }
 
 export default function HistoryScreen() {

@@ -1,29 +1,19 @@
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 import api, { TOKEN_KEY } from './api';
+import * as SecureStore from 'expo-secure-store';
 import type { AuthResponse } from '../types/auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export interface GoogleAuthConfig {
-  androidClientId: string;
-  iosClientId: string;
-  webClientId: string;
-}
-
-// These values are injected via app.json/environment — placeholders for now
-const GOOGLE_CONFIG: GoogleAuthConfig = {
-  androidClientId: '',
-  iosClientId: '',
-  webClientId: '',
-};
+const extra = Constants.expoConfig?.extra ?? {};
 
 export function useGoogleAuth() {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: GOOGLE_CONFIG.androidClientId,
-    iosClientId: GOOGLE_CONFIG.iosClientId,
-    webClientId: GOOGLE_CONFIG.webClientId,
+    androidClientId: (extra.googleAndroidClientId as string) || undefined,
+    iosClientId: (extra.googleIosClientId as string) || undefined,
+    webClientId: (extra.googleWebClientId as string) || undefined,
   });
 
   return { request, response, promptAsync };
