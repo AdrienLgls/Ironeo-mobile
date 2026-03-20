@@ -14,6 +14,7 @@ import HubTabNavigation from '../components/ui/HubTabNavigation';
 import EmptyState from '../components/ui/EmptyState';
 import { SkeletonBox, SkeletonText, SkeletonCircle } from '../components/ui/Skeleton';
 import GroupChatTab from '../components/social/GroupChatTab';
+import GroupLeaderboardTab from '../components/social/GroupLeaderboardTab';
 import {
   getGroupDetail,
   getGroupActivity,
@@ -36,6 +37,7 @@ const GROUP_TABS = [
   { id: 'activite', label: 'Activité' },
   { id: 'membres', label: 'Membres' },
   { id: 'chat', label: 'Chat' },
+  { id: 'classement', label: 'Classement' },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -386,8 +388,8 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
         </Text>
       </View>
 
-      {/* ── Tab header (group info card + tab nav): hidden in chat for space ── */}
-      {activeTab !== 'chat' && (
+      {/* ── Tab header (group info card + tab nav): hidden in chat/classement for space ── */}
+      {activeTab !== 'chat' && activeTab !== 'classement' && (
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -512,8 +514,22 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
         </View>
       )}
 
-      {/* ── Footer: leave button (hidden in chat to avoid input overlap) ── */}
-      {activeTab !== 'chat' && (
+      {/* ── Tab: Classement ── */}
+      {activeTab === 'classement' && (
+        <View style={{ flex: 1, paddingHorizontal: 16 }}>
+          <View style={{ paddingTop: 4, paddingBottom: 0 }}>
+            <HubTabNavigation
+              tabs={GROUP_TABS}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          </View>
+          <GroupLeaderboardTab groupId={groupId} />
+        </View>
+      )}
+
+      {/* ── Footer: leave button (hidden in chat/classement to avoid overlap) ── */}
+      {activeTab !== 'chat' && activeTab !== 'classement' && (
         <View
           style={{
             position: 'absolute',

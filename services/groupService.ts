@@ -1,6 +1,19 @@
 import api from './api';
 import type { ActivityItem } from './socialService';
 
+// ─── Leaderboard types ────────────────────────────────────────────────────────
+
+export type GroupLeaderboardType = 'volume' | 'sessions' | 'streak';
+export type GroupLeaderboardPeriod = 'week' | 'month' | 'all';
+
+export interface GroupLeaderboardEntry {
+  rank: number;
+  userId: string;
+  username: string;
+  score: number;
+  isCurrentUser?: boolean;
+}
+
 // ─── Chat types ───────────────────────────────────────────────────────────────
 
 export interface ChatMessage {
@@ -95,6 +108,21 @@ export async function getGroupDetail(groupId: string): Promise<GroupDetail | nul
 export async function getGroupActivity(groupId: string): Promise<ActivityItem[]> {
   try {
     const { data } = await api.get<ActivityItem[]>(`/groups/${groupId}/activity`);
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getGroupLeaderboard(
+  groupId: string,
+  type: GroupLeaderboardType,
+  period: GroupLeaderboardPeriod,
+): Promise<GroupLeaderboardEntry[]> {
+  try {
+    const { data } = await api.get<GroupLeaderboardEntry[]>(
+      `/leaderboards/group/${groupId}/${type}/${period}`,
+    );
     return data || [];
   } catch {
     return [];
