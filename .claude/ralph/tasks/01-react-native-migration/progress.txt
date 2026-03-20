@@ -67,3 +67,12 @@ Feature: 01-react-native-migration
 - getProgramDetail réutilise la même route que getProgramById (GET /programs/:id)
 
 ---
+
+## 2026-03-20 - US-007: Active session screen
+- Fichiers : app/ActiveSessionScreen.tsx (créé), hooks/useWorkoutSession.ts (créé), app/WorkoutScreen.tsx (ActiveSession+PostSession dans stack)
+- useWorkoutSession hook gère tout le state : currentExerciseIndex, currentSetIndex, completion
+- `navigation.replace('PostSession', ...)` quand isComplete=true (pas de back vers session)
+- Stack.Screen children prop pour passer des params custom au component (program object)
+- Inline import dans le type : `import('../types/workout').ProgramDetail` ok pour les params de nav
+
+---

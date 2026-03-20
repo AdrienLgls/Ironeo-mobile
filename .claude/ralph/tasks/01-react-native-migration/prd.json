@@ -96,7 +96,7 @@
         "TypeScript compiles"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "This is the core workout screen. Timer added separately in US-008."
     },
     {

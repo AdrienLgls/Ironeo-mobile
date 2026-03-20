@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
+import RestTimer from '../components/workout/RestTimer';
 import type { ProgramDetail } from '../types/workout';
+
+const DEFAULT_REST_SECONDS = 90;
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
   program: ProgramDetail;
@@ -12,6 +15,8 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
 export default function ActiveSessionScreen({ navigation, program }: Props) {
   const { state, startSession, completeSet, currentExercise, currentSet, progress, completedSets, totalSets } =
     useWorkoutSession(program);
+  const [showRestTimer, setShowRestTimer] = useState(false);
+  const [restDuration, setRestDuration] = useState(DEFAULT_REST_SECONDS);
 
   useEffect(() => {
     startSession().catch(() => undefined);
@@ -89,18 +94,34 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
         {completedSets} / {totalSets} sets completed
       </Text>
 
+      {/* Rest timer */}
+      {showRestTimer && (
+        <RestTimer
+          durationSeconds={restDuration}
+          onComplete={() => { setShowRestTimer(false); completeSet(); }}
+          onSkip={() => { setShowRestTimer(false); completeSet(); }}
+        />
+      )}
+
       {/* Done button */}
-      <TouchableOpacity
-        onPress={completeSet}
-        className="bg-accent rounded-2xl py-5 items-center"
-        activeOpacity={0.8}
-      >
-        <Text className="text-black font-bold text-lg">
-          {state.currentSetIndex + 1 >= currentExercise.sets.length
-            ? 'Next exercise →'
-            : `Set ${state.currentSetIndex + 1} done ✓`}
-        </Text>
-      </TouchableOpacity>
+      {!showRestTimer && (
+        <TouchableOpacity
+          onPress={() => {
+            const ex = program.days[0]?.exercises[state.currentExerciseIndex];
+            const rest = ex?.restSeconds ?? DEFAULT_REST_SECONDS;
+            setRestDuration(rest);
+            setShowRestTimer(true);
+          }}
+          className="bg-accent rounded-2xl py-5 items-center"
+          activeOpacity={0.8}
+        >
+          <Text className="text-black font-bold text-lg">
+            {state.currentSetIndex + 1 >= currentExercise.sets.length
+              ? 'Next exercise →'
+              : `Set ${state.currentSetIndex + 1} done ✓`}
+          </Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 }
