@@ -1,10 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Modal,
+  Animated,
+} from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ViewShot from 'react-native-view-shot';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { updateWorkoutSession } from '../services/workoutService';
+import { checkPRs, type PRResult } from '../services/prService';
 import { FadeInUp, StaggerChildren } from '../components/ui/FadeIn';
 import type { WorkoutSession } from '../types/workout';
 import { ShareCardStats } from '../components/share/ShareCard';
@@ -26,16 +36,224 @@ function formatDuration(minutes: number): string {
   return `${minutes} min`;
 }
 
+function prTypeLabel(type: PRResult['type']): string {
+  switch (type) {
+    case 'maxWeight':
+      return 'Poids max';
+    case 'estimated1RM':
+      return '1RM estimé';
+    case 'maxRepsAtWeight':
+      return 'Reps max';
+  }
+}
+
+// ─── PRCelebrationModal ──────────────────────────────────────────────────────
+
+interface PRCelebrationModalProps {
+  visible: boolean;
+  prs: PRResult[];
+  onClose: () => void;
+}
+
+function PRCelebrationModal({ visible, prs, onClose }: PRCelebrationModalProps) {
+  const insets = useSafeAreaInsets();
+  const animations = useRef<Animated.Value[]>([]);
+
+  // Initialise one animated value per PR (reuse across renders)
+  if (animations.current.length !== prs.length) {
+    animations.current = prs.map(() => new Animated.Value(0));
+  }
+
+  useEffect(() => {
+    if (!visible) return;
+
+    // Reset all
+    animations.current.forEach((a) => a.setValue(0));
+
+    // Stagger each item in
+    const staggered = animations.current.map((anim, i) =>
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 350,
+        delay: i * 120,
+        useNativeDriver: true,
+      })
+    );
+
+    Animated.parallel(staggered).start();
+  }, [visible, prs.length]);
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      <View style={modalStyles.overlay}>
+        <View style={[modalStyles.sheet, { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }]}>
+          <Text style={modalStyles.title}>🏅 Nouveaux records !</Text>
+          <Text style={modalStyles.subtitle}>
+            {prs.length === 1 ? '1 record battu' : `${prs.length} records battus`} cette séance
+          </Text>
+
+          <ScrollView
+            style={modalStyles.list}
+            contentContainerStyle={modalStyles.listContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {prs.map((pr, i) => {
+              const anim = animations.current[i] ?? new Animated.Value(1);
+              const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] });
+              const opacity = anim;
+
+              return (
+                <Animated.View
+                  key={`${pr.exerciseId}-${pr.type}`}
+                  style={[modalStyles.prCard, { opacity, transform: [{ scale }] }]}
+                >
+                  <View style={modalStyles.prHeader}>
+                    <Text style={modalStyles.prName} numberOfLines={1}>
+                      {pr.exerciseName}
+                    </Text>
+                    <Text style={modalStyles.prType}>{prTypeLabel(pr.type)}</Text>
+                  </View>
+                  <View style={modalStyles.prValues}>
+                    <Text style={modalStyles.prNew}>
+                      {pr.value} {pr.unit}
+                    </Text>
+                    <Text style={modalStyles.prDelta}>
+                      +{pr.improvement} {pr.unit}
+                    </Text>
+                  </View>
+                  <Text style={modalStyles.prPrev}>
+                    Précédent : {pr.previousValue} {pr.unit}
+                  </Text>
+                </Animated.View>
+              );
+            })}
+          </ScrollView>
+
+          <TouchableOpacity style={modalStyles.btn} activeOpacity={0.8} onPress={onClose}>
+            <Text style={modalStyles.btnText}>Continuer</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  sheet: {
+    width: '100%',
+    backgroundColor: '#1A1A1A',
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    maxHeight: '80%',
+  },
+  title: {
+    fontFamily: 'Quilon-Medium',
+    fontSize: 24,
+    color: '#EFBF04',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontFamily: 'Rowan-Regular',
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  list: { flexGrow: 0 },
+  listContent: { gap: 10, paddingBottom: 8 },
+  prCard: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 16,
+    padding: 14,
+  },
+  prHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  prName: {
+    fontFamily: 'Quilon-Medium',
+    fontSize: 14,
+    color: '#EFBF04',
+    flex: 1,
+    marginRight: 8,
+  },
+  prType: {
+    fontFamily: 'Rowan-Regular',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+  },
+  prValues: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: 10,
+    marginBottom: 4,
+  },
+  prNew: {
+    fontFamily: 'Quilon-Medium',
+    fontSize: 22,
+    color: '#fafafa',
+  },
+  prDelta: {
+    fontFamily: 'Quilon-Medium',
+    fontSize: 14,
+    color: '#4ade80',
+  },
+  prPrev: {
+    fontFamily: 'Rowan-Regular',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.4)',
+  },
+  btn: {
+    marginTop: 20,
+    backgroundColor: '#EFBF04',
+    borderRadius: 16,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  btnText: {
+    fontFamily: 'Quilon-Medium',
+    fontSize: 16,
+    color: '#0a0a0a',
+  },
+});
+
+// ─── PostSessionScreen ───────────────────────────────────────────────────────
+
 export default function PostSessionScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const insets = useSafeAreaInsets();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [saving, setSaving] = useState(true);
+  const [detectedPRs, setDetectedPRs] = useState<PRResult[]>([]);
+  const [showPRModal, setShowPRModal] = useState(false);
   const shareCardRef = useRef<ViewShot>(null);
 
   useEffect(() => {
     updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() })
-      .then(setSession)
+      .then(async (saved) => {
+        setSession(saved);
+        const prs = await checkPRs(saved);
+        if (prs.length > 0) {
+          setDetectedPRs(prs);
+          setShowPRModal(true);
+        }
+      })
       .catch(() => undefined)
       .finally(() => setSaving(false));
   }, [sessionId]);
@@ -62,18 +280,6 @@ export default function PostSessionScreen({ route, navigation }: Props) {
     };
   }, [session]);
 
-  const prs = useMemo(() => {
-    // Show exercises where a completed set exists (placeholder for real PR detection)
-    if (!session) return [];
-    return session.exercises
-      .filter((ex) => ex.sets.some((s) => s.completed && (s.weight || 0) > 0))
-      .slice(0, 3)
-      .map((ex) => {
-        const maxWeight = Math.max(...ex.sets.filter((s) => s.completed).map((s) => s.weight || 0));
-        return { name: ex.exerciseName || 'Exercice', weight: maxWeight };
-      });
-  }, [session]);
-
   const completionRate = stats.totalSets > 0
     ? Math.round((stats.completedSets / stats.totalSets) * 100)
     : 0;
@@ -88,115 +294,123 @@ export default function PostSessionScreen({ route, navigation }: Props) {
   }
 
   return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={[styles.content, { paddingTop: insets.top + 24 }]}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Trophy header */}
-      <FadeInUp>
-        <View style={styles.header}>
-          <Text style={styles.trophy}>🏆</Text>
-          <Text style={styles.title}>Séance terminée !</Text>
-          <Text style={styles.subtitle}>
-            {session?.programName ?? 'Séance libre'}
-          </Text>
-        </View>
-      </FadeInUp>
+    <>
+      <PRCelebrationModal
+        visible={showPRModal}
+        prs={detectedPRs}
+        onClose={() => setShowPRModal(false)}
+      />
 
-      {/* Stats grid */}
-      <StaggerChildren staggerMs={80} baseDelay={200}>
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{stats.completedSets}</Text>
-            <Text style={styles.statLabel}>Sets complétés</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>
-              {session?.durationMinutes ? formatDuration(session.durationMinutes) : '—'}
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[styles.content, { paddingTop: insets.top + 24 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Trophy header */}
+        <FadeInUp>
+          <View style={styles.header}>
+            <Text style={styles.trophy}>🏆</Text>
+            <Text style={styles.title}>Séance terminée !</Text>
+            <Text style={styles.subtitle}>
+              {session?.programName ?? 'Séance libre'}
             </Text>
-            <Text style={styles.statLabel}>Durée</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{formatVolume(stats.totalVolume)}</Text>
-            <Text style={styles.statLabel}>Volume total</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>
-              {stats.avgRpe != null ? stats.avgRpe.toFixed(1) : '—'}
-            </Text>
-            <Text style={styles.statLabel}>RPE moyen</Text>
-          </View>
-        </View>
+        </FadeInUp>
 
-        {/* Completion bar */}
-        <View style={styles.completionCard}>
-          <View style={styles.completionRow}>
-            <Text style={styles.completionLabel}>Complétion</Text>
-            <Text style={styles.completionPct}>{completionRate}%</Text>
+        {/* Stats grid */}
+        <StaggerChildren staggerMs={80} baseDelay={200}>
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>{stats.completedSets}</Text>
+              <Text style={styles.statLabel}>Sets complétés</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>
+                {session?.durationMinutes ? formatDuration(session.durationMinutes) : '—'}
+              </Text>
+              <Text style={styles.statLabel}>Durée</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>{formatVolume(stats.totalVolume)}</Text>
+              <Text style={styles.statLabel}>Volume total</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>
+                {stats.avgRpe != null ? stats.avgRpe.toFixed(1) : '—'}
+              </Text>
+              <Text style={styles.statLabel}>RPE moyen</Text>
+            </View>
           </View>
-          <View style={styles.progressTrack}>
-            <View style={[styles.progressFill, { width: `${completionRate}%` as unknown as number }]} />
-          </View>
-        </View>
 
-        {/* Per-exercise breakdown */}
-        {session && session.exercises.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Par exercice</Text>
-            {session.exercises.map((ex, i) => {
-              const done = ex.sets.filter((s) => s.completed);
-              const vol = done.reduce((sum, s) => sum + (s.weight || 0) * (s.reps || 0), 0);
-              return (
-                <View key={i} style={styles.exRow}>
-                  <Text style={styles.exName} numberOfLines={1}>
-                    {ex.exerciseName || `Exercice ${i + 1}`}
-                  </Text>
-                  <View style={styles.exRight}>
-                    <Text style={styles.exSets}>{done.length} sets</Text>
-                    {vol > 0 && <Text style={styles.exVol}>{formatVolume(vol)}</Text>}
+          {/* Completion bar */}
+          <View style={styles.completionCard}>
+            <View style={styles.completionRow}>
+              <Text style={styles.completionLabel}>Complétion</Text>
+              <Text style={styles.completionPct}>{completionRate}%</Text>
+            </View>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${completionRate}%` as unknown as number }]} />
+            </View>
+          </View>
+
+          {/* Per-exercise breakdown */}
+          {session && session.exercises.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Par exercice</Text>
+              {session.exercises.map((ex, i) => {
+                const done = ex.sets.filter((s) => s.completed);
+                const vol = done.reduce((sum, s) => sum + (s.weight || 0) * (s.reps || 0), 0);
+                return (
+                  <View key={i} style={styles.exRow}>
+                    <Text style={styles.exName} numberOfLines={1}>
+                      {ex.exerciseName || `Exercice ${i + 1}`}
+                    </Text>
+                    <View style={styles.exRight}>
+                      <Text style={styles.exSets}>{done.length} sets</Text>
+                      {vol > 0 && <Text style={styles.exVol}>{formatVolume(vol)}</Text>}
+                    </View>
                   </View>
-                </View>
-              );
-            })}
+                );
+              })}
+            </View>
+          )}
+
+          {/* Share card */}
+          <View style={styles.shareSection}>
+            <Text style={styles.sectionTitle}>Partager ta séance</Text>
+            <ViewShot ref={shareCardRef} options={{ format: 'png', quality: 1 }}>
+              <ShareCardStats
+                pseudo="Toi"
+                level={1}
+                totalSessions={stats.completedSets}
+                totalVolume={stats.totalVolume}
+                totalPRs={detectedPRs.length}
+                streak={0}
+              />
+            </ViewShot>
+            <ShareButton cardRef={shareCardRef} label="Partager" />
           </View>
-        )}
 
-        {/* Share card */}
-        <View style={styles.shareSection}>
-          <Text style={styles.sectionTitle}>Partager ta séance</Text>
-          <ViewShot ref={shareCardRef} options={{ format: 'png', quality: 1 }}>
-            <ShareCardStats
-              pseudo="Toi"
-              level={1}
-              totalSessions={stats.completedSets}
-              totalVolume={stats.totalVolume}
-              totalPRs={0}
-              streak={0}
-            />
-          </ViewShot>
-          <ShareButton cardRef={shareCardRef} label="Partager" />
-        </View>
-
-        {/* CTAs */}
-        <View style={styles.ctaArea}>
-          <TouchableOpacity
-            style={styles.ctaPrimary}
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('ProgramsList')}
-          >
-            <Text style={styles.ctaPrimaryText}>Retour aux programmes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.ctaSecondary}
-            activeOpacity={0.8}
-            onPress={() => navigation.getParent()?.navigate('Home')}
-          >
-            <Text style={styles.ctaSecondaryText}>Accueil</Text>
-          </TouchableOpacity>
-        </View>
-      </StaggerChildren>
-    </ScrollView>
+          {/* CTAs */}
+          <View style={styles.ctaArea}>
+            <TouchableOpacity
+              style={styles.ctaPrimary}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('ProgramsList')}
+            >
+              <Text style={styles.ctaPrimaryText}>Retour aux programmes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.ctaSecondary}
+              activeOpacity={0.8}
+              onPress={() => navigation.getParent()?.navigate('Home')}
+            >
+              <Text style={styles.ctaSecondaryText}>Accueil</Text>
+            </TouchableOpacity>
+          </View>
+        </StaggerChildren>
+      </ScrollView>
+    </>
   );
 }
 
