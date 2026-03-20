@@ -111,7 +111,7 @@
         "TypeScript compiles"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Use React state + useEffect for local timer first. Foreground service added in US-009."
     },
     {

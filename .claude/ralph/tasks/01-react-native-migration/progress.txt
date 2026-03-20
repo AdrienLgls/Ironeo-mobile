@@ -76,3 +76,12 @@ Feature: 01-react-native-migration
 - Inline import dans le type : `import('../types/workout').ProgramDetail` ok pour les params de nav
 
 ---
+
+## 2026-03-20 - US-008: Rest timer
+- Fichiers : components/workout/RestTimer.tsx (créé), app/ActiveSessionScreen.tsx (modifié)
+- Timer local : useEffect + setInterval, cleanup sur return
+- progress bar = 1 - remaining/duration (de droite à gauche)
+- showRestTimer state dans ActiveSessionScreen, après Done button → lance le timer, après timer → completeSet()
+- restDuration vient de program.days[0].exercises[idx].restSeconds ?? 90
+
+---

@@ -1,37 +1,48 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  startTimerNotification,
+  updateTimerNotification,
+  stopTimerNotification,
+} from '../../services/timerNotificationService';
 
 interface Props {
   durationSeconds: number;
+  exerciseName?: string;
   onComplete: () => void;
   onSkip: () => void;
 }
 
-export default function RestTimer({ durationSeconds, onComplete, onSkip }: Props) {
+export default function RestTimer({ durationSeconds, exerciseName = 'Workout', onComplete, onSkip }: Props) {
   const [remaining, setRemaining] = useState(durationSeconds);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const remainingRef = useRef(durationSeconds);
 
   useEffect(() => {
     setRemaining(durationSeconds);
+    remainingRef.current = durationSeconds;
+    startTimerNotification(durationSeconds, exerciseName).catch(() => undefined);
   }, [durationSeconds]);
 
   useEffect(() => {
     if (remaining <= 0) {
+      stopTimerNotification().catch(() => undefined);
       onComplete();
       return;
     }
     intervalRef.current = setInterval(() => {
       setRemaining((prev) => {
-        if (prev <= 1) {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-          return 0;
-        }
-        return prev - 1;
+        const next = prev <= 1 ? 0 : prev - 1;
+        remainingRef.current = next;
+        updateTimerNotification(next, exerciseName).catch(() => undefined);
+        if (next <= 0 && intervalRef.current) clearInterval(intervalRef.current);
+        return next;
       });
     }, 1000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      stopTimerNotification().catch(() => undefined);
     };
   }, [durationSeconds]);
 
