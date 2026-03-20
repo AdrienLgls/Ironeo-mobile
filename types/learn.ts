@@ -7,15 +7,32 @@ export interface Article {
   content?: string;
   summary?: string;
   quizId?: string;
+  isFavorite?: boolean;
 }
 
 export interface Parcours {
   id: string;
   title: string;
+  description?: string;
   category: string;
   imageUrl?: string;
-  articlesCount: number;
-  progressPercent?: number;
+  articleCount: number;
+  progress?: number;
+  isStarted?: boolean;
+}
+
+export interface ParcoursArticle {
+  id: string;
+  title: string;
+  isCompleted: boolean;
+  isLocked: boolean;
+}
+
+export interface ParcoursDetailType {
+  id: string;
+  title: string;
+  description?: string;
+  articles: ParcoursArticle[];
 }
 
 export interface Quiz {

@@ -60,3 +60,25 @@ export async function getLearnStats(): Promise<{ totalRead: number; avgScore: nu
     return null;
   }
 }
+
+export async function searchArticles(query: string, category?: string): Promise<Article[]> {
+  const params: Record<string, string> = { search: query };
+  if (category && category !== 'Tous') {
+    params.category = category.toLowerCase();
+  }
+  const { data } = await api.get<Article[]>('/articles', { params });
+  return data;
+}
+
+export async function getFavorites(): Promise<Article[]> {
+  const { data } = await api.get<Article[]>('/articles/user/favorites');
+  return data;
+}
+
+export async function toggleFavorite(articleId: string): Promise<void> {
+  await api.post(`/articles/${articleId}/favorite`);
+}
+
+export async function markStarted(articleId: string): Promise<void> {
+  await api.post(`/articles/${articleId}/start`);
+}

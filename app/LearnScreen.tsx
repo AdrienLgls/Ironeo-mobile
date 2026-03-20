@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   FlatList,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   useWindowDimensions,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import RenderHtml from 'react-native-render-html';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats } from '../services/learnService';
+import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats, searchArticles, getFavorites, toggleFavorite } from '../services/learnService';
 import type { InProgressArticle, MasteredArticle } from '../services/learnService';
 import { getDueReviews } from '../services/userService';
 import type { DueReview } from '../services/userService';
@@ -28,7 +30,7 @@ export type LearnStackParamList = {
 
 const Stack = createNativeStackNavigator<LearnStackParamList>();
 
-const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie'] as const;
+const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie', 'Favoris'] as const;
 
 const HUB_TABS = [
   { id: 'articles', label: 'Articles' },
@@ -212,9 +214,12 @@ function ArticlesListScreen({
   const [articles, setArticles] = useState<Article[]>([]);
   const [filtered, setFiltered] = useState<Article[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('articles');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [dueReviews, setDueReviews] = useState<DueReview[]>([]);
   const [inProgress, setInProgress] = useState<InProgressArticle[]>([]);
@@ -241,13 +246,58 @@ function ArticlesListScreen({
       .finally(() => setLoading(false));
   }, []);
 
+  // Debounced search + category filter
   useEffect(() => {
-    if (activeCategory === 'Tous') {
-      setFiltered(articles);
-    } else {
-      setFiltered(articles.filter((a) => a.category.toLowerCase() === activeCategory.toLowerCase()));
+    if (debounceRef.current !== null) {
+      clearTimeout(debounceRef.current);
     }
-  }, [activeCategory, articles]);
+
+    if (activeCategory === 'Favoris') {
+      setSearchLoading(true);
+      debounceRef.current = setTimeout(() => {
+        getFavorites()
+          .then((favs) => {
+            const q = searchQuery.trim().toLowerCase();
+            setFiltered(q ? favs.filter((a) => a.title.toLowerCase().includes(q)) : favs);
+          })
+          .catch(() => setFiltered([]))
+          .finally(() => setSearchLoading(false));
+      }, 300);
+      return;
+    }
+
+    const q = searchQuery.trim();
+    if (q || activeCategory !== 'Tous') {
+      setSearchLoading(true);
+      debounceRef.current = setTimeout(() => {
+        searchArticles(q, activeCategory === 'Tous' ? undefined : activeCategory)
+          .then(setFiltered)
+          .catch(() => setFiltered([]))
+          .finally(() => setSearchLoading(false));
+      }, 300);
+    } else {
+      setFiltered(articles);
+    }
+  }, [searchQuery, activeCategory, articles]);
+
+  function handleToggleFavorite(articleId: string) {
+    // Optimistic update
+    setFiltered((prev) =>
+      prev.map((a) => (a.id === articleId ? { ...a, isFavorite: !a.isFavorite } : a)),
+    );
+    setArticles((prev) =>
+      prev.map((a) => (a.id === articleId ? { ...a, isFavorite: !a.isFavorite } : a)),
+    );
+    toggleFavorite(articleId).catch(() => {
+      // Revert on error
+      setFiltered((prev) =>
+        prev.map((a) => (a.id === articleId ? { ...a, isFavorite: !a.isFavorite } : a)),
+      );
+      setArticles((prev) =>
+        prev.map((a) => (a.id === articleId ? { ...a, isFavorite: !a.isFavorite } : a)),
+      );
+    });
+  }
 
   if (loading) {
     return (
@@ -272,46 +322,85 @@ function ArticlesListScreen({
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
-              <View style={{ flexDirection: 'row', gap: 8 }}>
-                {CATEGORIES.map((cat) => {
-                  const isActive = activeCategory === cat;
-                  return (
-                    <TouchableOpacity
-                      key={cat}
-                      onPress={() => setActiveCategory(cat)}
-                      activeOpacity={0.7}
-                      style={{
-                        paddingHorizontal: 14,
-                        paddingVertical: 7,
-                        borderRadius: 20,
-                        backgroundColor: isActive ? '#EFBF04' : 'rgba(255,255,255,0.08)',
-                      }}
-                    >
-                      <Text style={{
-                        color: isActive ? '#000' : 'rgba(255,255,255,0.6)',
-                        fontFamily: 'Rowan-Regular',
-                        fontSize: 13,
-                      }}>
-                        {cat}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
+            <View>
+              {/* Search bar */}
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderRadius: 12,
+                paddingHorizontal: 12,
+                marginBottom: 12,
+                height: 44,
+              }}>
+                <Ionicons name="search" size={18} color="rgba(255,255,255,0.4)" />
+                <TextInput
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Rechercher un article…"
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    color: '#fafafa',
+                    fontFamily: 'Rowan-Regular',
+                    fontSize: 14,
+                  }}
+                />
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.3)" />
+                  </TouchableOpacity>
+                )}
               </View>
-            </ScrollView>
+
+              {/* Category pills */}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  {CATEGORIES.map((cat) => {
+                    const isActive = activeCategory === cat;
+                    return (
+                      <TouchableOpacity
+                        key={cat}
+                        onPress={() => setActiveCategory(cat)}
+                        activeOpacity={0.7}
+                        style={{
+                          paddingHorizontal: 14,
+                          paddingVertical: 7,
+                          borderRadius: 20,
+                          backgroundColor: isActive ? '#EFBF04' : 'rgba(255,255,255,0.06)',
+                        }}
+                      >
+                        <Text style={{
+                          color: isActive ? '#000' : 'rgba(255,255,255,0.6)',
+                          fontFamily: 'Rowan-Regular',
+                          fontSize: 13,
+                        }}>
+                          {cat}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </ScrollView>
+            </View>
           }
           ListEmptyComponent={
             <View>
-              <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-                {error ?? 'Aucun article disponible'}
-              </Text>
+              {searchLoading ? (
+                <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
+              ) : (
+                <Text className="text-white/40 text-body-sm font-body text-center mt-8">
+                  {error ?? 'Aucun article disponible'}
+                </Text>
+              )}
             </View>
           }
           renderItem={({ item }) => (
             <ArticleCard
               article={item}
               onPress={() => navigation.navigate('ArticleDetail', { articleId: item.id })}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
         />

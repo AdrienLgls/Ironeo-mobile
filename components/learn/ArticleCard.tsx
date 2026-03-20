@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { Article } from '../../types/learn';
 
 interface Props {
   article: Article;
   onPress: () => void;
+  onToggleFavorite?: (articleId: string) => void;
 }
 
 const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
@@ -20,7 +22,7 @@ function getCategoryStyle(category: string) {
   return CATEGORY_COLORS[key] ?? { bg: 'rgba(239,191,4,0.2)', text: '#EFBF04' };
 }
 
-export default function ArticleCard({ article, onPress }: Props) {
+export default function ArticleCard({ article, onPress, onToggleFavorite }: Props) {
   const catStyle = getCategoryStyle(article.category);
 
   return (
@@ -45,16 +47,33 @@ export default function ArticleCard({ article, onPress }: Props) {
 
       {/* Content */}
       <View style={{ padding: 14 }}>
-        {/* Category + read time */}
+        {/* Category + read time + favorite */}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
           <View style={{ backgroundColor: catStyle.bg, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 }}>
             <Text style={{ color: catStyle.text, fontFamily: 'Rowan-Regular', fontSize: 11, textTransform: 'capitalize' }}>
               {article.category}
             </Text>
           </View>
-          <Text style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Rowan-Regular', fontSize: 11 }}>
-            {article.readTimeMinutes} min
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Text style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Rowan-Regular', fontSize: 11 }}>
+              {article.readTimeMinutes} min
+            </Text>
+            {onToggleFavorite !== undefined && (
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(article.id);
+                }}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Ionicons
+                  name={article.isFavorite === true ? 'heart' : 'heart-outline'}
+                  size={18}
+                  color={article.isFavorite === true ? '#EFBF04' : 'rgba(255,255,255,0.35)'}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Title */}
