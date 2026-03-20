@@ -82,3 +82,37 @@ export async function toggleFavorite(articleId: string): Promise<void> {
 export async function markStarted(articleId: string): Promise<void> {
   await api.post(`/articles/${articleId}/start`);
 }
+
+export interface QuizAnswer {
+  userAnswer: number;
+}
+
+export interface QuizFeedback {
+  status: string;
+  message: string;
+  suggestions: string[];
+}
+
+export interface QuizSubmitResult {
+  score: number;
+  totalQuestions: number;
+  percentage: number;
+  status: string;
+  bestScore: number;
+  nextReviewDue: string;
+  nextReviewDays: number;
+  weakConcepts: string[];
+  feedback: QuizFeedback;
+  streak: number;
+  totalPoints: number;
+  pointsAwarded: number;
+  levelUp: string | null;
+}
+
+export async function submitQuiz(
+  articleId: string,
+  answers: QuizAnswer[],
+): Promise<QuizSubmitResult> {
+  const { data } = await api.post<QuizSubmitResult>('/quiz/submit', { articleId, answers });
+  return data;
+}

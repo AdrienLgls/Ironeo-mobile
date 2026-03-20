@@ -14,8 +14,8 @@ import RenderHtml from 'react-native-render-html';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats, searchArticles, getFavorites, toggleFavorite } from '../services/learnService';
-import type { InProgressArticle, MasteredArticle } from '../services/learnService';
+import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats, searchArticles, getFavorites, toggleFavorite, submitQuiz } from '../services/learnService';
+import type { InProgressArticle, MasteredArticle, QuizSubmitResult } from '../services/learnService';
 import { getParcours } from '../services/parcoursService';
 import { getDueReviews } from '../services/userService';
 import type { DueReview } from '../services/userService';
@@ -28,7 +28,7 @@ import type { Article, Quiz, QuizQuestion, Parcours } from '../types/learn';
 export type LearnStackParamList = {
   ArticlesList: undefined;
   ArticleDetail: { articleId: string };
-  Quiz: { quizId: string };
+  Quiz: { quizId: string; articleId: string };
   ParcoursDetail: { parcoursSlug: string; parcoursTitle: string };
 };
 
@@ -527,7 +527,7 @@ function ArticleDetailScreen({
 
       {article.quizId != null && (
         <TouchableOpacity
-          onPress={() => navigation.navigate('Quiz', { quizId: article.quizId! })}
+          onPress={() => navigation.navigate('Quiz', { quizId: article.quizId!, articleId })}
           style={{
             marginTop: 24,
             backgroundColor: '#EFBF04',
@@ -547,14 +547,15 @@ function QuizScreen({
   route,
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'Quiz'>) {
-  const { quizId } = route.params;
+  const { quizId, articleId } = route.params;
   const insets = useSafeAreaInsets();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<QuizSubmitResult | null>(null);
 
   useEffect(() => {
     getQuizById(quizId)
@@ -575,33 +576,150 @@ function QuizScreen({
   const isLast = currentIndex === quiz.questions.length - 1;
 
   function handleNext() {
-    if (selected === question.correctIndex) {
-      setScore((s) => s + 1);
-    }
+    if (selected === null) return;
+    const newAnswers = [...answers, selected];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const currentQuiz: Quiz = quiz!;
+
     if (isLast) {
-      setFinished(true);
+      setAnswers(newAnswers);
+      setSubmitting(true);
+      submitQuiz(articleId, newAnswers.map((a) => ({ userAnswer: a })))
+        .then(setResult)
+        .catch(() => {
+          // Fallback local si submit échoue
+          const localScore = newAnswers.filter((a, i) => a === currentQuiz.questions[i].correctIndex).length;
+          setResult({
+            score: localScore,
+            totalQuestions: currentQuiz.questions.length,
+            percentage: Math.round((localScore / currentQuiz.questions.length) * 100),
+            status: 'completed',
+            bestScore: Math.round((localScore / currentQuiz.questions.length) * 100),
+            nextReviewDue: new Date().toISOString(),
+            nextReviewDays: 3,
+            weakConcepts: [],
+            feedback: { status: 'good', message: '', suggestions: [] },
+            streak: 0,
+            totalPoints: 0,
+            pointsAwarded: 0,
+            levelUp: null,
+          });
+        })
+        .finally(() => setSubmitting(false));
     } else {
+      setAnswers(newAnswers);
       setCurrentIndex((i) => i + 1);
       setSelected(null);
     }
   }
 
-  if (finished) {
+  if (submitting) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-6">
-        <Text className="text-5xl mb-4">🎯</Text>
-        <Text className="text-white text-h2 font-heading mb-2">Quiz terminé !</Text>
-        <Text className="text-white/50 text-body-sm font-body mb-8">
-          {score} / {quiz.questions.length} bonnes réponses
+      <View className="flex-1 bg-background items-center justify-center">
+        <ActivityIndicator color="#EFBF04" size="large" />
+        <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 14, marginTop: 12 }}>
+          Calcul des résultats…
         </Text>
-        <TouchableOpacity
-          className="bg-accent rounded-2xl py-4 w-full items-center"
-          activeOpacity={0.8}
-          onPress={() => navigation.goBack()}
-        >
-          <Text className="text-background text-body font-heading">Retour aux articles</Text>
-        </TouchableOpacity>
       </View>
+    );
+  }
+
+  if (result !== null) {
+    const isMastered = result.percentage >= 80;
+    return (
+      <ScrollView
+        className="flex-1 bg-background"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 40 }}
+      >
+        {/* Score */}
+        <View style={{ alignItems: 'center', marginBottom: 32 }}>
+          <Text style={{ color: '#EFBF04', fontFamily: 'Quilon-Medium', fontSize: 52, lineHeight: 60 }}>
+            {result.score}/{result.totalQuestions}
+          </Text>
+          <Text style={{ color: '#EFBF04', fontFamily: 'Quilon-Medium', fontSize: 18, marginTop: 4 }}>
+            {result.percentage}%
+          </Text>
+          <Text style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Rowan-Regular', fontSize: 14, marginTop: 8, textAlign: 'center' }}>
+            {result.feedback.message !== '' ? result.feedback.message : `${result.score} bonne${result.score > 1 ? 's' : ''} réponse${result.score > 1 ? 's' : ''} sur ${result.totalQuestions}`}
+          </Text>
+          {result.pointsAwarded > 0 && (
+            <View style={{ backgroundColor: 'rgba(239,191,4,0.12)', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 4, marginTop: 10 }}>
+              <Text style={{ color: '#EFBF04', fontFamily: 'Rowan-Regular', fontSize: 13 }}>
+                +{result.pointsAwarded} pts
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Récapitulatif par question */}
+        <Text style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Quilon-Medium', fontSize: 12, letterSpacing: 0.8, textTransform: 'uppercase', marginBottom: 12 }}>
+          Récapitulatif
+        </Text>
+        {quiz.questions.map((q, idx) => {
+          const userAnswer = answers[idx] ?? -1;
+          const isCorrect = userAnswer === q.correctIndex;
+          return (
+            <View
+              key={q.id}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                borderRadius: 12,
+                padding: 14,
+                marginBottom: 10,
+                borderLeftWidth: 3,
+                borderLeftColor: isCorrect ? '#22c55e' : '#ef4444',
+              }}
+            >
+              <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 13, marginBottom: 8 }}>
+                {idx + 1}. {q.text}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Text style={{ color: isCorrect ? '#22c55e' : '#ef4444', fontFamily: 'Rowan-Regular', fontSize: 12, flex: 1 }}>
+                  {isCorrect ? '✓' : '✗'} Ta réponse : {userAnswer >= 0 ? q.options[userAnswer] : '—'}
+                </Text>
+              </View>
+              {!isCorrect && (
+                <Text style={{ color: '#22c55e', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                  ✓ Bonne réponse : {q.options[q.correctIndex]}
+                </Text>
+              )}
+            </View>
+          );
+        })}
+
+        {/* Bouton maîtrisé */}
+        {isMastered && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('ArticlesList')}
+            style={{
+              marginTop: 16,
+              backgroundColor: '#EFBF04',
+              borderRadius: 14,
+              paddingVertical: 14,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 15 }}>⭐ Marquer comme maîtrisé</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Bouton retour */}
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={() => navigation.navigate('ArticlesList')}
+          style={{
+            marginTop: isMastered ? 10 : 16,
+            backgroundColor: 'rgba(255,255,255,0.06)',
+            borderRadius: 14,
+            paddingVertical: 14,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 15 }}>← Retour aux articles</Text>
+        </TouchableOpacity>
+      </ScrollView>
     );
   }
 
