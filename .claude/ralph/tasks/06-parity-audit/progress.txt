@@ -1,0 +1,15 @@
+Phase 6 — Parity mobile/web & features manquantes
+Démarrée: 2026-03-20
+Branche: feat/06-parity-audit
+
+Stories:
+✅ US-601 Auto-PR detection post-session
+✅ US-602 Articles search + filters + favorites
+✅ US-603 Parcours learning paths
+✅ US-604 Quiz submission et résultats
+✅ US-605 Leaderboard groupe
+✅ US-606 Toast + Confirm contexts
+✅ US-607 Programme unfollow + exercice custom
+✅ US-608 Export données CSV/JSON
+✅ US-609 Edition séance
+✅ US-610 Polish final Phase 6
