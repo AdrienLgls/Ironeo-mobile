@@ -13,7 +13,7 @@ const RADIUS = 16;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export default function ParcoursCard({ parcours, onPress }: Props) {
-  const progress = parcours.progressPercent ?? 0;
+  const progress = parcours.progress ?? 0;
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress / 100);
 
   return (
@@ -48,7 +48,7 @@ export default function ParcoursCard({ parcours, onPress }: Props) {
           {parcours.title}
         </Text>
         <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
-          {parcours.articlesCount} module{parcours.articlesCount !== 1 ? 's' : ''}
+          {parcours.articleCount} article{parcours.articleCount !== 1 ? 's' : ''}
         </Text>
       </View>
 

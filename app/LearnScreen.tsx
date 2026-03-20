@@ -16,16 +16,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats, searchArticles, getFavorites, toggleFavorite } from '../services/learnService';
 import type { InProgressArticle, MasteredArticle } from '../services/learnService';
+import { getParcours } from '../services/parcoursService';
 import { getDueReviews } from '../services/userService';
 import type { DueReview } from '../services/userService';
 import ArticleCard from '../components/learn/ArticleCard';
+import ParcoursListTab from '../components/learn/ParcoursListTab';
+import ParcoursDetailScreen from './ParcoursDetailScreen';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
-import type { Article, Quiz, QuizQuestion } from '../types/learn';
+import type { Article, Quiz, QuizQuestion, Parcours } from '../types/learn';
 
 export type LearnStackParamList = {
   ArticlesList: undefined;
   ArticleDetail: { articleId: string };
   Quiz: { quizId: string };
+  ParcoursDetail: { parcoursSlug: string; parcoursTitle: string };
 };
 
 const Stack = createNativeStackNavigator<LearnStackParamList>();
@@ -34,6 +38,7 @@ const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie', 
 
 const HUB_TABS = [
   { id: 'articles', label: 'Articles' },
+  { id: 'parcours', label: 'Parcours' },
   { id: 'progression', label: 'Progression' },
 ];
 
@@ -225,6 +230,8 @@ function ArticlesListScreen({
   const [inProgress, setInProgress] = useState<InProgressArticle[]>([]);
   const [mastered, setMastered] = useState<MasteredArticle[]>([]);
   const [learnStats, setLearnStats] = useState<{ totalRead: number; avgScore: number; streak: number } | null>(null);
+  const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
+  const [parcoursLoading, setParcoursLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -245,6 +252,16 @@ function ArticlesListScreen({
       .catch(() => setError('Unable to load data'))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'parcours') return;
+    if (parcoursList.length > 0) return;
+    setParcoursLoading(true);
+    getParcours()
+      .then(setParcoursList)
+      .catch(() => undefined)
+      .finally(() => setParcoursLoading(false));
+  }, [activeTab, parcoursList.length]);
 
   // Debounced search + category filter
   useEffect(() => {
@@ -403,6 +420,12 @@ function ArticlesListScreen({
               onToggleFavorite={handleToggleFavorite}
             />
           )}
+        />
+      ) : activeTab === 'parcours' ? (
+        <ParcoursListTab
+          parcours={parcoursList}
+          loading={parcoursLoading}
+          onPress={(p) => navigation.navigate('ParcoursDetail', { parcoursSlug: p.slug, parcoursTitle: p.title })}
         />
       ) : (
         <ProgressionTab
@@ -631,6 +654,7 @@ export default function LearnScreen() {
       <Stack.Screen name="ArticlesList" component={ArticlesListScreen} />
       <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
       <Stack.Screen name="Quiz" component={QuizScreen} />
+      <Stack.Screen name="ParcoursDetail" component={ParcoursDetailScreen} />
     </Stack.Navigator>
   );
 }

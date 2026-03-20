@@ -12,6 +12,7 @@ export interface Article {
 
 export interface Parcours {
   id: string;
+  slug: string;
   title: string;
   description?: string;
   category: string;
