@@ -274,7 +274,7 @@
         "TypeScript compiles"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/workout/PlateCalculator.jsx",
       "notes": "Read PlateCalculator.jsx. Pure calculation, no API. Each plate has a color (25kg=red, 20kg=blue, 15kg=yellow, 10kg=green, 5kg=white, 2.5kg=black). Create components/workout/PlateCalculator.tsx."
     },
