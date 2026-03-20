@@ -98,3 +98,32 @@ export async function getTodaySession(): Promise<{ completed: boolean; programNa
     return null;
   }
 }
+
+export interface YearInReview {
+  year: number;
+  totalWorkouts: number;
+  trainingDays: number;
+  totalPRs: number;
+  bestStreak: number;
+  totalVolume: number; // kg
+  totalDuration: number; // minutes
+  totalSets: number;
+  heaviestWeight: number; // kg
+  monthlyWorkouts: number[]; // array of 12
+  bestMonth: number; // 0-11 index
+  bestMonthWorkouts: number;
+  articlesRead: number;
+  articlesMastered: number;
+  badgesEarned: number;
+  totalPoints: number;
+  level: number;
+}
+
+export async function getYearInReview(): Promise<YearInReview | null> {
+  try {
+    const { data } = await api.get<YearInReview>('/profile/me/year-in-review');
+    return data;
+  } catch {
+    return null;
+  }
+}
