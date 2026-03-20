@@ -246,7 +246,7 @@
         "TypeScript compiles"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/ProfileScreen.tsx"
     },
     {
@@ -259,7 +259,7 @@
         "TypeScript compiles"
       ],
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "notes": "Reuse form pattern from Register screen"
     },
     {
@@ -271,7 +271,7 @@
         "TypeScript compiles"
       ],
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/NotificationSettingsScreen.tsx"
     },
     {
@@ -283,7 +283,7 @@
         "TypeScript compiles"
       ],
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/SettingsScreen.tsx. Use AuthContext to trigger logout."
     },
     {

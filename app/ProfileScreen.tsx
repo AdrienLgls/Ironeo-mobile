@@ -14,12 +14,14 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import api from '../services/api';
 import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
+import PaywallScreen from './PaywallScreen';
 
 export type ProfileStackParamList = {
   ProfileHome: undefined;
   EditProfile: undefined;
   NotificationSettings: undefined;
   Settings: undefined;
+  Paywall: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
@@ -82,6 +84,15 @@ function ProfileHomeScreen({
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
         <Text className="text-white text-sm">Notifications</Text>
+        <Text className="text-white/30 text-sm">›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('Paywall')}
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-sm">Subscription</Text>
         <Text className="text-white/30 text-sm">›</Text>
       </TouchableOpacity>
 
@@ -323,6 +334,7 @@ export default function ProfileScreen() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Paywall" component={PaywallScreen} />
     </Stack.Navigator>
   );
 }
