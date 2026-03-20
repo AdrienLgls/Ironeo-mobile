@@ -212,7 +212,7 @@
         "TypeScript compiles"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/profile/ActivityHeatmap.jsx + frontend/src/components/social/SocialProfileView.jsx",
       "notes": "Read ActivityHeatmap.jsx. 52 columns (weeks) x 7 rows (days). Color intensity = workout count that day. Data from GET /users/stats or GET /users/activity. Create components/profile/ActivityHeatmap.tsx."
     },
