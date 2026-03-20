@@ -227,7 +227,7 @@
         "TypeScript compiles"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/ui/Skeleton.jsx + SkeletonPatterns.jsx",
       "notes": "Read Skeleton.jsx. Use Animated.loop with interpolate opacity 0.3→0.7→0.3. Or use react-native-linear-gradient for shimmer. Create components/ui/Skeleton.tsx."
     },

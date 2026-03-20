@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider } from './hooks/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import RootNavigator from './app/RootNavigator';
 import { initNotifications, requestNotificationPermissions } from './services/timerNotificationService';
 
@@ -31,8 +32,10 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <StatusBar style="light" />
-      <RootNavigator />
+      <ToastProvider>
+        <StatusBar style="light" />
+        <RootNavigator />
+      </ToastProvider>
     </AuthProvider>
   );
 }
