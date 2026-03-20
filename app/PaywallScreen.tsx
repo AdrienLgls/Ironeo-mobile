@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import api from '../services/api';
 import type { UserProfile } from '../types/user';
@@ -37,6 +38,7 @@ const PLANS: Plan[] = [
 ];
 
 export default function PaywallScreen() {
+  const insets = useSafeAreaInsets();
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,7 +61,7 @@ export default function PaywallScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <Text className="text-white text-2xl font-bold mb-2">Subscription</Text>
       <Text className="text-white/40 text-sm mb-6">Unlock your full potential</Text>
 
@@ -103,7 +105,7 @@ export default function PaywallScreen() {
 
       <Modal visible={checkoutUrl !== null} animationType="slide" onRequestClose={handleWebViewClose}>
         <View className="flex-1 bg-background">
-          <View className="flex-row items-center px-4 pt-12 pb-3 border-b border-white/[0.06]">
+          <View className="flex-row items-center px-4 pb-3 border-b border-white/[0.06]" style={{ paddingTop: insets.top + 16 }}>
             <TouchableOpacity onPress={handleWebViewClose} activeOpacity={0.7} className="mr-4">
               <Text className="text-accent text-sm">✕ Close</Text>
             </TouchableOpacity>

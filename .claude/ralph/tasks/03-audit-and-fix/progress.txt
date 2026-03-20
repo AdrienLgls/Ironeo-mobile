@@ -3,3 +3,52 @@
 ## Branch: feat/03-audit-and-fix
 ## Goal: Perfect visual and functional parity with web
 
+## 2026-03-20 - US-310: Services API complets
+- Files modifiés: services/userService.ts, services/workoutService.ts, services/learnService.ts
+- Patterns: getFollowedPrograms, getDueReviews, getActiveSession, getTodaySession, getPoints, getVolumeStats, getSessionsStats, getPersonalRecord, getSessionById, getInProgressArticles, getMasteredArticles, getLearnStats
+---
+## 2026-03-20 - US-301: HeroCard 5 états contextuels
+- Files modifiés: components/home/HeroCard.tsx, app/HomeScreen.tsx
+- Patterns: active-session (orange), workout-completed (emerald), workout-day (gold), rest-day (indigo), new-user (subtle) — gradient backgrounds, context-aware CTAs
+---
+## 2026-03-20 - US-302: HomeScreen données enrichies
+- Files modifiés: app/HomeScreen.tsx
+- Patterns: Promise.all avec 9 API calls, passé à HeroCard: activeSession, workoutCompleted, todaySession, dueReviews, followedPrograms, pointsData
+---
+## 2026-03-20 - US-303: WorkoutScreen onglet Méthode + charts
+- Files modifiés: app/WorkoutScreen.tsx
+- Patterns: 4ème onglet Méthode (3 cards: Périodisation, Rotation cycles, Tracking PRs), VolumeAreaChart + SessionsBarChart dans Historique
+---
+## 2026-03-20 - US-304: ProgramCard + session cards styling riche
+- Files modifiés: components/workout/ProgramCard.tsx, app/WorkoutScreen.tsx
+- Patterns: difficulty badge coloré, sessions/week, play button gold, history cards fr-FR date + volume + chevron
+---
+## 2026-03-20 - US-305: ActiveSession timer + volume + notes
+- Files modifiés: app/ActiveSessionScreen.tsx
+- Patterns: ⏱ chrono temps réel, ⚡ volume running total, 🏆 PR badge async, notes field par exercice
+---
+## 2026-03-20 - US-306: LearnScreen onglet Progression + SRS
+- Files modifiés: app/LearnScreen.tsx
+- Patterns: onglet Progression avec 3 sections (quiz à réviser, en cours, maîtrisés), stats banner (articles lus | score moyen | streak)
+---
+## 2026-03-20 - US-307: ArticleDetail rendu HTML riche
+- Files modifiés: app/LearnScreen.tsx, types/learn.ts
+- Patterns: react-native-render-html avec tagsStyles custom (Quilon headings, Rowan body, code blocks gold), fallback plain text, quiz button
+---
+## 2026-03-20 - US-308: ExercisesScreen search + filtre équipement
+- Files modifiés: app/ExercisesScreen.tsx
+- Patterns: search bar debounce 300ms, EQUIPMENT_FILTERS 6 options, client-side filter, EmptyState si no results
+---
+## 2026-03-20 - US-309: PostSession récap complet
+- Files modifiés: app/PostSessionScreen.tsx
+- Patterns: sets complétés, durée, volume total, RPE moyen, par-exercice breakdown, CTAs Programmes + Accueil, FadeInUp + StaggerChildren
+---
+## 2026-03-20 - US-311: SessionDetail screen + HistoryScreen enrichi
+- Files créés: app/SessionDetailScreen.tsx
+- Files modifiés: app/HistoryScreen.tsx, app/WorkoutScreen.tsx
+- Patterns: navigation SessionDetail depuis History, date fr-FR long, volume/durée/sets badges, per-exercise sets avec RPE
+---
+## 2026-03-20 - US-312: Polish final — safe areas, tsc clean
+- Files modifiés: app/PaywallScreen.tsx
+- Patterns: useSafeAreaInsets partout, zero console.log, zero erreurs TypeScript
+---

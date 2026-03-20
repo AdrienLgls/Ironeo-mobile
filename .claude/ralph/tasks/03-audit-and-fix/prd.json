@@ -88,7 +88,7 @@
         "Commit: feat(session): US-305 ActiveSession RPE + volume + PR detection"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/pages/WorkoutSession.jsx"
     },
     {
@@ -121,7 +121,7 @@
         "Commit: feat(learn): US-307 ArticleDetail rendu HTML riche"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/pages/Article.jsx"
     },
     {
@@ -137,7 +137,7 @@
         "Commit: feat(exercises): US-308 search + filtre équipement"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/pages/Programs.jsx (exercises tab)"
     },
     {
@@ -154,7 +154,7 @@
         "Commit: feat(session): US-309 PostSession récap complet"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/pages/WorkoutSession.jsx (post-session state)"
     },
     {
@@ -190,7 +190,7 @@
         "Commit: feat(history): US-311 SessionDetail screen"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/pages/SessionDetail.jsx"
     },
     {
