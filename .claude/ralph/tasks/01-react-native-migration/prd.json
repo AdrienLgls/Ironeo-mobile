@@ -23,7 +23,7 @@
         "Widget shows last workout session (name, date, duration)",
         "Calls GET /api/workouts/recent",
         "Shows 'No recent workout' state if empty",
-        "Tappable → navigates to workout detail (placeholder for now)",
+        "Tappable \u2192 navigates to workout detail (placeholder for now)",
         "TypeScript compiles"
       ],
       "priority": 2,
@@ -63,7 +63,7 @@
         "WorkoutScreen shows list of programs",
         "Calls GET /api/programs",
         "Each card: program name, days/week, duration",
-        "Tappable → navigates to ProgramDetailScreen",
+        "Tappable \u2192 navigates to ProgramDetailScreen",
         "Loading + empty states",
         "TypeScript compiles"
       ],
@@ -77,7 +77,7 @@
       "acceptanceCriteria": [
         "ProgramDetailScreen shows program info + list of exercises per day",
         "Calls GET /api/programs/:id",
-        "Start Session button → navigates to ActiveSessionScreen",
+        "Start Session button \u2192 navigates to ActiveSessionScreen",
         "TypeScript compiles"
       ],
       "priority": 6,
@@ -135,7 +135,7 @@
       "title": "Session summary screen",
       "acceptanceCriteria": [
         "PostSessionScreen shows: duration, exercises completed, sets done, PRs",
-        "Save session button → PATCH /api/workout-sessions/:id with completion",
+        "Save session button \u2192 PATCH /api/workout-sessions/:id with completion",
         "Share button (optional, can be placeholder)",
         "Return to Home button",
         "TypeScript compiles"
@@ -154,7 +154,7 @@
         "TypeScript compiles"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/ExercisesScreen.tsx"
     },
     {
@@ -189,7 +189,7 @@
         "HistoryScreen shows past workout sessions",
         "Calls GET /api/workout-sessions",
         "Each item: date, program, duration",
-        "Tappable → session detail",
+        "Tappable \u2192 session detail",
         "TypeScript compiles"
       ],
       "priority": 14,
@@ -220,7 +220,7 @@
       ],
       "priority": 16,
       "passes": false,
-      "notes": "Use ScrollView. Content may be HTML/markdown — use a RN markdown renderer if needed."
+      "notes": "Use ScrollView. Content may be HTML/markdown \u2014 use a RN markdown renderer if needed."
     },
     {
       "id": "US-017",
@@ -242,7 +242,7 @@
       "acceptanceCriteria": [
         "ProfileScreen shows user info (name, avatar, subscription status)",
         "Calls GET /api/users/me",
-        "Edit profile button → EditProfileScreen",
+        "Edit profile button \u2192 EditProfileScreen",
         "TypeScript compiles"
       ],
       "priority": 18,
@@ -297,7 +297,7 @@
       ],
       "priority": 22,
       "passes": false,
-      "notes": "Use react-native-webview. Checkout URLs from backend config. Plans: Free, 6.99€/mois Premium, 12.99€/mois Premium+."
+      "notes": "Use react-native-webview. Checkout URLs from backend config. Plans: Free, 6.99\u20ac/mois Premium, 12.99\u20ac/mois Premium+."
     }
   ]
 }

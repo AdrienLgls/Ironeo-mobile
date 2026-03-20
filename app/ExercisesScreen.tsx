@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { getExercises } from '../services/workoutService';
 import type { Exercise } from '../types/workout';
+
+const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'arms', 'shoulders', 'core'] as const;
 
 export default function ExercisesScreen() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [filtered, setFiltered] = useState<Exercise[]>([]);
   const [search, setSearch] = useState('');
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,8 +25,14 @@ export default function ExercisesScreen() {
 
   useEffect(() => {
     const q = search.toLowerCase().trim();
-    setFiltered(q ? exercises.filter((ex) => ex.name.toLowerCase().includes(q)) : exercises);
-  }, [search, exercises]);
+    setFiltered(
+      exercises.filter((ex) => {
+        const matchesSearch = !q || ex.name.toLowerCase().includes(q);
+        const matchesGroup = !activeGroup || ex.muscleGroups.some((g) => g.toLowerCase() === activeGroup);
+        return matchesSearch && matchesGroup;
+      })
+    );
+  }, [search, activeGroup, exercises]);
 
   if (loading) {
     return (
@@ -47,8 +56,22 @@ export default function ExercisesScreen() {
               onChangeText={setSearch}
               placeholder="Search exercises..."
               placeholderTextColor="rgba(255,255,255,0.3)"
-              className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm"
+              className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm mb-3"
             />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+              {MUSCLE_GROUPS.map((group) => (
+                <TouchableOpacity
+                  key={group}
+                  activeOpacity={0.7}
+                  onPress={() => setActiveGroup(activeGroup === group ? null : group)}
+                  className={`mr-2 px-3 py-1.5 rounded-full ${activeGroup === group ? 'bg-accent' : 'bg-white/[0.08]'}`}
+                >
+                  <Text className={`text-xs capitalize font-medium ${activeGroup === group ? 'text-black' : 'text-white/60'}`}>
+                    {group}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         }
         ListEmptyComponent={
