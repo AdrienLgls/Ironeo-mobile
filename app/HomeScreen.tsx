@@ -4,7 +4,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { TabParamList } from './TabNavigator';
-import { getUserStats, getRecentSessions, getNextWorkout } from '../services/userService';
+import {
+  getUserStats,
+  getRecentSessions,
+  getNextWorkout,
+  getFollowedPrograms,
+  getDueReviews,
+  getActiveSession,
+  getTodaySession,
+  getPoints,
+} from '../services/userService';
+import type {
+  FollowedProgram,
+  ActiveSessionInfo,
+  PointsData,
+} from '../services/userService';
 import api from '../services/api';
 import HeroCard from '../components/home/HeroCard';
 import StreakChain from '../components/home/StreakChain';
@@ -27,18 +41,42 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const [error, setError] = useState<string | null>(null);
 
+  // Context-aware state data
+  const [activeSession, setActiveSession] = useState<ActiveSessionInfo | null>(null);
+  const [workoutCompleted, setWorkoutCompleted] = useState(false);
+  const [todaySession, setTodaySession] = useState<{ programName?: string } | null>(null);
+  const [dueReviewsCount, setDueReviewsCount] = useState(0);
+  const [followedPrograms, setFollowedPrograms] = useState<FollowedProgram[]>([]);
+  const [pointsData, setPointsData] = useState<PointsData | null>(null);
+
   const loadData = useCallback(() =>
     Promise.all([
       api.get<UserProfile>('/users/me').then(({ data }) => data),
       getUserStats(),
       getRecentSessions(),
       getNextWorkout(),
+      getActiveSession(),
+      getTodaySession(),
+      getDueReviews(),
+      getFollowedPrograms(),
+      getPoints(),
     ])
-      .then(([profileData, statsData, sessions, next]) => {
+      .then(([profileData, statsData, sessions, next, activeSess, today, dueReviews, followed, points]) => {
         setProfile(profileData);
         setStats(statsData);
         setRecentSession(sessions[0] ?? null);
         setNextWorkout(next);
+        setActiveSession(activeSess);
+        if (today) {
+          setWorkoutCompleted(today.completed);
+          setTodaySession(today.completed ? null : { programName: today.programName });
+        } else {
+          setWorkoutCompleted(false);
+          setTodaySession(null);
+        }
+        setDueReviewsCount(dueReviews.length);
+        setFollowedPrograms(followed);
+        setPointsData(points);
       })
       .catch(() => setError('Unable to load stats'))
       .finally(() => setLoading(false)),
@@ -61,20 +99,31 @@ export default function HomeScreen() {
     );
   }
 
+  const level = pointsData?.level ?? stats?.level ?? 1;
+  const xp = pointsData?.currentLevelXP ?? stats?.xp ?? 0;
+  const xpToNextLevel = pointsData?.xpToNextLevel ?? stats?.xpToNextLevel ?? 1000;
+
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       {error && (
         <Text className="text-red-400 text-body-sm font-body text-center mb-4">{error}</Text>
       )}
 
-      {/* HeroCard: greeting + XP bar */}
+      {/* HeroCard: context-aware greeting + XP bar */}
       {profile && (
         <HeroCard
           userName={profile.name ?? 'Athlète'}
-          level={stats?.level ?? 1}
-          xp={stats?.xp ?? 0}
-          xpToNextLevel={stats?.xpToNextLevel ?? 1000}
+          level={level}
+          xp={xp}
+          xpToNextLevel={xpToNextLevel}
+          activeSession={activeSession}
+          workoutCompleted={workoutCompleted}
+          todaySession={todaySession}
+          dueReviewsCount={dueReviewsCount}
+          followedPrograms={followedPrograms}
           onStartWorkout={() => navigation.navigate('Workout')}
+          onResumeSession={() => navigation.navigate('Workout')}
+          onLearn={() => navigation.navigate('Learn')}
         />
       )}
 
