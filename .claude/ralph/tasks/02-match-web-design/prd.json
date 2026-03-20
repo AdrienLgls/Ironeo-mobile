@@ -290,7 +290,7 @@
         "TypeScript compiles"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/charts/VolumeAreaChart.jsx + SessionsBarChart.jsx",
       "notes": "Read both chart files. Check context7 for victory-native docs. Install victory-native (works with Expo). Aggregate session data client-side for the charts."
     },
