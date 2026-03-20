@@ -66,11 +66,11 @@ export async function sendFriendRequest(userId: string): Promise<void> {
 }
 
 export async function acceptFriendRequest(userId: string): Promise<void> {
-  await api.put(`/friends/accept/${userId}`);
+  await api.post(`/friends/accept/${userId}`);
 }
 
 export async function rejectFriendRequest(userId: string): Promise<void> {
-  await api.put(`/friends/reject/${userId}`);
+  await api.delete(`/friends/reject/${userId}`);
 }
 
 export async function removeFriend(userId: string): Promise<void> {
@@ -79,8 +79,8 @@ export async function removeFriend(userId: string): Promise<void> {
 
 export async function searchUsers(query: string): Promise<Friend[]> {
   try {
-    const { data } = await api.get<Friend[]>(`/users/search?q=${query}`);
-    return data || [];
+    const { data } = await api.get<Friend[]>(`/profile/pseudo/${encodeURIComponent(query)}`);
+    return data ? [data as unknown as Friend] : [];
   } catch {
     return [];
   }
@@ -88,7 +88,7 @@ export async function searchUsers(query: string): Promise<Friend[]> {
 
 export async function getUserProfile(userId: string): Promise<unknown> {
   try {
-    const { data } = await api.get<unknown>(`/users/${userId}/profile`);
+    const { data } = await api.get<unknown>(`/profile/${userId}`);
     return data;
   } catch {
     return null;

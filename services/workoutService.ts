@@ -22,12 +22,12 @@ export async function getExerciseById(id: string): Promise<Exercise> {
 }
 
 export async function createWorkoutSession(programId: string): Promise<WorkoutSession> {
-  const { data } = await api.post<WorkoutSession>('/workout-sessions', { programId });
+  const { data } = await api.post<WorkoutSession>('/sessions', { programId });
   return data;
 }
 
 export async function updateWorkoutSession(id: string, updates: Partial<WorkoutSession>): Promise<WorkoutSession> {
-  const { data } = await api.patch<WorkoutSession>(`/workout-sessions/${id}`, updates);
+  const { data } = await api.patch<WorkoutSession>(`/sessions/${id}`, updates);
   return data;
 }
 
@@ -37,7 +37,7 @@ export async function getProgramDetail(id: string): Promise<import('../types/wor
 }
 
 export async function getWorkoutSessions(): Promise<WorkoutSession[]> {
-  const { data } = await api.get<WorkoutSession[]>('/workout-sessions');
+  const { data } = await api.get<WorkoutSession[]>('/sessions');
   return data;
 }
 
@@ -82,7 +82,7 @@ export async function getPersonalRecord(exerciseId: string): Promise<PersonalRec
 }
 
 export async function getSessionById(id: string): Promise<WorkoutSession & { exercises?: unknown[] }> {
-  const { data } = await api.get<WorkoutSession & { exercises?: unknown[] }>(`/workout-sessions/${id}`);
+  const { data } = await api.get<WorkoutSession & { exercises?: unknown[] }>(`/sessions/${id}`);
   return data;
 }
 
@@ -122,10 +122,10 @@ export interface SessionPatch {
 }
 
 export async function updateSession(id: string, patch: SessionPatch): Promise<WorkoutSession> {
-  const { data } = await api.put<WorkoutSession>(`/workout-sessions/${id}`, patch);
+  const { data } = await api.put<WorkoutSession>(`/sessions/${id}`, patch);
   return data;
 }
 
 export async function deleteSession(id: string): Promise<void> {
-  await api.delete(`/workout-sessions/${id}`);
+  await api.delete(`/sessions/${id}`);
 }

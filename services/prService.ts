@@ -47,7 +47,7 @@ export async function checkPRs(session: WorkoutSession): Promise<PRResult[]> {
       };
 
       try {
-        const { data } = await api.post<CheckPRsResponse>('/workout-sessions/check-prs', payload);
+        const { data } = await api.post<CheckPRsResponse>('/sessions/check-prs', payload);
         for (const pr of data.prs) {
           // Deduplicate: keep only the best improvement per exercise+type
           const existing = results.findIndex(
