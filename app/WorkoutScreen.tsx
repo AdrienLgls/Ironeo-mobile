@@ -140,17 +140,75 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
             )
           }
           renderItem={({ item }) => {
-            const date = new Date(item.startedAt).toLocaleDateString('fr-CA', {
-              year: 'numeric',
-              month: 'short',
+            const date = new Date(item.startedAt).toLocaleDateString('fr-FR', {
               day: 'numeric',
+              month: 'long',
+              year: 'numeric',
             });
+
+            const totalVolumeKg = item.exercises.reduce((acc, ex) => {
+              return acc + ex.sets.reduce((setAcc, s) => {
+                if (s.completed && s.weight != null) {
+                  return setAcc + s.weight * s.reps;
+                }
+                return setAcc;
+              }, 0);
+            }, 0);
+            const volumeLabel = totalVolumeKg >= 1000
+              ? `${(totalVolumeKg / 1000).toFixed(1)}t`
+              : totalVolumeKg > 0
+                ? `${Math.round(totalVolumeKg)}kg`
+                : null;
+
+            const exerciseNames = item.exercises.map((ex) => ex.exerciseName);
+            const visibleNames = exerciseNames.slice(0, 3);
+            const extraCount = exerciseNames.length - visibleNames.length;
+            const exerciseSummary = extraCount > 0
+              ? `${visibleNames.join(', ')} +${extraCount} autres`
+              : visibleNames.join(', ');
+
             return (
-              <View className="bg-white/[0.04] rounded-2xl p-4 mb-3">
-                <Text className="text-white text-body-sm font-heading mb-1">{item.programName}</Text>
-                <Text className="text-white/40 text-caption font-body">
-                  {date}{item.durationMinutes != null ? ` · ${item.durationMinutes} min` : ''}
-                </Text>
+              <View
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.04)',
+                  borderRadius: 16,
+                  padding: 16,
+                  marginBottom: 12,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{ color: '#ffffff', fontFamily: 'Quilon-Medium', fontSize: 15, marginBottom: 4 }}
+                  >
+                    {item.programName}
+                  </Text>
+                  <View style={{ flexDirection: 'row', gap: 8, marginBottom: exerciseSummary ? 6 : 0 }}>
+                    <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                      {date}
+                    </Text>
+                    {item.durationMinutes != null ? (
+                      <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                        · {item.durationMinutes} min
+                      </Text>
+                    ) : null}
+                    {volumeLabel ? (
+                      <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                        · {volumeLabel}
+                      </Text>
+                    ) : null}
+                  </View>
+                  {exerciseSummary ? (
+                    <Text
+                      style={{ color: 'rgba(255,255,255,0.25)', fontFamily: 'Rowan-Regular', fontSize: 11 }}
+                      numberOfLines={1}
+                    >
+                      {exerciseSummary}
+                    </Text>
+                  ) : null}
+                </View>
+                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, marginLeft: 8 }}>{'›'}</Text>
               </View>
             );
           }}
