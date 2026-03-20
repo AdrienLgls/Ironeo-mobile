@@ -106,3 +106,57 @@ Feature: 01-react-native-migration
 - python3 pour modifier WorkoutScreen quand Edit bloque
 
 ---
+
+## 2026-03-20 - US-011: Exercises catalog screen
+- Fichiers : app/ExercisesScreen.tsx (créé)
+- FlatList + search bar TextInput filtrant par nom
+- Loading/empty states
+
+---
+
+## 2026-03-20 - US-012: Exercise filter by muscle group
+- Fichiers : app/ExercisesScreen.tsx (modifié)
+- Chips horizontaux (ScrollView) : chest, back, legs, arms, shoulders, core
+- Filtre combiné search + muscleGroup via useEffect
+
+---
+
+## 2026-03-20 - US-013: Exercise detail screen
+- Fichiers : app/ExerciseDetailScreen.tsx (créé), app/WorkoutScreen.tsx (ExercisesList + ExerciseDetail dans stack), app/ExercisesScreen.tsx (navigation props)
+- ExercisesScreen navigue vers ExerciseDetail sur press
+- Lien "Exercises" dans ProgramsList header
+
+---
+
+## 2026-03-20 - US-014: Workout history screen
+- Fichiers : app/HistoryScreen.tsx (créé), app/WorkoutScreen.tsx (History dans stack)
+- GET /workout-sessions, FlatList avec programName + date + duration
+- Accessible via lien "History" dans ProgramsList header
+
+---
+
+## 2026-03-20 - US-015/016/017: Learn tab — articles, reader, quiz
+- Fichiers : app/LearnScreen.tsx (réécrit en Stack), services/learnService.ts (créé), types/learn.ts (créé)
+- LearnScreen = Stack.Navigator avec ArticlesList, ArticleDetail, Quiz
+- Quiz : questions une par une, multiple choice, score final
+
+---
+
+## 2026-03-20 - US-018/019/020/021: Profile stack
+- Fichiers : app/ProfileScreen.tsx (réécrit en Stack), types/user.ts (UserProfile + NotificationSettings)
+- ProfileScreen = Stack.Navigator : ProfileHome, EditProfile, NotificationSettings, Settings
+- Logout via useAuthContext().logout + Alert de confirmation
+- Delete account : DELETE /users/me + logout
+
+---
+
+## 2026-03-20 - US-022: LemonSqueezy subscription WebView
+- Fichiers : app/PaywallScreen.tsx (créé), app/ProfileScreen.tsx (Paywall dans stack)
+- 3 plans (Free, Premium €6.99, Premium+ €12.99) avec features list
+- TouchableOpacity → Modal avec WebView + checkout URL LemonSqueezy
+- Refresh subscription status après fermeture du WebView
+
+---
+
+## COMPLETE - 2026-03-20
+Toutes les 22 user stories implémentées. React Native migration terminée.

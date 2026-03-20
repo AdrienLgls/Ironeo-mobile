@@ -296,7 +296,7 @@
         "TypeScript compiles"
       ],
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "notes": "Use react-native-webview. Checkout URLs from backend config. Plans: Free, 6.99\u20ac/mois Premium, 12.99\u20ac/mois Premium+."
     }
   ]
