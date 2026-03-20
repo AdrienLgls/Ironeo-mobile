@@ -8,11 +8,19 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  FlatList,
 } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../services/api';
 import { getUserStats } from '../services/userService';
+import {
+  getNotifications,
+  markAllAsRead,
+  getUnreadCount,
+  type Notification,
+} from '../services/notificationService';
 import ActivityHeatmap from '../components/profile/ActivityHeatmap';
 import type { UserStats } from '../types/user';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,6 +28,9 @@ import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
 import PaywallScreen from './PaywallScreen';
 import WorkoutReminderSettings from './NotificationSettingsScreen';
+import BodyMeasurementsScreenComponent from './BodyMeasurementsScreen';
+import ProgressPhotosScreenComponent from './ProgressPhotosScreen';
+import YearInReviewScreenComponent from './YearInReviewScreen';
 
 export type ProfileStackParamList = {
   ProfileHome: undefined;
@@ -28,6 +39,10 @@ export type ProfileStackParamList = {
   WorkoutReminders: undefined;
   Settings: undefined;
   Paywall: undefined;
+  Notifications: undefined;
+  BodyMeasurements: undefined;
+  ProgressPhotos: undefined;
+  YearInReview: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
@@ -39,6 +54,7 @@ function ProfileHomeScreen({
 }: NativeStackScreenProps<ProfileStackParamList, 'ProfileHome'>) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
 
@@ -46,10 +62,12 @@ function ProfileHomeScreen({
     Promise.all([
       api.get<UserProfile>('/users/me').then(({ data }) => data),
       getUserStats().catch(() => null),
+      getUnreadCount().catch(() => 0),
     ])
-      .then(([profileData, statsData]) => {
+      .then(([profileData, statsData, count]) => {
         setProfile(profileData);
         setStats(statsData);
+        setUnreadCount(count);
       })
       .catch(() => undefined)
       .finally(() => setLoading(false));
@@ -65,6 +83,31 @@ function ProfileHomeScreen({
 
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
+      {/* Header row with bell */}
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Notifications')}
+          style={{ padding: 8, position: 'relative' }}
+          accessibilityLabel="Notifications"
+        >
+          <Ionicons name="notifications-outline" size={24} color="#fff" />
+          {unreadCount > 0 && (
+            <View
+              style={{
+                position: 'absolute',
+                top: 6,
+                right: 6,
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: '#ef4444',
+              }}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+
       {/* Profile hero */}
       <View className="bg-white/[0.04] rounded-2xl p-6 mb-6 items-center">
         {/* Avatar */}
@@ -150,9 +193,36 @@ function ProfileHomeScreen({
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => navigation.navigate('Settings')}
-        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4"
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
         <Text className="text-white text-body-sm font-body">Paramètres</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('BodyMeasurements')}
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-body-sm font-body">Mensurations</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('ProgressPhotos')}
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-body-sm font-body">Photos de progression</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('YearInReview')}
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4"
+      >
+        <Text className="text-white text-body-sm font-body">Mon année</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -379,6 +449,101 @@ function SettingsScreen({
   );
 }
 
+// --- Notifications Screen ---
+
+function NotificationsScreenInline({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, 'Notifications'>) {
+  const insets = useSafeAreaInsets();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getNotifications()
+      .then(setNotifications)
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleMarkAllRead() {
+    await markAllAsRead();
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+  }
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#121212', paddingTop: insets.top + 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 16 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{ color: '#EFBF04', fontSize: 14, fontFamily: 'Rowan-Regular' }}>← Retour</Text>
+        </TouchableOpacity>
+        <Text style={{ color: '#fff', fontSize: 20, fontFamily: 'Quilon-Medium' }}>Notifications</Text>
+        <TouchableOpacity onPress={handleMarkAllRead}>
+          <Text style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, fontFamily: 'Rowan-Regular' }}>Tout lire</Text>
+        </TouchableOpacity>
+      </View>
+
+      {loading ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ActivityIndicator color="#EFBF04" size="large" />
+        </View>
+      ) : notifications.length === 0 ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular' }}>Aucune notification</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                backgroundColor: item.isRead ? 'rgba(255,255,255,0.04)' : 'rgba(239,191,4,0.08)',
+                borderRadius: 16,
+                padding: 16,
+                marginBottom: 8,
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular' }}>{item.message}</Text>
+              <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, fontFamily: 'Rowan-Regular', marginTop: 4 }}>
+                {new Date(item.createdAt).toLocaleDateString('fr-CA')}
+              </Text>
+            </View>
+          )}
+        />
+      )}
+    </View>
+  );
+}
+
+// --- BodyMeasurements wrapper ---
+
+function BodyMeasurementsWrapper({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, 'BodyMeasurements'>) {
+  return <BodyMeasurementsScreenComponent onBack={() => navigation.goBack()} />;
+}
+
+// --- ProgressPhotos wrapper ---
+
+function ProgressPhotosWrapper({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, 'ProgressPhotos'>) {
+  return <ProgressPhotosScreenComponent navigation={navigation} />;
+}
+
+// --- YearInReview wrapper ---
+
+function YearInReviewWrapper({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, 'YearInReview'>) {
+  return (
+    <YearInReviewScreenComponent
+      navigation={navigation as unknown as import('@react-navigation/native-stack').NativeStackNavigationProp<{ YearInReview: undefined }, 'YearInReview'>}
+      route={{ key: 'YearInReview', name: 'YearInReview', params: undefined }}
+    />
+  );
+}
+
 // --- Stack Navigator ---
 
 function WorkoutRemindersScreen({
@@ -396,6 +561,10 @@ export default function ProfileScreen() {
       <Stack.Screen name="WorkoutReminders" component={WorkoutRemindersScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Paywall" component={PaywallScreen} />
+      <Stack.Screen name="Notifications" component={NotificationsScreenInline} />
+      <Stack.Screen name="BodyMeasurements" component={BodyMeasurementsWrapper} />
+      <Stack.Screen name="ProgressPhotos" component={ProgressPhotosWrapper} />
+      <Stack.Screen name="YearInReview" component={YearInReviewWrapper} />
     </Stack.Navigator>
   );
 }
