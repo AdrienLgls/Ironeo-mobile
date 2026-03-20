@@ -17,6 +17,7 @@ import {
 import type {
   FollowedProgram,
   ActiveSessionInfo,
+  DueReview,
   PointsData,
 } from '../services/userService';
 import api from '../services/api';
@@ -45,7 +46,7 @@ export default function HomeScreen() {
   const [activeSession, setActiveSession] = useState<ActiveSessionInfo | null>(null);
   const [workoutCompleted, setWorkoutCompleted] = useState(false);
   const [todaySession, setTodaySession] = useState<{ programName?: string } | null>(null);
-  const [dueReviewsCount, setDueReviewsCount] = useState(0);
+  const [dueReviews, setDueReviews] = useState<DueReview[]>([]);
   const [followedPrograms, setFollowedPrograms] = useState<FollowedProgram[]>([]);
   const [pointsData, setPointsData] = useState<PointsData | null>(null);
 
@@ -74,7 +75,7 @@ export default function HomeScreen() {
           setWorkoutCompleted(false);
           setTodaySession(null);
         }
-        setDueReviewsCount(dueReviews.length);
+        setDueReviews(dueReviews);
         setFollowedPrograms(followed);
         setPointsData(points);
       })
@@ -99,10 +100,6 @@ export default function HomeScreen() {
     );
   }
 
-  const level = pointsData?.level ?? stats?.level ?? 1;
-  const xp = pointsData?.currentLevelXP ?? stats?.xp ?? 0;
-  const xpToNextLevel = pointsData?.xpToNextLevel ?? stats?.xpToNextLevel ?? 1000;
-
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       {error && (
@@ -112,18 +109,18 @@ export default function HomeScreen() {
       {/* HeroCard: context-aware greeting + XP bar */}
       {profile && (
         <HeroCard
-          userName={profile.name ?? 'Athlète'}
-          level={level}
-          xp={xp}
-          xpToNextLevel={xpToNextLevel}
-          activeSession={activeSession}
-          workoutCompleted={workoutCompleted}
-          todaySession={todaySession}
-          dueReviewsCount={dueReviewsCount}
-          followedPrograms={followedPrograms}
+          userName={profile?.name?.split(' ')[0] || ''}
+          level={pointsData?.level ?? stats?.level ?? 1}
+          xp={pointsData?.currentLevelXP ?? stats?.xp ?? 0}
+          xpToNextLevel={pointsData?.xpToNextLevel ?? stats?.xpToNextLevel ?? 100}
           onStartWorkout={() => navigation.navigate('Workout')}
           onResumeSession={() => navigation.navigate('Workout')}
           onLearn={() => navigation.navigate('Learn')}
+          activeSession={activeSession}
+          workoutCompleted={workoutCompleted}
+          todaySession={todaySession}
+          dueReviewsCount={dueReviews.length}
+          followedPrograms={followedPrograms}
         />
       )}
 
