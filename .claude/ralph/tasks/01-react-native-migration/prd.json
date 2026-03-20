@@ -141,7 +141,7 @@
         "TypeScript compiles"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/PostSessionScreen.tsx"
     },
     {

@@ -97,3 +97,12 @@ Feature: 01-react-native-migration
 - CRITIQUE : nécessite expo-dev-client pour tester (pas Expo Go)
 
 ---
+
+## 2026-03-20 - US-010: Session summary screen
+- Fichiers : app/PostSessionScreen.tsx (créé), app/WorkoutScreen.tsx (PostSessionScreen remplace placeholder)
+- PATCH /workout-sessions/:id avec completedAt au mount
+- Stats : sets completés, durée, % completion
+- navigation.navigate('ProgramsList') pour retour — navigue dans le même stack
+- python3 pour modifier WorkoutScreen quand Edit bloque
+
+---
