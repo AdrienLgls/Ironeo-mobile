@@ -23,6 +23,8 @@ export interface UserStats {
   level?: number;
   xp?: number;
   xpToNextLevel?: number;
+  totalXP?: number;
+  totalPRs?: number;
 }
 
 export interface RecentSession {

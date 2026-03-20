@@ -197,7 +197,7 @@
         "TypeScript compiles"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/ArticleCard.jsx + ParcoursCard.jsx",
       "notes": "Read both files. Articles/parcours from GET /articles and GET /parcours. Category color map: Technique=blue, Nutrition=green, Mentalité=purple, Anatomie=red."
     },

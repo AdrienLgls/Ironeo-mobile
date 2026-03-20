@@ -12,6 +12,9 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import api from '../services/api';
+import { getUserStats } from '../services/userService';
+import ActivityHeatmap from '../components/profile/ActivityHeatmap';
+import type { UserStats } from '../types/user';
 import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
 import PaywallScreen from './PaywallScreen';
@@ -32,12 +35,18 @@ function ProfileHomeScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'ProfileHome'>) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<UserProfile>('/users/me')
-      .then(({ data }) => setProfile(data))
+    Promise.all([
+      api.get<UserProfile>('/users/me').then(({ data }) => data),
+      getUserStats().catch(() => null),
+    ])
+      .then(([profileData, statsData]) => {
+        setProfile(profileData);
+        setStats(statsData);
+      })
       .catch(() => undefined)
       .finally(() => setLoading(false));
   }, []);
@@ -52,29 +61,58 @@ function ProfileHomeScreen({
 
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
-      <Text className="text-white text-h2 font-heading mb-6">Profile</Text>
-
-      <View className="bg-white/[0.04] rounded-2xl p-4 mb-4 items-center">
-        <View className="w-16 h-16 rounded-full bg-accent/20 items-center justify-center mb-3">
-          <Text className="text-accent text-h4 font-heading">
+      {/* Profile hero */}
+      <View className="bg-white/[0.04] rounded-2xl p-6 mb-6 items-center">
+        {/* Avatar */}
+        <View className="w-20 h-20 rounded-full bg-accent/20 items-center justify-center mb-3">
+          <Text className="text-accent text-h3 font-heading">
             {profile?.name?.charAt(0)?.toUpperCase() ?? '?'}
           </Text>
         </View>
-        <Text className="text-white text-body font-heading">{profile?.name ?? '—'}</Text>
-        <Text className="text-white/40 text-caption font-body mt-0.5">{profile?.email ?? '—'}</Text>
-        {profile?.subscriptionStatus != null && (
-          <View className="bg-accent/20 rounded-full px-3 py-1 mt-2">
-            <Text className="text-accent text-caption font-body capitalize">{profile.subscriptionStatus}</Text>
+        <Text className="text-white text-h4 font-heading">{profile?.name ?? '—'}</Text>
+        <Text className="text-white/40 text-caption font-body mt-1">{profile?.email ?? '—'}</Text>
+        {/* Level badge */}
+        {stats?.level != null && (
+          <View className="bg-accent/20 rounded-full px-4 py-1.5 mt-3">
+            <Text className="text-accent text-caption font-body">Niveau {stats.level}</Text>
           </View>
         )}
       </View>
 
+      {/* Stats grid */}
+      {stats && (
+        <View className="flex-row gap-3 mb-6">
+          <View className="flex-1 bg-white/[0.04] rounded-2xl p-3 items-center">
+            <Text className="text-accent text-h3 font-heading">{stats.totalWorkouts}</Text>
+            <Text className="text-white/50 text-caption font-body mt-1 text-center">Séances</Text>
+          </View>
+          <View className="flex-1 bg-white/[0.04] rounded-2xl p-3 items-center">
+            <Text className="text-accent text-h3 font-heading">{stats.streak}</Text>
+            <Text className="text-white/50 text-caption font-body mt-1 text-center">Série 🔥</Text>
+          </View>
+          <View className="flex-1 bg-white/[0.04] rounded-2xl p-3 items-center">
+            <Text className="text-accent text-h3 font-heading">{stats.totalPRs ?? 0}</Text>
+            <Text className="text-white/50 text-caption font-body mt-1 text-center">PRs ⚡</Text>
+          </View>
+          <View className="flex-1 bg-white/[0.04] rounded-2xl p-3 items-center">
+            <Text className="text-accent text-h3 font-heading">{stats.totalXP ?? stats.xp ?? 0}</Text>
+            <Text className="text-white/50 text-caption font-body mt-1 text-center">XP</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Activity heatmap */}
+      <View className="bg-white/[0.02] rounded-2xl p-4 mb-6">
+        <ActivityHeatmap maxWeeks={26} />
+      </View>
+
+      {/* Navigation items */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => navigation.navigate('EditProfile')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-body-sm font-body">Edit profile</Text>
+        <Text className="text-white text-body-sm font-body">Modifier le profil</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
@@ -92,7 +130,7 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('Paywall')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-body-sm font-body">Subscription</Text>
+        <Text className="text-white text-body-sm font-body">Abonnement</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
@@ -101,7 +139,7 @@ function ProfileHomeScreen({
         onPress={() => navigation.navigate('Settings')}
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4"
       >
-        <Text className="text-white text-body-sm font-body">Settings</Text>
+        <Text className="text-white text-body-sm font-body">Paramètres</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
     </ScrollView>
