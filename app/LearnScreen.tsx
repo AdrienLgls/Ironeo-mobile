@@ -6,7 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
+import RenderHtml from 'react-native-render-html';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -326,12 +328,32 @@ function ArticlesListScreen({
   );
 }
 
+const articleTagsStyles = {
+  body: {
+    color: '#fafafa',
+    fontFamily: 'Rowan-Regular',
+    fontSize: 15,
+    lineHeight: 24,
+  },
+  h1: { fontFamily: 'Quilon-Medium', fontSize: 25, color: '#fafafa', marginTop: 16, marginBottom: 8 },
+  h2: { fontFamily: 'Quilon-Medium', fontSize: 20, color: '#fafafa', marginTop: 14, marginBottom: 6 },
+  h3: { fontFamily: 'Quilon-Medium', fontSize: 18, color: '#fafafa', marginTop: 12, marginBottom: 4 },
+  p: { fontFamily: 'Rowan-Regular', fontSize: 15, color: '#e0e0e0', lineHeight: 24, marginBottom: 12 },
+  code: { fontFamily: 'monospace', backgroundColor: 'rgba(255,255,255,0.08)', color: '#EFBF04', paddingHorizontal: 4, borderRadius: 4 },
+  pre: { backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 8, padding: 12 },
+  strong: { fontFamily: 'Quilon-Medium', color: '#fafafa' },
+  ul: { color: '#e0e0e0' },
+  li: { fontFamily: 'Rowan-Regular', fontSize: 15, lineHeight: 22, color: '#e0e0e0' },
+  blockquote: { borderLeftWidth: 3, borderLeftColor: '#EFBF04', paddingLeft: 12, color: '#a0a0a0' },
+} as const;
+
 function ArticleDetailScreen({
   route,
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'ArticleDetail'>) {
   const { articleId } = route.params;
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -359,6 +381,12 @@ function ArticleDetailScreen({
     );
   }
 
+  const htmlContent = article.content == null
+    ? null
+    : article.content.startsWith('<')
+      ? article.content
+      : `<p>${article.content.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
+
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
@@ -374,10 +402,30 @@ function ArticleDetailScreen({
 
       <Text className="text-white text-h2 font-heading mb-6">{article.title}</Text>
 
-      {article.content != null ? (
-        <Text className="text-white/70 text-body-sm font-body">{article.content}</Text>
+      {htmlContent != null ? (
+        <RenderHtml
+          contentWidth={width - 32}
+          source={{ html: htmlContent }}
+          tagsStyles={articleTagsStyles}
+          systemFonts={['Quilon-Medium', 'Rowan-Regular']}
+        />
       ) : (
         <Text className="text-white/30 text-body-sm font-body italic">Contenu indisponible</Text>
+      )}
+
+      {article.quizId != null && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Quiz', { quizId: article.quizId! })}
+          style={{
+            marginTop: 24,
+            backgroundColor: '#EFBF04',
+            borderRadius: 14,
+            paddingVertical: 14,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 15 }}>📝 Faire le quiz</Text>
+        </TouchableOpacity>
       )}
     </ScrollView>
   );

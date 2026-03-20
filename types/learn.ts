@@ -6,6 +6,7 @@ export interface Article {
   imageUrl?: string;
   content?: string;
   summary?: string;
+  quizId?: string;
 }
 
 export interface Parcours {
