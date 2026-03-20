@@ -1,0 +1,13 @@
+# Ironeo Mobile — Phase 5 Progress
+
+## Stories complétées
+
+✅ US-501 SocialScreen intégration réelle des onglets — commit 5166b91
+✅ US-502 Group Chat avec polling + réactions — commit 2404647
+✅ US-503 Body Measurements screen — commit 634188b
+✅ US-504 Progress Photos galerie + upload — commit d9b8f06
+✅ US-505 Share cards + native share API — commit 759fbd8
+✅ US-506 Year in Review animated carousel — commit 14fc750
+✅ US-507 Push notifications Expo + rappels séance — commit 01505f1
+✅ US-508 ProfileScreen bell + liens features — commit dd957c1
+✅ US-509 Polish final Phase 5 — commit <hash>
