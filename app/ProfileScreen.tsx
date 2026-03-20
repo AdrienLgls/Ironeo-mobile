@@ -22,6 +22,11 @@ import {
   getUnreadCount,
   type Notification,
 } from '../services/notificationService';
+import {
+  exportSessionsCSV,
+  exportSessionsJSON,
+  exportPRsCSV,
+} from '../services/exportService';
 import ActivityHeatmap from '../components/profile/ActivityHeatmap';
 import type { UserStats } from '../types/user';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -50,6 +55,8 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
 // --- Profile Home ---
 
+type ExportKey = 'sessionsCSV' | 'sessionsJSON' | 'prsCSV';
+
 function ProfileHomeScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'ProfileHome'>) {
@@ -58,6 +65,8 @@ function ProfileHomeScreen({
   const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
+  const [exportLoading, setExportLoading] = useState<ExportKey | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     Promise.all([
@@ -73,6 +82,20 @@ function ProfileHomeScreen({
       .catch(() => undefined)
       .finally(() => setLoading(false));
   }, []);
+
+  async function handleExport(key: ExportKey): Promise<void> {
+    setExportLoading(key);
+    try {
+      if (key === 'sessionsCSV') await exportSessionsCSV();
+      else if (key === 'sessionsJSON') await exportSessionsJSON();
+      else await exportPRsCSV();
+      toast.success('Export prêt');
+    } catch {
+      toast.error('Échec de l\'export');
+    } finally {
+      setExportLoading(null);
+    }
+  }
 
   if (loading) {
     return (
@@ -226,6 +249,34 @@ function ProfileHomeScreen({
         <Text className="text-white text-body-sm font-body">Mon année</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
+
+      {/* Mes données */}
+      <Text className="text-white/40 text-overline font-body uppercase tracking-wider mt-6 mb-2">
+        Mes données
+      </Text>
+
+      {(
+        [
+          { key: 'sessionsCSV', label: 'Sessions CSV' },
+          { key: 'sessionsJSON', label: 'Sessions JSON' },
+          { key: 'prsCSV', label: 'Records CSV' },
+        ] as { key: ExportKey; label: string }[]
+      ).map(({ key, label }) => (
+        <TouchableOpacity
+          key={key}
+          activeOpacity={0.7}
+          onPress={() => handleExport(key)}
+          disabled={exportLoading !== null}
+          className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+        >
+          <Text className="text-white text-body-sm font-body">{label}</Text>
+          {exportLoading === key ? (
+            <ActivityIndicator color="#EFBF04" size="small" />
+          ) : (
+            <Text style={{ color: '#EFBF04', fontSize: 14 }}>↓</Text>
+          )}
+        </TouchableOpacity>
+      ))}
     </ScrollView>
   );
 }

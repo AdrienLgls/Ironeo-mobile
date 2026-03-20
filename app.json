@@ -40,7 +40,8 @@
         {
           "sounds": []
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "scheme": "ironeo",
     "extra": {
