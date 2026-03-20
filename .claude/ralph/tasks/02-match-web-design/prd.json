@@ -133,7 +133,7 @@
         "TypeScript compiles"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/workout/ExerciseCard.jsx + SetRow.jsx + SetTypeBadge.jsx + PRBadge.jsx",
       "notes": "Read those 4 files. Weight/reps are TextInput. RPE is a TouchableOpacity row of circles 1-10. Create components/workout/SetRow.tsx and update ActiveSessionScreen."
     },
