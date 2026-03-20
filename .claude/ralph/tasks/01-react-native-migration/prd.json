@@ -206,7 +206,7 @@
         "TypeScript compiles"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/LearnScreen.tsx"
     },
     {
@@ -219,7 +219,7 @@
         "TypeScript compiles"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Use ScrollView. Content may be HTML/markdown \u2014 use a RN markdown renderer if needed."
     },
     {
@@ -233,7 +233,7 @@
         "TypeScript compiles"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/QuizScreen.tsx"
     },
     {
