@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
 import { AuthProvider } from './hooks/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
 import RootNavigator from './app/RootNavigator';
 import { initNotifications, requestNotificationPermissions } from './services/timerNotificationService';
 import { configurePushNotifications, registerForPushNotifications } from './services/pushNotificationService';
@@ -48,8 +49,10 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <StatusBar style="light" />
-        <RootNavigator />
+        <ConfirmProvider>
+          <StatusBar style="light" />
+          <RootNavigator />
+        </ConfirmProvider>
       </ToastProvider>
     </AuthProvider>
   );

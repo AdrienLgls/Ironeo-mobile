@@ -7,9 +7,10 @@ import {
   Switch,
   TextInput,
   ActivityIndicator,
-  Alert,
   FlatList,
 } from 'react-native';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -235,6 +236,7 @@ function EditProfileScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'EditProfile'>) {
   const insets = useSafeAreaInsets();
+  const toast = useToast();
   const [name, setName] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
@@ -264,7 +266,7 @@ function EditProfileScreen({
       });
       navigation.goBack();
     } catch {
-      Alert.alert('Error', 'Unable to save profile');
+      toast.error('Unable to save profile');
     } finally {
       setSaving(false);
     }
@@ -392,34 +394,33 @@ function SettingsScreen({
 }: NativeStackScreenProps<ProfileStackParamList, 'Settings'>) {
   const insets = useSafeAreaInsets();
   const { logout } = useAuthContext();
+  const toast = useToast();
+  const confirm = useConfirm();
 
-  function handleLogout() {
-    Alert.alert('Log out', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log out', style: 'destructive', onPress: logout },
-    ]);
+  async function handleLogout() {
+    const ok = await confirm({
+      title: 'Log out',
+      message: 'Are you sure you want to log out?',
+      confirmText: 'Log out',
+      destructive: true,
+    });
+    if (ok) logout();
   }
 
-  function handleDeleteAccount() {
-    Alert.alert(
-      'Delete account',
-      'This will permanently delete your account and all data. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await api.delete('/users/me');
-              await logout();
-            } catch {
-              Alert.alert('Error', 'Unable to delete account');
-            }
-          },
-        },
-      ]
-    );
+  async function handleDeleteAccount() {
+    const ok = await confirm({
+      title: 'Delete account',
+      message: 'This will permanently delete your account and all data. This cannot be undone.',
+      confirmText: 'Delete',
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await api.delete('/users/me');
+      await logout();
+    } catch {
+      toast.error('Unable to delete account');
+    }
   }
 
   return (

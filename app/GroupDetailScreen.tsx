@@ -5,8 +5,9 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
@@ -284,6 +285,8 @@ function LoadingSkeleton() {
 export default function GroupDetailScreen({ route, navigation }: Props) {
   const { groupId } = route.params;
   const insets = useSafeAreaInsets();
+  const toast = useToast();
+  const confirm = useConfirm();
 
   const [group, setGroup] = useState<GroupDetail | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
@@ -300,29 +303,23 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
       .finally(() => setLoading(false));
   }, [groupId]);
 
-  const handleLeave = useCallback(() => {
-    Alert.alert(
-      'Quitter le groupe',
-      `Voulez-vous vraiment quitter "${group?.name ?? 'ce groupe'}" ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Quitter',
-          style: 'destructive',
-          onPress: async () => {
-            setLeaving(true);
-            try {
-              await leaveGroup(groupId);
-              navigation.goBack();
-            } catch {
-              Alert.alert('Erreur', 'Impossible de quitter le groupe. Réessayez.');
-              setLeaving(false);
-            }
-          },
-        },
-      ],
-    );
-  }, [groupId, group?.name, navigation]);
+  const handleLeave = useCallback(async () => {
+    const ok = await confirm({
+      title: 'Quitter le groupe',
+      message: `Voulez-vous vraiment quitter "${group?.name ?? 'ce groupe'}" ?`,
+      confirmText: 'Quitter',
+      destructive: true,
+    });
+    if (!ok) return;
+    setLeaving(true);
+    try {
+      await leaveGroup(groupId);
+      navigation.goBack();
+    } catch {
+      toast.error('Impossible de quitter le groupe. Réessayez.');
+      setLeaving(false);
+    }
+  }, [groupId, group?.name, navigation, confirm, toast]);
 
   if (loading) {
     return (

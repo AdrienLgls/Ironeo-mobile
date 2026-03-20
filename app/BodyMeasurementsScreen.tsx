@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -9,6 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, {
   Defs,
@@ -372,6 +373,7 @@ interface AddMeasurementFormProps {
 function AddMeasurementForm({ onSaved }: AddMeasurementFormProps) {
   const [form, setForm] = useState<AddFormState>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   function handleChange(key: keyof AddFormState, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -385,7 +387,7 @@ function AddMeasurementForm({ onSaved }: AddMeasurementFormProps) {
     if (form.waist) payload.waist = parseFloat(form.waist);
 
     if (Object.keys(payload).length === 0) {
-      Alert.alert('Aucune donnée', 'Remplis au moins un champ.');
+      toast.warning('Remplis au moins un champ.');
       return;
     }
 
@@ -395,7 +397,7 @@ function AddMeasurementForm({ onSaved }: AddMeasurementFormProps) {
       setForm(EMPTY_FORM);
       onSaved();
     } catch {
-      Alert.alert('Erreur', 'Impossible d\'enregistrer la mesure.');
+      toast.error('Impossible d\'enregistrer la mesure.');
     } finally {
       setSaving(false);
     }
@@ -437,6 +439,7 @@ interface HistoryListProps {
 
 function HistoryList({ measurements, onDelete }: HistoryListProps) {
   const recent = measurements.slice(0, 10);
+  const confirm = useConfirm();
 
   if (recent.length === 0) {
     return (
@@ -446,15 +449,14 @@ function HistoryList({ measurements, onDelete }: HistoryListProps) {
     );
   }
 
-  function confirmDelete(id: string) {
-    Alert.alert(
-      'Supprimer',
-      'Supprimer cette mesure ?',
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { text: 'Supprimer', style: 'destructive', onPress: () => onDelete(id) },
-      ]
-    );
+  async function confirmDelete(id: string) {
+    const ok = await confirm({
+      title: 'Supprimer',
+      message: 'Supprimer cette mesure ?',
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (ok) onDelete(id);
   }
 
   return (
@@ -492,6 +494,7 @@ interface BodyMeasurementsScreenProps {
 
 export default function BodyMeasurementsScreen({ onBack }: BodyMeasurementsScreenProps) {
   const insets = useSafeAreaInsets();
+  const toast = useToast();
   const [trends, setTrends] = useState<MeasurementTrends>({ measurements: [], latestDeltas: {} });
   const [loading, setLoading] = useState(true);
   const [selectedMetric, setSelectedMetric] = useState<MetricKey>('weight');
@@ -532,7 +535,7 @@ export default function BodyMeasurementsScreen({ onBack }: BodyMeasurementsScree
         measurements: prev.measurements.filter((m) => m._id !== id),
       }));
     } catch {
-      Alert.alert('Erreur', 'Impossible de supprimer cette mesure.');
+      toast.error('Impossible de supprimer cette mesure.');
     }
   }
 
