@@ -48,7 +48,7 @@
         "TypeScript compiles"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/tailwind.config.js — colors, shadows, components layer",
       "notes": "Read tailwind.config.js colors + index.css component layer. Shadows in RN use elevation on Android and shadowColor/shadowRadius on iOS. NativeWind v4 supports custom box-shadow."
     },

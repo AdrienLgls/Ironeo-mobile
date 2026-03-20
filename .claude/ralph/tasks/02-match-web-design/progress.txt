@@ -40,3 +40,16 @@ Goal: Reproduire EXACTEMENT le design du site Ironeo web dans l'app React Native
   - Avatar initials → text-h4 font-heading (20px Quilon)
 - Composant web source → équivalent RN: tailwind.config.js fontSize → tailwind.config.js fontSize + NativeWind classes applied across all screens
 ---
+## 2026-03-20 - US-203: Design tokens — card patterns, glow shadow, buttons
+- Files créés/modifiés: tailwind.config.js
+- Patterns importants:
+  - primary color added (= accent #EFBF04) with foreground
+  - secondary/muted as nested objects matching web
+  - gold nested object + flat aliases for convenience
+  - recovery nested object + flat aliases
+  - border color: rgba(212, 175, 55, 0.15)
+  - boxShadow: glow (20px), glow-lg (40px), card
+  - borderRadius: lg=10, xl=12, 2xl=16, 3xl=24
+  - card-primary/card-secondary/btn-primary/btn-secondary via addUtilities plugin
+- Composant web source → équivalent RN: tailwind.config.js colors/shadows/borderRadius
+---
