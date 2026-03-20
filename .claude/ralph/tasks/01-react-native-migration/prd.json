@@ -193,7 +193,7 @@
         "TypeScript compiles"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/HistoryScreen.tsx. Add to Workout tab or Profile tab."
     },
     {
