@@ -2,10 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ViewShot from 'react-native-view-shot';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { updateWorkoutSession } from '../services/workoutService';
 import { FadeInUp, StaggerChildren } from '../components/ui/FadeIn';
 import type { WorkoutSession } from '../types/workout';
+import { ShareCardStats } from '../components/share/ShareCard';
+import ShareButton from '../components/share/ShareButton';
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'PostSession'>;
 
@@ -28,6 +31,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [saving, setSaving] = useState(true);
+  const shareCardRef = useRef<ViewShot>(null);
 
   useEffect(() => {
     updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() })
@@ -158,6 +162,22 @@ export default function PostSessionScreen({ route, navigation }: Props) {
           </View>
         )}
 
+        {/* Share card */}
+        <View style={styles.shareSection}>
+          <Text style={styles.sectionTitle}>Partager ta séance</Text>
+          <ViewShot ref={shareCardRef} options={{ format: 'png', quality: 1 }}>
+            <ShareCardStats
+              pseudo="Toi"
+              level={1}
+              totalSessions={stats.completedSets}
+              totalVolume={stats.totalVolume}
+              totalPRs={0}
+              streak={0}
+            />
+          </ViewShot>
+          <ShareButton cardRef={shareCardRef} label="Partager" />
+        </View>
+
         {/* CTAs */}
         <View style={styles.ctaArea}>
           <TouchableOpacity
@@ -246,4 +266,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ctaSecondaryText: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#fafafa' },
+  shareSection: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
 });
