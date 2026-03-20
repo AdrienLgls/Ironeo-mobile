@@ -117,8 +117,14 @@ export default function ParcoursDetailScreen({
         />
       ) : (
         detail.articles.map((article, index) => (
-          <View
+          <TouchableOpacity
             key={article.id}
+            activeOpacity={article.isLocked ? 1 : 0.7}
+            onPress={() => {
+              if (!article.isLocked) {
+                navigation.navigate('ArticleDetail', { articleId: article.id });
+              }
+            }}
             style={{
               backgroundColor: 'rgba(255,255,255,0.04)',
               borderRadius: 12,
@@ -161,7 +167,7 @@ export default function ParcoursDetailScreen({
 
             {/* Status badge */}
             <ArticleStatusBadge article={article} />
-          </View>
+          </TouchableOpacity>
         ))
       )}
     </ScrollView>
