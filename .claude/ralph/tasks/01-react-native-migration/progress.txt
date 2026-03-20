@@ -58,3 +58,12 @@ Feature: 01-react-native-migration
 - Types workout : Program, Exercise, WorkoutSet, SessionExercise, WorkoutSession
 
 ---
+
+## 2026-03-20 - US-006: Program detail screen
+- Fichiers : app/WorkoutScreen.tsx (ProgramDetailScreen remplace placeholder), components/workout/ExerciseCard.tsx (créé), types/workout.ts (ProgramExercise, ProgramDay, ProgramDetail), services/workoutService.ts (getProgramDetail)
+- NativeStackScreenProps<ParamList, 'ScreenName'> pour typer les props de navigation
+- `navigation.goBack()` pour le bouton retour custom
+- `cat >> file << 'EOF'` ok pour append, mais les inline imports sont moches → préférer lire + éditer imports du fichier
+- getProgramDetail réutilise la même route que getProgramById (GET /programs/:id)
+
+---

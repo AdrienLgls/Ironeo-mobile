@@ -81,7 +81,7 @@
         "TypeScript compiles"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "Group exercises by day. Create ExerciseCard component."
     },
     {

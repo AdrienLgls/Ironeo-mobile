@@ -5,11 +5,14 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProgramCard from '../components/workout/ProgramCard';
 import ExerciseCard from '../components/workout/ExerciseCard';
 import { getPrograms, getProgramDetail } from '../services/workoutService';
+import ActiveSessionScreen from './ActiveSessionScreen';
 import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
 
 export type WorkoutStackParamList = {
   ProgramsList: undefined;
   ProgramDetail: { programId: string };
+  ActiveSession: { program: import('../types/workout').ProgramDetail };
+  PostSession: { sessionId: string };
 };
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
@@ -119,10 +122,19 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
       <TouchableOpacity
         className="bg-accent rounded-2xl py-4 items-center mt-2"
         activeOpacity={0.8}
+        onPress={() => navigation.navigate('ActiveSession', { program })}
       >
         <Text className="text-black font-bold text-base">Start Session</Text>
       </TouchableOpacity>
     </ScrollView>
+  );
+}
+
+function PostSessionPlaceholder() {
+  return (
+    <View className="flex-1 bg-background items-center justify-center">
+      <Text className="text-white/40">Session complete — summary coming soon</Text>
+    </View>
   );
 }
 
@@ -131,6 +143,13 @@ export default function WorkoutScreen() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProgramsList" component={ProgramsListScreen} />
       <Stack.Screen name="ProgramDetail" component={ProgramDetailScreen} />
+      <Stack.Screen
+        name="ActiveSession"
+        children={({ route, navigation }) => (
+          <ActiveSessionScreen program={route.params.program} route={route} navigation={navigation} />
+        )}
+      />
+      <Stack.Screen name="PostSession" component={PostSessionPlaceholder} />
     </Stack.Navigator>
   );
 }
