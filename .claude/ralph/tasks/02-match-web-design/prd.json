@@ -1,0 +1,332 @@
+{
+  "branchName": "feat/02-match-web-design",
+  "webSourcePath": "/home/claudeclaw/claudeclaw-workspace/Ironeo/frontend",
+  "userStories": [
+    {
+      "id": "US-201",
+      "title": "Custom fonts: Quilon-Medium + Rowan-Regular",
+      "acceptanceCriteria": [
+        "expo-font installed and useFonts() called in App.tsx",
+        "Quilon-Medium.otf loaded as 'Quilon-Medium'",
+        "Rowan-Regular.otf loaded as 'Rowan-Regular'",
+        "app.json updated with fonts asset bundle",
+        "All heading Text components use fontFamily: 'Quilon-Medium'",
+        "All body Text components use fontFamily: 'Rowan-Regular'",
+        "AppLoading or SplashScreen shown while fonts load",
+        "TypeScript compiles without errors"
+      ],
+      "priority": 1,
+      "passes": false,
+      "webSource": "frontend/public/fonts/Quilon-Medium.otf + Rowan-Regular.otf",
+      "notes": "Fonts are copied to assets/fonts/. Use expo-font useFonts hook. Show splash until fonts ready. Apply Quilon to titles (h1-h4 equivalent), Rowan to body text."
+    },
+    {
+      "id": "US-202",
+      "title": "Typography scale exact — letter-spacing, line-height, sizes",
+      "acceptanceCriteria": [
+        "tailwind.config.js updated with exact type scale from web (h1: 31.25px, h2: 25px, h3: 22.36px, body: 16px, caption: 13.53px, overline: 12.11px)",
+        "Letter-spacing classes added: tracking-tight (0.015em), tracking-normal (0.02em), tracking-wide (0.03em)",
+        "Line-height classes: leading-heading (1.55), leading-body (1.60), leading-caption (1.65)",
+        "All existing screens updated to use proper type scale classes",
+        "TypeScript compiles without errors"
+      ],
+      "priority": 2,
+      "passes": false,
+      "webSource": "frontend/tailwind.config.js — typography section",
+      "notes": "Read tailwind.config.js from web. Match EXACTLY. NativeWind supports custom fontSize/lineHeight/letterSpacing in tailwind.config.js extend."
+    },
+    {
+      "id": "US-203",
+      "title": "Design tokens — card patterns, glow shadow, buttons",
+      "acceptanceCriteria": [
+        "tailwind.config.js updated with: card-primary (bg-white/[0.02] rounded-2xl), card-secondary (bg-white/[0.04] rounded-xl)",
+        "Gold glow shadow defined: boxShadow '0 0 20px rgba(212,175,55,0.3)'",
+        "btn-primary class: bg-primary (accent) text-black font-semibold",
+        "btn-secondary class: bg-white/[0.06] text-white",
+        "Gold color palette extended: gold-vivid #EFBF04, gold-medium #D4A804, gold-pale #F5D54A, gold-dark #B8920A",
+        "Recovery state colors: recovering #C49600, almost #8B9A3F, ready #5C8A5C",
+        "TypeScript compiles"
+      ],
+      "priority": 3,
+      "passes": false,
+      "webSource": "frontend/tailwind.config.js — colors, shadows, components layer",
+      "notes": "Read tailwind.config.js colors + index.css component layer. Shadows in RN use elevation on Android and shadowColor/shadowRadius on iOS. NativeWind v4 supports custom box-shadow."
+    },
+    {
+      "id": "US-204",
+      "title": "Bottom nav — 5 items avec indicateur gold animé",
+      "acceptanceCriteria": [
+        "TabNavigator updated from 4 to 5 items: Home, Workout, + (FAB center), Learn, Profile",
+        "Center FAB (+ button): gold circle, elevated, navigates to a session start screen",
+        "Active tab indicator: animated gold gradient underline (like web BottomNav)",
+        "Tab icons updated to match web: Home=🏠, Workout=💪, Learn=📚, Social/Profile=👤",
+        "Tab bar height: 60px minimum with safe area padding",
+        "Gold tint on active icon",
+        "TypeScript compiles"
+      ],
+      "priority": 4,
+      "passes": false,
+      "webSource": "frontend/src/components/BottomNav.jsx",
+      "notes": "Read BottomNav.jsx from web. The web has 5 slots: 2 left, FAB center (start session), 2 right. Use Animated for indicator. FAB should navigate to workout start flow."
+    },
+    {
+      "id": "US-205",
+      "title": "HomeScreen — HeroCard avec greeting contextuel et XP bar",
+      "acceptanceCriteria": [
+        "HeroCard component: greeting changes by time of day (Bonjour/Bonsoir/Bonne nuit)",
+        "User name displayed (from GET /users/me)",
+        "XP/level progress bar with gold color and percentage",
+        "Level badge (ex: 'Niveau 12') displayed next to name",
+        "Correct fonts: Quilon for title, Rowan for body",
+        "Matches web HeroCard.jsx visual exactly",
+        "TypeScript compiles"
+      ],
+      "priority": 5,
+      "passes": false,
+      "webSource": "frontend/src/components/dashboard/HeroCard.jsx",
+      "notes": "Read HeroCard.jsx. Time-based greeting. XP/level from GET /users/stats. Create components/home/HeroCard.tsx."
+    },
+    {
+      "id": "US-206",
+      "title": "HomeScreen — StreakChain animée",
+      "acceptanceCriteria": [
+        "StreakChain component: 7 circles for each day of week",
+        "Completed days: gold fill with checkmark",
+        "Current day: gold outline pulse animation",
+        "Future days: dim white/10",
+        "Streak count displayed with AnimatedFlame emoji equivalent",
+        "Matches web StreakChain.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 6,
+      "passes": false,
+      "webSource": "frontend/src/components/dashboard/StreakChain.jsx + AnimatedFlame.jsx",
+      "notes": "Read StreakChain.jsx. Use Animated.loop for pulse on current day. Create components/home/StreakChain.tsx."
+    },
+    {
+      "id": "US-207",
+      "title": "HomeScreen — WeeklyProgressRings (volume, sessions, intensité)",
+      "acceptanceCriteria": [
+        "3 circular progress rings: Volume, Sessions, Intensité",
+        "Each ring: gold arc on dark circle background",
+        "Percentage and value label in center",
+        "Data from GET /users/stats",
+        "Matches web WeeklyProgressRing.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 7,
+      "passes": false,
+      "webSource": "frontend/src/components/dashboard/WeeklyProgressRing.jsx + ProgressRings.jsx",
+      "notes": "Read WeeklyProgressRing.jsx. Use react-native-svg Svg+Circle with strokeDashoffset for the arc. Install react-native-svg if not present."
+    },
+    {
+      "id": "US-208",
+      "title": "ActiveSessionScreen — redesign fidèle au web (SetRow, RPE, poids)",
+      "acceptanceCriteria": [
+        "Each set has: weight input, reps input, RPE selector (1-10), complete checkbox",
+        "Completed set: strikethrough + gold checkmark",
+        "PR indicator badge (⚡ PR) when applicable",
+        "Add set / remove set buttons",
+        "Exercise name in Quilon font, large",
+        "Set type badge: Warmup / Working / Drop Set",
+        "Matches web ExerciseCard.jsx + SetRow.jsx visual exactly",
+        "TypeScript compiles"
+      ],
+      "priority": 8,
+      "passes": false,
+      "webSource": "frontend/src/components/workout/ExerciseCard.jsx + SetRow.jsx + SetTypeBadge.jsx + PRBadge.jsx",
+      "notes": "Read those 4 files. Weight/reps are TextInput. RPE is a TouchableOpacity row of circles 1-10. Create components/workout/SetRow.tsx and update ActiveSessionScreen."
+    },
+    {
+      "id": "US-209",
+      "title": "RestTimer — cercle SVG animé (comme RestTimerCircle.jsx du web)",
+      "acceptanceCriteria": [
+        "Circular timer: SVG arc that shrinks as time passes (strokeDashoffset animation)",
+        "Gold arc on dark circle",
+        "Time remaining displayed in center (large, Quilon font)",
+        "Exercise name displayed below",
+        "Skip button + sound option",
+        "Matches web RestTimerCircle.jsx visual exactly",
+        "TypeScript compiles"
+      ],
+      "priority": 9,
+      "passes": false,
+      "webSource": "frontend/src/components/workout/RestTimerCircle.jsx + SetCountdown.jsx",
+      "notes": "Read RestTimerCircle.jsx. Use react-native-svg. Animated.timing for the arc. Replace current RestTimer component."
+    },
+    {
+      "id": "US-210",
+      "title": "WorkoutScreen — Hub tabs (Programmes / Exercices / Historique)",
+      "acceptanceCriteria": [
+        "WorkoutScreen shows 3 tabs: Programmes, Exercices, Historique",
+        "Tabs use same visual as web HubTabNavigation: underline indicator gold animated",
+        "Active tab indicator slides between tabs with animation",
+        "Tab label: Quilon font, uppercase, letter-spacing",
+        "Matches web Programs.jsx HubTabNavigation visual",
+        "TypeScript compiles"
+      ],
+      "priority": 10,
+      "passes": false,
+      "webSource": "frontend/src/components/ui/HubTabNavigation.jsx + Programs.jsx",
+      "notes": "Read HubTabNavigation.jsx. Create components/ui/HubTabNavigation.tsx reusable. Use Animated for indicator slide. Apply in WorkoutScreen."
+    },
+    {
+      "id": "US-211",
+      "title": "ExercisesScreen — cards avec images, badges catégorie, difficulté",
+      "acceptanceCriteria": [
+        "Exercise card: image (from exercise.imageUrl), name in Quilon, category badge (gold/20 bg), difficulty badge",
+        "Muscle group chips: colored by muscle group",
+        "Grid layout: 2 columns on phone",
+        "Skeleton loading (shimmer animation)",
+        "Matches web ExerciseCard.jsx visual exactly",
+        "TypeScript compiles"
+      ],
+      "priority": 11,
+      "passes": false,
+      "webSource": "frontend/src/components/ExerciseCard.jsx",
+      "notes": "Read ExerciseCard.jsx from web root components. Add imageUrl to Exercise type if missing. Use Image component with fallback. Grid with numColumns={2} in FlatList."
+    },
+    {
+      "id": "US-212",
+      "title": "LearnScreen — ArticleCard avec image et ParcoursCard avec progress ring",
+      "acceptanceCriteria": [
+        "ArticleCard: cover image (full width), category badge (colored), title in Quilon, read time",
+        "ParcoursCard: thumbnail image, title, modules count, progress ring (SVG circle)",
+        "Category filter pills: Tous, Technique, Nutrition, Mentalité, Anatomie",
+        "Matches web ArticleCard.jsx + ParcoursCard.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 12,
+      "passes": false,
+      "webSource": "frontend/src/components/ArticleCard.jsx + ParcoursCard.jsx",
+      "notes": "Read both files. Articles/parcours from GET /articles and GET /parcours. Category color map: Technique=blue, Nutrition=green, Mentalité=purple, Anatomie=red."
+    },
+    {
+      "id": "US-213",
+      "title": "ProfileScreen — stats, level badge, ActivityHeatmap",
+      "acceptanceCriteria": [
+        "Profile hero: large avatar (initials fallback), name in Quilon, level badge gold",
+        "Stats grid: total workouts, current streak, PRs count, XP total",
+        "ActivityHeatmap: 52-week calendar grid (small squares), gold for active days",
+        "Matches web SocialProfileView.jsx + ActivityHeatmap.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 13,
+      "passes": false,
+      "webSource": "frontend/src/components/profile/ActivityHeatmap.jsx + frontend/src/components/social/SocialProfileView.jsx",
+      "notes": "Read ActivityHeatmap.jsx. 52 columns (weeks) x 7 rows (days). Color intensity = workout count that day. Data from GET /users/stats or GET /users/activity. Create components/profile/ActivityHeatmap.tsx."
+    },
+    {
+      "id": "US-214",
+      "title": "Skeleton loading — shimmer sur tous les écrans",
+      "acceptanceCriteria": [
+        "SkeletonBox component: animated shimmer (Animated.loop LinearGradient or opacity pulse)",
+        "SkeletonText component: lines of varying width",
+        "Applied on: HomeScreen, WorkoutScreen, ExercisesScreen, LearnScreen, ProfileScreen",
+        "Matches web Skeleton.jsx shimmer animation visual",
+        "TypeScript compiles"
+      ],
+      "priority": 14,
+      "passes": false,
+      "webSource": "frontend/src/components/ui/Skeleton.jsx + SkeletonPatterns.jsx",
+      "notes": "Read Skeleton.jsx. Use Animated.loop with interpolate opacity 0.3→0.7→0.3. Or use react-native-linear-gradient for shimmer. Create components/ui/Skeleton.tsx."
+    },
+    {
+      "id": "US-215",
+      "title": "Toast notifications — style identique au web (useToast hook)",
+      "acceptanceCriteria": [
+        "ToastContext with useToast() hook: .success(), .error(), .info(), .loading()",
+        "Toast UI: dark bg (white/[0.08]), icon colored (green/red/blue/gold), slide-in from top",
+        "Auto-dismiss after 3s",
+        "Stacks multiple toasts",
+        "Matches web toast visual",
+        "TypeScript compiles"
+      ],
+      "priority": 15,
+      "passes": false,
+      "webSource": "frontend/src/context/ToastContext.jsx",
+      "notes": "Read ToastContext.jsx. Use Animated.timing for slide-in. Render toasts in a fixed position overlay (top-safe-area). Create context/ToastContext.tsx and hooks/useToast.ts."
+    },
+    {
+      "id": "US-216",
+      "title": "EmptyState component — identique au web",
+      "acceptanceCriteria": [
+        "EmptyState component: icon (large, centered), title in Quilon, description in Rowan, optional CTA button",
+        "Props: icon (string emoji or component), title, description, cta?: { label, onPress }",
+        "Applied on all screens with empty states",
+        "Matches web EmptyState.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 16,
+      "passes": false,
+      "webSource": "frontend/src/components/ui/EmptyState.jsx",
+      "notes": "Read EmptyState.jsx. Simple component. Replace all inline empty state Text with EmptyState. Create components/ui/EmptyState.tsx."
+    },
+    {
+      "id": "US-217",
+      "title": "Workout — PlateCalculator (calculateur de disques)",
+      "acceptanceCriteria": [
+        "PlateCalculator component: input a target weight, shows which plates to add each side",
+        "Barbell weight selector (20kg default)",
+        "Plates: 25, 20, 15, 10, 5, 2.5, 1.25 kg displayed as colored circles",
+        "Toggle button in active session to show/hide",
+        "Matches web PlateCalculator.jsx visual",
+        "TypeScript compiles"
+      ],
+      "priority": 17,
+      "passes": false,
+      "webSource": "frontend/src/components/workout/PlateCalculator.jsx",
+      "notes": "Read PlateCalculator.jsx. Pure calculation, no API. Each plate has a color (25kg=red, 20kg=blue, 15kg=yellow, 10kg=green, 5kg=white, 2.5kg=black). Create components/workout/PlateCalculator.tsx."
+    },
+    {
+      "id": "US-218",
+      "title": "Charts — Historique avec VolumeAreaChart et SessionsBarChart",
+      "acceptanceCriteria": [
+        "HistoryScreen shows charts section: Volume par semaine (area chart), Sessions par semaine (bar chart)",
+        "Install victory-native or react-native-chart-kit",
+        "Gold color for data, dark background",
+        "Data from GET /workout-sessions (aggregate client-side)",
+        "Matches web charts visual (approximate)",
+        "TypeScript compiles"
+      ],
+      "priority": 18,
+      "passes": false,
+      "webSource": "frontend/src/components/charts/VolumeAreaChart.jsx + SessionsBarChart.jsx",
+      "notes": "Read both chart files. Check context7 for victory-native docs. Install victory-native (works with Expo). Aggregate session data client-side for the charts."
+    },
+    {
+      "id": "US-219",
+      "title": "Animations — fadeInUp, scaleIn sur les cartes et transitions",
+      "acceptanceCriteria": [
+        "FadeIn wrapper component using Animated.timing (opacity 0→1, translateY 20→0)",
+        "Applied on card lists (staggered delay per item index)",
+        "ScaleIn for modals and dialogs (scale 0.9→1)",
+        "Respects reduced motion preference (no animation if enabled)",
+        "Matches web Framer Motion animations (visual equivalent)",
+        "TypeScript compiles"
+      ],
+      "priority": 19,
+      "passes": false,
+      "webSource": "frontend/src/components/ui/FadeIn.jsx + tailwind.config.js animations section",
+      "notes": "Read FadeIn.jsx. Use Animated.timing or react-native-reanimated. Stagger: each item gets delay = index * 50ms. Create components/ui/FadeIn.tsx."
+    },
+    {
+      "id": "US-220",
+      "title": "Polish final — grain texture, safe areas, scroll behaviors",
+      "acceptanceCriteria": [
+        "useSafeAreaInsets applied on all screens (replace pt-12 manual padding)",
+        "Scrollbar hidden on all ScrollViews",
+        "Pull-to-refresh on HomeScreen, WorkoutScreen, LearnScreen",
+        "KeyboardAvoidingView sur tous les formulaires",
+        "StatusBar style='light' confirmed everywhere",
+        "All screens use Quilon/Rowan fonts consistently",
+        "Final tsc check: zero errors",
+        "Git commit with all changes"
+      ],
+      "priority": 20,
+      "passes": false,
+      "webSource": "frontend/src/index.css — safe areas, scrollbar-hide",
+      "notes": "Global polish pass. Check every screen. Fix inconsistencies. This is the final story before COMPLETE."
+    }
+  ]
+}

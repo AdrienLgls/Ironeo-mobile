@@ -1,15 +1,44 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
+  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}', './App.tsx'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
         background: '#121212',
         accent: '#EFBF04',
+        'gold-vivid': '#EFBF04',
+        'gold-medium': '#D4A804',
+        'gold-pale': '#F5D54A',
+        'gold-dark': '#B8920A',
+        'gold-bg': '#FDF2CC',
+        secondary: '#1e1e1e',
+        muted: '#a0a0a0',
+        recovering: '#C49600',
+        almost: '#8B9A3F',
+        ready: '#5C8A5C',
+      },
+      fontFamily: {
+        heading: ['Quilon-Medium', 'system-ui'],
+        body: ['Rowan-Regular', 'system-ui'],
+      },
+      fontSize: {
+        'display-lg': ['39.06px', { lineHeight: '1.55', letterSpacing: '0.015em', fontWeight: '800' }],
+        'display-md': ['34.94px', { lineHeight: '1.55', letterSpacing: '0.015em', fontWeight: '800' }],
+        h1: ['31.25px', { lineHeight: '1.55', letterSpacing: '0.02em', fontWeight: '700' }],
+        h2: ['25px', { lineHeight: '1.55', letterSpacing: '0.02em', fontWeight: '600' }],
+        h3: ['22.36px', { lineHeight: '1.60', letterSpacing: '0.025em', fontWeight: '600' }],
+        h4: ['20px', { lineHeight: '1.60', letterSpacing: '0.025em', fontWeight: '500' }],
+        h5: ['18.91px', { lineHeight: '1.60', letterSpacing: '0.03em', fontWeight: '500' }],
+        'body-xl': ['16.92px', { lineHeight: '1.60', letterSpacing: '0.03em' }],
+        body: ['16px', { lineHeight: '1.60', letterSpacing: '0.03em' }],
+        'body-sm': ['15.13px', { lineHeight: '1.65', letterSpacing: '0.03em' }],
+        'caption-lg': ['14.31px', { lineHeight: '1.65', letterSpacing: '0.03em' }],
+        caption: ['13.53px', { lineHeight: '1.65', letterSpacing: '0.03em' }],
+        'caption-sm': ['12.80px', { lineHeight: '1.65', letterSpacing: '0.03em', fontWeight: '300' }],
+        overline: ['12.11px', { lineHeight: '1.65', letterSpacing: '0.03em', fontWeight: '500' }],
       },
     },
   },
   plugins: [],
 };
-

@@ -1,0 +1,27 @@
+# Ralph Progress Log — Phase 2 : Match Web Design
+Started: 2026-03-20
+Feature: 02-match-web-design
+Goal: Reproduire EXACTEMENT le design du site Ironeo web dans l'app React Native
+
+## Web Source
+- Frontend path: /home/claudeclaw/claudeclaw-workspace/Ironeo/frontend
+- Design system: tailwind.config.js + src/index.css
+- Components: src/components/
+
+## Règles absolues
+- Lire le composant web source AVANT d'écrire le code RN
+- Reproduire EXACTEMENT les tailles, couleurs, letter-spacing, font-family
+- Polices: Quilon-Medium pour titres, Rowan-Regular pour corps de texte
+- Polices disponibles: assets/fonts/Quilon-Medium.otf + Rowan-Regular.otf
+- Aucun style inventé — tout vient du web source
+
+## Codebase Patterns (Phase 1)
+- Screens dans app/
+- Composants dans components/<domaine>/
+- Services dans services/
+- Types dans types/
+- NativeWind v4 pour les styles
+- Pattern erreur: .catch(() => setError('msg')).finally(() => setLoading(false))
+
+---
+
