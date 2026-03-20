@@ -1,5 +1,5 @@
 import api from './api';
-import type { Program, Exercise, WorkoutSession } from '../types/workout';
+import type { Program, Exercise, WorkoutSession, CreateCustomExerciseInput } from '../types/workout';
 
 export async function getPrograms(): Promise<Program[]> {
   const { data } = await api.get<Program[]>('/programs');
@@ -84,4 +84,34 @@ export async function getPersonalRecord(exerciseId: string): Promise<PersonalRec
 export async function getSessionById(id: string): Promise<WorkoutSession & { exercises?: unknown[] }> {
   const { data } = await api.get<WorkoutSession & { exercises?: unknown[] }>(`/workout-sessions/${id}`);
   return data;
+}
+
+export interface FollowedProgramEntry {
+  _id: string;
+  program: { _id: string; name: string };
+  isActive: boolean;
+}
+
+export async function getFollowedPrograms(): Promise<FollowedProgramEntry[]> {
+  const { data } = await api.get<FollowedProgramEntry[]>('/programs/user/followed');
+  return data;
+}
+
+export async function unfollowProgram(id: string): Promise<void> {
+  await api.delete(`/programs/${id}/follow`);
+}
+
+export async function createCustomExercise(input: CreateCustomExerciseInput): Promise<Exercise> {
+  const { data } = await api.post<Exercise>('/exercises', {
+    name: input.name,
+    category: input.muscleGroup,
+    primaryMuscles: [input.muscleGroup],
+    equipment: input.equipment ?? 'Poids corps',
+    description: input.description,
+  });
+  return data;
+}
+
+export async function deleteCustomExercise(id: string): Promise<void> {
+  await api.delete(`/exercises/${id}`);
 }

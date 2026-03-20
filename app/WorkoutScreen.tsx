@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProgramCard from '../components/workout/ProgramCard';
 import ExerciseCard from '../components/workout/ExerciseCard';
-import { getPrograms, getProgramDetail, getExercises, getWorkoutSessions, getVolumeStats, getSessionsStats } from '../services/workoutService';
+import ExerciseCreatorModal from '../components/workout/ExerciseCreatorModal';
+import { getPrograms, getProgramDetail, getExercises, getWorkoutSessions, getVolumeStats, getSessionsStats, unfollowProgram, deleteCustomExercise, getFollowedPrograms } from '../services/workoutService';
 import type { WeeklyStats } from '../services/workoutService';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
 import VolumeAreaChart from '../components/charts/VolumeAreaChart';
 import SessionsBarChart from '../components/charts/SessionsBarChart';
@@ -40,6 +43,8 @@ const HUB_TABS = [
 
 function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackParamList, "ProgramsList">) {
   const insets = useSafeAreaInsets();
+  const confirm = useConfirm();
+  const toast = useToast();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
@@ -48,9 +53,10 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('programmes');
+  const [creatorVisible, setCreatorVisible] = useState(false);
 
-  useEffect(() => {
-    Promise.all([getPrograms(), getExercises(), getWorkoutSessions(), getVolumeStats(), getSessionsStats()])
+  const loadData = useCallback(() => {
+    return Promise.all([getPrograms(), getExercises(), getWorkoutSessions(), getVolumeStats(), getSessionsStats()])
       .then(([p, e, s, vs, ss]) => {
         setPrograms(p);
         setExercises(e);
@@ -58,9 +64,29 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
         setVolumeStats(vs);
         setSessionsStats(ss);
       })
-      .catch(() => setError('Unable to load data'))
-      .finally(() => setLoading(false));
+      .catch(() => setError('Unable to load data'));
   }, []);
+
+  useEffect(() => {
+    loadData().finally(() => setLoading(false));
+  }, [loadData]);
+
+  async function handleDeleteExercise(id: string, name: string) {
+    const ok = await confirm({
+      title: 'Supprimer cet exercice ?',
+      message: `"${name}" sera supprimé définitivement.`,
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteCustomExercise(id);
+      toast.success('Exercice supprimé');
+      void loadData();
+    } catch {
+      toast.error('Erreur lors de la suppression');
+    }
+  }
 
   if (loading) {
     return (
@@ -78,13 +104,40 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
   );
 
   if (activeTab === 'exercices') {
+    const ExercisesHeader = (
+      <>
+        {ListHeader}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 12 }}>
+          <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 13 }}>
+            {exercises.length} exercice{exercises.length !== 1 ? 's' : ''}
+          </Text>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={() => setCreatorVisible(true)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 6,
+              backgroundColor: '#EFBF04',
+              borderRadius: 20,
+              paddingHorizontal: 14,
+              paddingVertical: 8,
+            }}
+          >
+            <Text style={{ color: '#000', fontSize: 16, lineHeight: 18 }}>+</Text>
+            <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 13 }}>Créer</Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
+
     return (
       <View className="flex-1 bg-background">
         <FlatList
           data={exercises}
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-4 pb-6"
-          ListHeaderComponent={ListHeader}
+          ListHeaderComponent={ExercisesHeader}
           ListEmptyComponent={
             error ? (
               <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
@@ -94,20 +147,57 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
           }
           renderItem={({ item }) => (
             <TouchableOpacity
-              className="bg-white/[0.04] rounded-2xl p-4 mb-3"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                borderRadius: 16,
+                padding: 16,
+                marginBottom: 12,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('ExerciseDetail', { exerciseId: item.id })}
             >
-              <Text className="text-white text-body-sm font-heading mb-2">{item.name}</Text>
-              <View className="flex-row flex-wrap gap-2">
-                {item.muscleGroups.map((group) => (
-                  <View key={group} className="bg-white/[0.08] rounded-full px-2 py-1">
-                    <Text className="text-white/60 text-caption font-body">{group}</Text>
-                  </View>
-                ))}
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <Text style={{ color: '#ffffff', fontFamily: 'Quilon-Medium', fontSize: 15 }}>
+                    {item.name}
+                  </Text>
+                  {item.isCustom ? (
+                    <View style={{ backgroundColor: '#EFBF04', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
+                      <Text style={{ color: '#000', fontFamily: 'Rowan-Regular', fontSize: 11 }}>Perso</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                  {item.muscleGroups.map((group) => (
+                    <View key={group} style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
+                      <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Rowan-Regular', fontSize: 11 }}>{group}</Text>
+                    </View>
+                  ))}
+                </View>
               </View>
+              {item.isCustom ? (
+                <TouchableOpacity
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  onPress={() => void handleDeleteExercise(item.id, item.name)}
+                  style={{ marginLeft: 12, padding: 4 }}
+                >
+                  <Text style={{ fontSize: 16, color: 'rgba(239,68,68,0.8)' }}>🗑</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18, marginLeft: 8 }}>{'›'}</Text>
+              )}
             </TouchableOpacity>
           )}
+        />
+        <ExerciseCreatorModal
+          visible={creatorVisible}
+          onClose={() => setCreatorVisible(false)}
+          onCreated={() => {
+            setCreatorVisible(false);
+            void loadData();
+          }}
         />
       </View>
     );
@@ -288,16 +378,43 @@ type ProgramDetailProps = NativeStackScreenProps<WorkoutStackParamList, 'Program
 function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   const { programId } = route.params;
   const insets = useSafeAreaInsets();
+  const confirm = useConfirm();
+  const toast = useToast();
   const [program, setProgram] = useState<ProgramDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [unfollowing, setUnfollowing] = useState(false);
 
   useEffect(() => {
-    getProgramDetail(programId)
-      .then(setProgram)
+    Promise.all([getProgramDetail(programId), getFollowedPrograms()])
+      .then(([p, followed]) => {
+        setProgram(p);
+        setIsFollowed(followed.some((fp) => fp.program._id === programId));
+      })
       .catch(() => setError('Unable to load program'))
       .finally(() => setLoading(false));
   }, [programId]);
+
+  async function handleUnfollow() {
+    const ok = await confirm({
+      title: 'Ne plus suivre ce programme ?',
+      message: 'Tu pourras le retrouver et le suivre à nouveau plus tard.',
+      confirmText: 'Ne plus suivre',
+      destructive: true,
+    });
+    if (!ok) return;
+    setUnfollowing(true);
+    try {
+      await unfollowProgram(programId);
+      toast.success('Programme retiré de ta liste');
+      setIsFollowed(false);
+    } catch {
+      toast.error('Erreur lors de la suppression du suivi');
+    } finally {
+      setUnfollowing(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -346,6 +463,30 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
       >
         <Text className="text-black text-body font-heading">Start Session</Text>
       </TouchableOpacity>
+
+      {isFollowed ? (
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'rgba(239,68,68,0.12)',
+            borderRadius: 16,
+            paddingVertical: 16,
+            alignItems: 'center',
+            marginTop: 12,
+            opacity: unfollowing ? 0.6 : 1,
+          }}
+          activeOpacity={0.8}
+          onPress={() => void handleUnfollow()}
+          disabled={unfollowing}
+        >
+          {unfollowing ? (
+            <ActivityIndicator color="#ef4444" size="small" />
+          ) : (
+            <Text style={{ color: '#ef4444', fontFamily: 'Quilon-Medium', fontSize: 16 }}>
+              Ne plus suivre
+            </Text>
+          )}
+        </TouchableOpacity>
+      ) : null}
     </ScrollView>
   );
 }

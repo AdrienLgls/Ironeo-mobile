@@ -7,6 +7,15 @@ export interface Program {
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
+export type MuscleGroup =
+  | 'Chest'
+  | 'Back'
+  | 'Legs'
+  | 'Shoulders'
+  | 'Arms'
+  | 'Core'
+  | 'Full Body';
+
 export interface Exercise {
   id: string;
   name: string;
@@ -19,6 +28,14 @@ export interface Exercise {
   description?: string;
   instructions?: string;
   tips?: string;
+  isCustom?: boolean;
+}
+
+export interface CreateCustomExerciseInput {
+  name: string;
+  muscleGroup: MuscleGroup;
+  equipment?: string;
+  description?: string;
 }
 
 export type SetType = 'Normal' | 'Warmup' | 'Dropset';
