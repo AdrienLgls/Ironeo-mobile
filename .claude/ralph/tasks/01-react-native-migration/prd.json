@@ -167,7 +167,7 @@
         "TypeScript compiles"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Add filter state to ExercisesScreen or custom useExerciseFilter hook"
     },
     {

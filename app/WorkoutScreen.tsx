@@ -7,6 +7,8 @@ import ExerciseCard from '../components/workout/ExerciseCard';
 import { getPrograms, getProgramDetail } from '../services/workoutService';
 import ActiveSessionScreen from './ActiveSessionScreen';
 import PostSessionScreen from './PostSessionScreen';
+import ExercisesScreen from './ExercisesScreen';
+import ExerciseDetailScreen from './ExerciseDetailScreen';
 import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
 
 export type WorkoutStackParamList = {
@@ -14,6 +16,8 @@ export type WorkoutStackParamList = {
   ProgramDetail: { programId: string };
   ActiveSession: { program: import('../types/workout').ProgramDetail };
   PostSession: { sessionId: string };
+  ExercisesList: undefined;
+  ExerciseDetail: { exerciseId: string };
 };
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
@@ -45,7 +49,12 @@ function ProgramsListScreen({ navigation }: { navigation: { navigate: (screen: s
         keyExtractor={(item) => item.id}
         contentContainerClassName="px-4 pt-12 pb-6"
         ListHeaderComponent={
-          <Text className="text-white text-2xl font-bold mb-6">Programs</Text>
+          <View className="flex-row items-center justify-between mb-6">
+            <Text className="text-white text-2xl font-bold">Programs</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('ExercisesList')} activeOpacity={0.7}>
+              <Text className="text-accent text-sm">Exercises →</Text>
+            </TouchableOpacity>
+          </View>
         }
         ListEmptyComponent={
           error ? (
@@ -143,6 +152,8 @@ export default function WorkoutScreen() {
         )}
       />
       <Stack.Screen name="PostSession" component={PostSessionScreen} />
+      <Stack.Screen name="ExercisesList" component={ExercisesScreen} />
+      <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} />
     </Stack.Navigator>
   );
 }

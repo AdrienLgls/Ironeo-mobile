@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { WorkoutStackParamList } from './WorkoutScreen';
 import { getExercises } from '../services/workoutService';
 import type { Exercise } from '../types/workout';
 
 const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'arms', 'shoulders', 'core'] as const;
 
-export default function ExercisesScreen() {
+type Props = NativeStackScreenProps<WorkoutStackParamList, 'ExercisesList'>;
+
+export default function ExercisesScreen({ navigation }: Props) {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [filtered, setFiltered] = useState<Exercise[]>([]);
   const [search, setSearch] = useState('');
@@ -50,6 +54,9 @@ export default function ExercisesScreen() {
         contentContainerClassName="px-4 pb-6"
         ListHeaderComponent={
           <View className="pt-12 mb-4">
+            <TouchableOpacity onPress={() => navigation.goBack()} className="mb-3">
+              <Text className="text-accent text-sm">← Back</Text>
+            </TouchableOpacity>
             <Text className="text-white text-2xl font-bold mb-4">Exercises</Text>
             <TextInput
               value={search}
@@ -82,6 +89,7 @@ export default function ExercisesScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             activeOpacity={0.7}
+            onPress={() => navigation.navigate('ExerciseDetail', { exerciseId: item.id })}
             className="flex-row items-center py-4 border-b border-white/[0.05]"
           >
             <View className="flex-1">
