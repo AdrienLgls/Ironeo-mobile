@@ -7,6 +7,7 @@ import { getUserStats, getRecentSessions, getNextWorkout } from '../services/use
 import api from '../services/api';
 import HeroCard from '../components/home/HeroCard';
 import StreakChain from '../components/home/StreakChain';
+import WeeklyProgressRings from '../components/home/WeeklyProgressRings';
 import RecentSessionCard from '../components/home/RecentSessionCard';
 import NextWorkoutCard from '../components/home/NextWorkoutCard';
 import ProgressWidget from '../components/home/ProgressWidget';
@@ -68,6 +69,18 @@ export default function HomeScreen() {
       {/* Streak chain */}
       {stats && (
         <StreakChain currentStreak={stats.streak} />
+      )}
+
+      {/* Weekly progress rings */}
+      {stats && (
+        <WeeklyProgressRings
+          sessions={stats.workoutsThisWeek}
+          sessionsGoal={4}
+          volumeKg={0}
+          volumeGoal={5}
+          intensity={0}
+          intensityGoal={8}
+        />
       )}
 
       {/* Stats row */}

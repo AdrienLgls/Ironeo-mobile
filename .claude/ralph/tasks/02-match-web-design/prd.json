@@ -99,7 +99,7 @@
         "TypeScript compiles"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/dashboard/StreakChain.jsx + AnimatedFlame.jsx",
       "notes": "Read StreakChain.jsx. Use Animated.loop for pulse on current day. Create components/home/StreakChain.tsx."
     },
