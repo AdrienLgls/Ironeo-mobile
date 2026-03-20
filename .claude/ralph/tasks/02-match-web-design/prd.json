@@ -82,7 +82,7 @@
         "TypeScript compiles"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/dashboard/HeroCard.jsx",
       "notes": "Read HeroCard.jsx. Time-based greeting. XP/level from GET /users/stats. Create components/home/HeroCard.tsx."
     },

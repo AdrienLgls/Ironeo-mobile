@@ -6,6 +6,7 @@ import type { TabParamList } from './TabNavigator';
 import { getUserStats, getRecentSessions, getNextWorkout } from '../services/userService';
 import api from '../services/api';
 import HeroCard from '../components/home/HeroCard';
+import StreakChain from '../components/home/StreakChain';
 import RecentSessionCard from '../components/home/RecentSessionCard';
 import NextWorkoutCard from '../components/home/NextWorkoutCard';
 import ProgressWidget from '../components/home/ProgressWidget';
@@ -62,6 +63,11 @@ export default function HomeScreen() {
           xpToNextLevel={stats?.xpToNextLevel ?? 1000}
           onStartWorkout={() => navigation.navigate('Workout')}
         />
+      )}
+
+      {/* Streak chain */}
+      {stats && (
+        <StreakChain currentStreak={stats.streak} />
       )}
 
       {/* Stats row */}
