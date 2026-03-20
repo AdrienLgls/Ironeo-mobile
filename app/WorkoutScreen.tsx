@@ -6,6 +6,7 @@ import ProgramCard from '../components/workout/ProgramCard';
 import ExerciseCard from '../components/workout/ExerciseCard';
 import { getPrograms, getProgramDetail } from '../services/workoutService';
 import ActiveSessionScreen from './ActiveSessionScreen';
+import PostSessionScreen from './PostSessionScreen';
 import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
 
 export type WorkoutStackParamList = {
@@ -130,14 +131,6 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   );
 }
 
-function PostSessionPlaceholder() {
-  return (
-    <View className="flex-1 bg-background items-center justify-center">
-      <Text className="text-white/40">Session complete — summary coming soon</Text>
-    </View>
-  );
-}
-
 export default function WorkoutScreen() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -149,7 +142,7 @@ export default function WorkoutScreen() {
           <ActiveSessionScreen program={route.params.program} route={route} navigation={navigation} />
         )}
       />
-      <Stack.Screen name="PostSession" component={PostSessionPlaceholder} />
+      <Stack.Screen name="PostSession" component={PostSessionScreen} />
     </Stack.Navigator>
   );
 }

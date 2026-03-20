@@ -127,7 +127,7 @@
         "TypeScript compiles"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "CRITICAL FEATURE. Use expo-task-manager defineTask + expo-notifications. Check context7 docs for Expo Notifications and Task Manager before implementing. Requires expo-dev-client (not Expo Go)."
     },
     {

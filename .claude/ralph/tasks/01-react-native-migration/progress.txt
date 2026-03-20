@@ -85,3 +85,15 @@ Feature: 01-react-native-migration
 - restDuration vient de program.days[0].exercises[idx].restSeconds ?? 90
 
 ---
+
+## 2026-03-20 - US-009: Foreground notification timer
+- Fichiers : services/timerNotificationService.ts (créé), components/workout/RestTimer.tsx (modifié), App.tsx (modifié), app.json (permissions)
+- Pattern : startTimerNotification() au mount, updateTimerNotification() chaque seconde, stopTimerNotification() au unmount/complete
+- TaskManager.defineTask() doit être au top-level du fichier (pas dans un composant)
+- Permissions Android : FOREGROUND_SERVICE, FOREGROUND_SERVICE_HEALTH, POST_NOTIFICATIONS, WAKE_LOCK
+- expo-notifications plugin dans app.json (plugins array)
+- npm install (pas pnpm) car pnpm pas dispo sur ce VPS
+- RestTimer props : exerciseName ajouté (string, optional, default 'Workout')
+- CRITIQUE : nécessite expo-dev-client pour tester (pas Expo Go)
+
+---
