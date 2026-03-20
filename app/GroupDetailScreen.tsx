@@ -12,6 +12,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
 import EmptyState from '../components/ui/EmptyState';
 import { SkeletonBox, SkeletonText, SkeletonCircle } from '../components/ui/Skeleton';
+import GroupChatTab from '../components/social/GroupChatTab';
 import {
   getGroupDetail,
   getGroupActivity,
@@ -33,6 +34,7 @@ type Props = NativeStackScreenProps<GroupDetailParams, 'GroupDetail'>;
 const GROUP_TABS = [
   { id: 'activite', label: 'Activité' },
   { id: 'membres', label: 'Membres' },
+  { id: 'chat', label: 'Chat' },
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -387,152 +389,171 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
         </Text>
       </View>
 
-      {/* ── Content ── */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + 80,
-        }}
-      >
-        {/* Group header card */}
-        <View
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.04)',
-            borderRadius: 16,
-            padding: 16,
-            marginBottom: 20,
+      {/* ── Tab header (group info card + tab nav): hidden in chat for space ── */}
+      {activeTab !== 'chat' && (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: insets.bottom + 80,
           }}
         >
-          <Text
+          {/* Group header card */}
+          <View
             style={{
-              color: '#fafafa',
-              fontFamily: 'Quilon-Medium',
-              fontSize: 24,
-              marginBottom: 6,
+              backgroundColor: 'rgba(255,255,255,0.04)',
+              borderRadius: 16,
+              padding: 16,
+              marginBottom: 20,
             }}
           >
-            {group.name}
-          </Text>
-          {group.description ? (
             <Text
               style={{
-                color: 'rgba(255,255,255,0.6)',
-                fontFamily: 'Rowan-Regular',
-                fontSize: 14,
-                lineHeight: 20,
-                marginBottom: 12,
+                color: '#fafafa',
+                fontFamily: 'Quilon-Medium',
+                fontSize: 24,
+                marginBottom: 6,
               }}
             >
-              {group.description}
+              {group.name}
             </Text>
-          ) : null}
-          {/* Stats row */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text
-              style={{
-                color: 'rgba(255,255,255,0.5)',
-                fontFamily: 'Rowan-Regular',
-                fontSize: 13,
-              }}
-            >
-              {group.memberCount} membre{group.memberCount !== 1 ? 's' : ''}
-            </Text>
-            <View
-              style={{
-                backgroundColor: group.isPublic
-                  ? 'rgba(34,197,94,0.15)'
-                  : 'rgba(239,191,4,0.15)',
-                borderRadius: 999,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-              }}
-            >
+            {group.description ? (
               <Text
                 style={{
-                  color: group.isPublic ? '#22c55e' : '#EFBF04',
-                  fontFamily: 'Quilon-Medium',
-                  fontSize: 11,
+                  color: 'rgba(255,255,255,0.6)',
+                  fontFamily: 'Rowan-Regular',
+                  fontSize: 14,
+                  lineHeight: 20,
+                  marginBottom: 12,
                 }}
               >
-                {group.isPublic ? 'Public' : 'Privé'}
+                {group.description}
               </Text>
+            ) : null}
+            {/* Stats row */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text
+                style={{
+                  color: 'rgba(255,255,255,0.5)',
+                  fontFamily: 'Rowan-Regular',
+                  fontSize: 13,
+                }}
+              >
+                {group.memberCount} membre{group.memberCount !== 1 ? 's' : ''}
+              </Text>
+              <View
+                style={{
+                  backgroundColor: group.isPublic
+                    ? 'rgba(34,197,94,0.15)'
+                    : 'rgba(239,191,4,0.15)',
+                  borderRadius: 999,
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                }}
+              >
+                <Text
+                  style={{
+                    color: group.isPublic ? '#22c55e' : '#EFBF04',
+                    fontFamily: 'Quilon-Medium',
+                    fontSize: 11,
+                  }}
+                >
+                  {group.isPublic ? 'Public' : 'Privé'}
+                </Text>
+              </View>
             </View>
           </View>
+
+          {/* Tabs */}
+          <HubTabNavigation
+            tabs={GROUP_TABS}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
+
+          {/* Tab: Activité */}
+          {activeTab === 'activite' && (
+            <>
+              {activity.length === 0 ? (
+                <EmptyState
+                  icon="📭"
+                  title="Aucune activité"
+                  description="Les séances et records des membres apparaîtront ici."
+                  compact
+                />
+              ) : (
+                activity.map((item) => <ActivityItemRow key={item._id} item={item} />)
+              )}
+            </>
+          )}
+
+          {/* Tab: Membres */}
+          {activeTab === 'membres' && (
+            <>
+              {members.length === 0 ? (
+                <EmptyState icon="👥" title="Aucun membre" compact />
+              ) : (
+                members.map((member) => <MemberRow key={member._id} member={member} />)
+              )}
+            </>
+          )}
+        </ScrollView>
+      )}
+
+      {/* ── Tab: Chat ── */}
+      {activeTab === 'chat' && (
+        <View style={{ flex: 1 }}>
+          {/* Compact tab nav for Chat */}
+          <View style={{ paddingHorizontal: 16, paddingTop: 4, paddingBottom: 0 }}>
+            <HubTabNavigation
+              tabs={GROUP_TABS}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          </View>
+          <GroupChatTab groupId={groupId} />
         </View>
+      )}
 
-        {/* Tabs */}
-        <HubTabNavigation
-          tabs={GROUP_TABS}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-
-        {/* Tab: Activité */}
-        {activeTab === 'activite' && (
-          <>
-            {activity.length === 0 ? (
-              <EmptyState
-                icon="📭"
-                title="Aucune activité"
-                description="Les séances et records des membres apparaîtront ici."
-                compact
-              />
-            ) : (
-              activity.map((item) => <ActivityItemRow key={item._id} item={item} />)
-            )}
-          </>
-        )}
-
-        {/* Tab: Membres */}
-        {activeTab === 'membres' && (
-          <>
-            {members.length === 0 ? (
-              <EmptyState icon="👥" title="Aucun membre" compact />
-            ) : (
-              members.map((member) => <MemberRow key={member._id} member={member} />)
-            )}
-          </>
-        )}
-      </ScrollView>
-
-      {/* ── Footer: leave button ── */}
-      <View
-        style={{
-          position: 'absolute',
-          bottom: insets.bottom + 16,
-          left: 16,
-          right: 16,
-        }}
-      >
-        <TouchableOpacity
-          onPress={handleLeave}
-          disabled={leaving}
-          activeOpacity={0.8}
+      {/* ── Footer: leave button (hidden in chat to avoid input overlap) ── */}
+      {activeTab !== 'chat' && (
+        <View
           style={{
-            backgroundColor: 'rgba(239,68,68,0.12)',
-            borderRadius: 14,
-            paddingVertical: 14,
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: 'rgba(239,68,68,0.25)',
+            position: 'absolute',
+            bottom: insets.bottom + 16,
+            left: 16,
+            right: 16,
           }}
         >
-          {leaving ? (
-            <ActivityIndicator color="#ef4444" size="small" />
-          ) : (
-            <Text
-              style={{
-                color: '#ef4444',
-                fontFamily: 'Quilon-Medium',
-                fontSize: 15,
-              }}
-            >
-              Quitter le groupe
-            </Text>
-          )}
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={handleLeave}
+            disabled={leaving}
+            activeOpacity={0.8}
+            style={{
+              backgroundColor: 'rgba(239,68,68,0.12)',
+              borderRadius: 14,
+              paddingVertical: 14,
+              alignItems: 'center',
+              borderWidth: 1,
+              borderColor: 'rgba(239,68,68,0.25)',
+            }}
+          >
+            {leaving ? (
+              <ActivityIndicator color="#ef4444" size="small" />
+            ) : (
+              <Text
+                style={{
+                  color: '#ef4444',
+                  fontFamily: 'Quilon-Medium',
+                  fontSize: 15,
+                }}
+              >
+                Quitter le groupe
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
