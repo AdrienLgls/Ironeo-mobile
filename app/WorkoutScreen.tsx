@@ -15,6 +15,7 @@ import PostSessionScreen from './PostSessionScreen';
 import ExercisesScreen from './ExercisesScreen';
 import ExerciseDetailScreen from './ExerciseDetailScreen';
 import HistoryScreen from './HistoryScreen';
+import SessionDetailScreen from './SessionDetailScreen';
 import type { Program, ProgramDetail, ProgramDay, Exercise, WorkoutSession } from '../types/workout';
 
 export type WorkoutStackParamList = {
@@ -25,6 +26,7 @@ export type WorkoutStackParamList = {
   ExercisesList: undefined;
   ExerciseDetail: { exerciseId: string };
   History: undefined;
+  SessionDetail: { sessionId: string };
 };
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
@@ -363,6 +365,7 @@ export default function WorkoutScreen() {
       <Stack.Screen name="ExercisesList" component={ExercisesScreen} />
       <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} />
       <Stack.Screen name="History" component={HistoryScreen} />
+      <Stack.Screen name="SessionDetail" component={SessionDetailScreen} />
     </Stack.Navigator>
   );
 }
