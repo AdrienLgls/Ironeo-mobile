@@ -5,8 +5,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProgramCard from '../components/workout/ProgramCard';
 import ExerciseCard from '../components/workout/ExerciseCard';
-import { getPrograms, getProgramDetail, getExercises, getWorkoutSessions } from '../services/workoutService';
+import { getPrograms, getProgramDetail, getExercises, getWorkoutSessions, getVolumeStats, getSessionsStats } from '../services/workoutService';
+import type { WeeklyStats } from '../services/workoutService';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
+import VolumeAreaChart from '../components/charts/VolumeAreaChart';
+import SessionsBarChart from '../components/charts/SessionsBarChart';
 import ActiveSessionScreen from './ActiveSessionScreen';
 import PostSessionScreen from './PostSessionScreen';
 import ExercisesScreen from './ExercisesScreen';
@@ -30,6 +33,7 @@ const HUB_TABS = [
   { id: 'programmes', label: 'Programmes' },
   { id: 'exercices', label: 'Exercices' },
   { id: 'historique', label: 'Historique' },
+  { id: 'methode', label: 'Méthode' },
 ];
 
 function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackParamList, "ProgramsList">) {
@@ -37,16 +41,20 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
   const [programs, setPrograms] = useState<Program[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
+  const [volumeStats, setVolumeStats] = useState<WeeklyStats[]>([]);
+  const [sessionsStats, setSessionsStats] = useState<WeeklyStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('programmes');
 
   useEffect(() => {
-    Promise.all([getPrograms(), getExercises(), getWorkoutSessions()])
-      .then(([p, e, s]) => {
+    Promise.all([getPrograms(), getExercises(), getWorkoutSessions(), getVolumeStats(), getSessionsStats()])
+      .then(([p, e, s, vs, ss]) => {
         setPrograms(p);
         setExercises(e);
         setSessions(s);
+        setVolumeStats(vs);
+        setSessionsStats(ss);
       })
       .catch(() => setError('Unable to load data'))
       .finally(() => setLoading(false));
@@ -104,13 +112,26 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
   }
 
   if (activeTab === 'historique') {
+    const StatsHeader = (
+      <>
+        {ListHeader}
+        <View className="mb-6">
+          <Text className="text-white text-body-sm font-heading mb-4">Statistiques</Text>
+          <VolumeAreaChart data={volumeStats} />
+          <View className="mt-4">
+            <SessionsBarChart data={sessionsStats} />
+          </View>
+        </View>
+      </>
+    );
+
     return (
       <View className="flex-1 bg-background">
         <FlatList
           data={sessions}
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-4 pb-6"
-          ListHeaderComponent={ListHeader}
+          ListHeaderComponent={StatsHeader}
           ListEmptyComponent={
             error ? (
               <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
@@ -134,6 +155,45 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
             );
           }}
         />
+      </View>
+    );
+  }
+
+  if (activeTab === 'methode') {
+    const methodeCards = [
+      {
+        icon: '📈',
+        title: 'Périodisation',
+        description: 'Progression systématique semaine après semaine. Chaque programme suit un plan d\'entraînement précis pour maximiser vos gains.',
+      },
+      {
+        icon: '🔄',
+        title: 'Rotation des cycles',
+        description: 'Alterner entre différents types de séances (force, hypertrophie, puissance) pour stimuler tous vos systèmes énergétiques.',
+      },
+      {
+        icon: '🏆',
+        title: 'Tracking des PRs',
+        description: 'Chaque personal record est enregistré. Surpassez-vous à chaque séance et voyez votre progression en temps réel.',
+      },
+    ];
+
+    return (
+      <View className="flex-1 bg-background">
+        <ScrollView contentContainerClassName="px-4 pb-6">
+          <View style={{ paddingTop: insets.top + 16, paddingBottom: 16 }}>
+            <Text className="text-white text-h2 font-heading mb-6">Workout</Text>
+            <HubTabNavigation tabs={HUB_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+          </View>
+          <Text className="text-white text-h2 font-heading mb-6">La Méthode Ironeo</Text>
+          {methodeCards.map((card) => (
+            <View key={card.title} className="bg-white/[0.04] rounded-2xl p-5 mb-4">
+              <Text style={{ fontSize: 40, marginBottom: 12 }}>{card.icon}</Text>
+              <Text className="text-white text-body-sm font-heading mb-2">{card.title}</Text>
+              <Text className="text-white/40 text-caption font-body">{card.description}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     );
   }
