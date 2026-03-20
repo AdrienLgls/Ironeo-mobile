@@ -207,7 +207,11 @@ function FriendCard({ friend, onRemove }: FriendCardProps) {
 
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
-export default function FriendsScreen() {
+interface FriendsScreenProps {
+  onUserPress?: (userId: string) => void;
+}
+
+export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScreenProps) {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loadingData, setLoadingData] = useState(true);
