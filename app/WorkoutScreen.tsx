@@ -4,13 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProgramCard from '../components/workout/ProgramCard';
 import ExerciseCard from '../components/workout/ExerciseCard';
-import { getPrograms, getProgramDetail } from '../services/workoutService';
+import { getPrograms, getProgramDetail, getExercises, getWorkoutSessions } from '../services/workoutService';
+import HubTabNavigation from '../components/ui/HubTabNavigation';
 import ActiveSessionScreen from './ActiveSessionScreen';
 import PostSessionScreen from './PostSessionScreen';
 import ExercisesScreen from './ExercisesScreen';
 import ExerciseDetailScreen from './ExerciseDetailScreen';
 import HistoryScreen from './HistoryScreen';
-import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
+import type { Program, ProgramDetail, ProgramDay, Exercise, WorkoutSession } from '../types/workout';
 
 export type WorkoutStackParamList = {
   ProgramsList: undefined;
@@ -24,15 +25,28 @@ export type WorkoutStackParamList = {
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
 
+const HUB_TABS = [
+  { id: 'programmes', label: 'Programmes' },
+  { id: 'exercices', label: 'Exercices' },
+  { id: 'historique', label: 'Historique' },
+];
+
 function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackParamList, "ProgramsList">) {
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('programmes');
 
   useEffect(() => {
-    getPrograms()
-      .then(setPrograms)
-      .catch(() => setError('Unable to load programs'))
+    Promise.all([getPrograms(), getExercises(), getWorkoutSessions()])
+      .then(([p, e, s]) => {
+        setPrograms(p);
+        setExercises(e);
+        setSessions(s);
+      })
+      .catch(() => setError('Unable to load data'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -44,25 +58,91 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
     );
   }
 
+  const ListHeader = (
+    <View className="pt-12 pb-4">
+      <Text className="text-white text-h2 font-heading mb-6">Workout</Text>
+      <HubTabNavigation tabs={HUB_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+    </View>
+  );
+
+  if (activeTab === 'exercices') {
+    return (
+      <View className="flex-1 bg-background">
+        <FlatList
+          data={exercises}
+          keyExtractor={(item) => item.id}
+          contentContainerClassName="px-4 pb-6"
+          ListHeaderComponent={ListHeader}
+          ListEmptyComponent={
+            error ? (
+              <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
+            ) : (
+              <Text className="text-white/40 text-body-sm font-body text-center mt-8">No exercises available</Text>
+            )
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              className="bg-white/[0.04] rounded-2xl p-4 mb-3"
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate('ExerciseDetail', { exerciseId: item.id })}
+            >
+              <Text className="text-white text-body-sm font-heading mb-2">{item.name}</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {item.muscleGroups.map((group) => (
+                  <View key={group} className="bg-white/[0.08] rounded-full px-2 py-1">
+                    <Text className="text-white/60 text-caption font-body">{group}</Text>
+                  </View>
+                ))}
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    );
+  }
+
+  if (activeTab === 'historique') {
+    return (
+      <View className="flex-1 bg-background">
+        <FlatList
+          data={sessions}
+          keyExtractor={(item) => item.id}
+          contentContainerClassName="px-4 pb-6"
+          ListHeaderComponent={ListHeader}
+          ListEmptyComponent={
+            error ? (
+              <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
+            ) : (
+              <Text className="text-white/40 text-body-sm font-body text-center mt-8">No sessions yet</Text>
+            )
+          }
+          renderItem={({ item }) => {
+            const date = new Date(item.startedAt).toLocaleDateString('fr-CA', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+            return (
+              <View className="bg-white/[0.04] rounded-2xl p-4 mb-3">
+                <Text className="text-white text-body-sm font-heading mb-1">{item.programName}</Text>
+                <Text className="text-white/40 text-caption font-body">
+                  {date}{item.durationMinutes != null ? ` · ${item.durationMinutes} min` : ''}
+                </Text>
+              </View>
+            );
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-background">
       <FlatList
         data={programs}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="px-4 pt-12 pb-6"
-        ListHeaderComponent={
-          <View className="flex-row items-center justify-between mb-6">
-            <Text className="text-white text-h2 font-heading">Programs</Text>
-            <View className="flex-row gap-4">
-              <TouchableOpacity onPress={() => navigation.navigate('History')} activeOpacity={0.7}>
-                <Text className="text-white/50 text-body-sm font-body">History</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('ExercisesList')} activeOpacity={0.7}>
-                <Text className="text-accent text-body-sm font-body">Exercises</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        }
+        contentContainerClassName="px-4 pb-6"
+        ListHeaderComponent={ListHeader}
         ListEmptyComponent={
           error ? (
             <Text className="text-red-400 text-body-sm font-body text-center mt-8">{error}</Text>
