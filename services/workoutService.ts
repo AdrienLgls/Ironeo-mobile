@@ -115,3 +115,17 @@ export async function createCustomExercise(input: CreateCustomExerciseInput): Pr
 export async function deleteCustomExercise(id: string): Promise<void> {
   await api.delete(`/exercises/${id}`);
 }
+
+export interface SessionPatch {
+  notes?: string;
+  rpe?: number;
+}
+
+export async function updateSession(id: string, patch: SessionPatch): Promise<WorkoutSession> {
+  const { data } = await api.put<WorkoutSession>(`/workout-sessions/${id}`, patch);
+  return data;
+}
+
+export async function deleteSession(id: string): Promise<void> {
+  await api.delete(`/workout-sessions/${id}`);
+}

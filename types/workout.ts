@@ -63,6 +63,8 @@ export interface WorkoutSession {
   completedAt?: string;
   durationMinutes?: number;
   exercises: SessionExercise[];
+  notes?: string;
+  rpe?: number;
 }
 
 export interface ProgramExercise {
