@@ -65,7 +65,7 @@
         "TypeScript compiles"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/BottomNav.jsx",
       "notes": "Read BottomNav.jsx from web. The web has 5 slots: 2 left, FAB center (start session), 2 right. Use Animated for indicator. FAB should navigate to workout start flow."
     },

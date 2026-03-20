@@ -20,6 +20,9 @@ export interface UserStats {
   totalWorkouts: number;
   currentWeight?: number;
   goalWeight?: number;
+  level?: number;
+  xp?: number;
+  xpToNextLevel?: number;
 }
 
 export interface RecentSession {
