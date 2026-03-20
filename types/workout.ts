@@ -10,7 +10,13 @@ export interface Program {
 export interface Exercise {
   id: string;
   name: string;
+  slug?: string;
+  category?: string;
+  difficulty?: 'Débutant' | 'Intermédiaire' | 'Avancé';
+  equipment?: string;
+  imageUrl?: string;
   muscleGroups: string[];
+  description?: string;
   instructions?: string;
   tips?: string;
 }

@@ -3,6 +3,7 @@ import { View, Text, FlatList, TextInput, TouchableOpacity, ActivityIndicator, S
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { getExercises } from '../services/workoutService';
+import ExerciseGridCard from '../components/workout/ExerciseGridCard';
 import type { Exercise } from '../types/workout';
 
 const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'arms', 'shoulders', 'core'] as const;
@@ -51,57 +52,71 @@ export default function ExercisesScreen({ navigation }: Props) {
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="px-4 pb-6"
+        numColumns={2}
+        columnWrapperStyle={{ paddingHorizontal: 12 }}
+        contentContainerStyle={{ paddingBottom: 24 }}
         ListHeaderComponent={
-          <View className="pt-12 mb-4">
-            <TouchableOpacity onPress={() => navigation.goBack()} className="mb-3">
-              <Text className="text-accent text-body-sm font-body">← Back</Text>
+          <View style={{ paddingTop: 48, paddingHorizontal: 16, paddingBottom: 8 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 12 }}>
+              <Text className="text-accent text-body-sm font-body">← Retour</Text>
             </TouchableOpacity>
-            <Text className="text-white text-h2 font-heading mb-4">Exercises</Text>
+            <Text className="text-white text-h2 font-heading mb-4">Exercices</Text>
             <TextInput
               value={search}
               onChangeText={setSearch}
-              placeholder="Search exercises..."
+              placeholder="Rechercher..."
               placeholderTextColor="rgba(255,255,255,0.3)"
-              className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm mb-3"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderRadius: 10,
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                color: '#fff',
+                fontFamily: 'Rowan-Regular',
+                fontSize: 15,
+                marginBottom: 10,
+              }}
             />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-              {MUSCLE_GROUPS.map((group) => (
-                <TouchableOpacity
-                  key={group}
-                  activeOpacity={0.7}
-                  onPress={() => setActiveGroup(activeGroup === group ? null : group)}
-                  className={`mr-2 px-3 py-1.5 rounded-full ${activeGroup === group ? 'bg-accent' : 'bg-white/[0.08]'}`}
-                >
-                  <Text className={`text-caption font-body capitalize ${activeGroup === group ? 'text-black' : 'text-white/60'}`}>
-                    {group}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 4 }}>
+              <View style={{ flexDirection: 'row', gap: 6 }}>
+                {MUSCLE_GROUPS.map((group) => (
+                  <TouchableOpacity
+                    key={group}
+                    activeOpacity={0.7}
+                    onPress={() => setActiveGroup(activeGroup === group ? null : group)}
+                    style={{
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      borderRadius: 20,
+                      backgroundColor: activeGroup === group ? '#EFBF04' : 'rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    <Text style={{
+                      fontFamily: 'Rowan-Regular',
+                      fontSize: 12,
+                      textTransform: 'capitalize',
+                      color: activeGroup === group ? '#000' : 'rgba(255,255,255,0.6)',
+                    }}>
+                      {group}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </ScrollView>
           </View>
         }
         ListEmptyComponent={
-          <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-            {error ?? 'No exercises found'}
-          </Text>
+          <View style={{ paddingHorizontal: 16 }}>
+            <Text className="text-white/40 text-body-sm font-body text-center mt-8">
+              {error ?? 'Aucun exercice trouvé'}
+            </Text>
+          </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <ExerciseGridCard
+            exercise={item}
             onPress={() => navigation.navigate('ExerciseDetail', { exerciseId: item.id })}
-            className="flex-row items-center py-4 border-b border-white/[0.05]"
-          >
-            <View className="flex-1">
-              <Text className="text-white text-body-sm font-body">{item.name}</Text>
-              {item.muscleGroups.length > 0 && (
-                <Text className="text-white/40 text-caption font-body mt-0.5">
-                  {item.muscleGroups.join(' · ')}
-                </Text>
-              )}
-            </View>
-            <Text className="text-white/20 text-caption font-body">›</Text>
-          </TouchableOpacity>
+          />
         )}
       />
     </View>
