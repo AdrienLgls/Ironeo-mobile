@@ -80,6 +80,23 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           }}
         />
       </View>
+      {/* Radial glow under active tab indicator — simulates ellipse gold gradient */}
+      <Animated.View
+        pointerEvents="none"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: (INDICATOR_WIDTH - 60) / 2,
+          width: 60,
+          height: 20,
+          borderRadius: 10,
+          backgroundColor: 'rgba(239,191,4,0.25)',
+          transform: [
+            { translateX: indicatorAnim },
+            { scaleX: 2 },
+          ],
+        }}
+      />
 
       {/* Tab bar content */}
       <View style={{ flexDirection: 'row', alignItems: 'center', height: TAB_HEIGHT }}>

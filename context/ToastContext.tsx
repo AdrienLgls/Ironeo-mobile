@@ -51,20 +51,20 @@ function ToastItem({
   onClose: (id: number) => void;
 }) {
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-20)).current;
+  const translateY = useRef(new Animated.Value(-60)).current;
   const config = TOAST_CONFIG[item.type];
 
   React.useEffect(() => {
     Animated.parallel([
       Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-      Animated.spring(translateY, { toValue: 0, tension: 100, friction: 10, useNativeDriver: true }),
+      Animated.spring(translateY, { toValue: 0, damping: 30, stiffness: 300, useNativeDriver: true }),
     ]).start();
   }, [opacity, translateY]);
 
   const handleClose = () => {
     Animated.parallel([
-      Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }),
-      Animated.timing(translateY, { toValue: -20, duration: 150, useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
+      Animated.timing(translateY, { toValue: -60, duration: 200, useNativeDriver: true }),
     ]).start(() => onClose(item.id));
   };
 

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useMemo, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import type { ActiveSessionInfo, FollowedProgram } from '../../services/userService';
 
 function getGreeting(): string {
@@ -72,6 +72,17 @@ export default function HeroCard({
   const firstName = userName.split(' ')[0];
   const xpPercent = Math.min(Math.round((xp / xpToNextLevel) * 100), 100);
 
+  const xpAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(xpAnim, {
+      toValue: xpPercent,
+      duration: 800,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      useNativeDriver: false,
+    }).start();
+  }, [xpAnim, xpPercent]);
+
   const userState = useMemo<UserState>(() => {
     if (activeSession) return 'active-session';
     if (workoutCompleted) return 'workout-completed';
@@ -128,10 +139,13 @@ export default function HeroCard({
           <Text className="text-accent text-caption font-body">{xpPercent}%</Text>
         </View>
         <View style={{ height: 4, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
-          <View
+          <Animated.View
             style={{
               height: '100%',
-              width: `${xpPercent}%`,
+              width: xpAnim.interpolate({
+                inputRange: [0, 100],
+                outputRange: ['0%', '100%'],
+              }),
               backgroundColor: '#EFBF04',
               borderRadius: 2,
               shadowColor: '#EFBF04',

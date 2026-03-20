@@ -117,8 +117,8 @@ export default function ParcoursDetailScreen({
         />
       ) : (
         detail.articles.map((article, index) => (
+          <View key={article.id} style={{ position: 'relative', marginBottom: 10 }}>
           <TouchableOpacity
-            key={article.id}
             activeOpacity={article.isLocked ? 1 : 0.7}
             onPress={() => {
               if (!article.isLocked) {
@@ -129,11 +129,11 @@ export default function ParcoursDetailScreen({
               backgroundColor: 'rgba(255,255,255,0.04)',
               borderRadius: 12,
               padding: 14,
-              marginBottom: 10,
               flexDirection: 'row',
               alignItems: 'center',
               gap: 12,
               opacity: article.isLocked ? 0.5 : 1,
+              overflow: 'hidden',
             }}
           >
             {/* Order number */}
@@ -167,7 +167,24 @@ export default function ParcoursDetailScreen({
 
             {/* Status badge */}
             <ArticleStatusBadge article={article} />
+            {/* Locked fade overlay */}
+            {article.isLocked && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 32,
+                  backgroundColor: 'rgba(18,18,18,0.6)',
+                  borderBottomLeftRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              />
+            )}
           </TouchableOpacity>
+          </View>
         ))
       )}
     </ScrollView>

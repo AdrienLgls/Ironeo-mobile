@@ -37,17 +37,36 @@ interface PendingConfirm {
 export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   const [pending, setPending] = useState<PendingConfirm | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.95)).current;
+  const translateY = useRef(new Animated.Value(20)).current;
 
   const confirm = useCallback((options: ConfirmOptions): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
+      opacity.setValue(0);
+      scale.setValue(0.95);
+      translateY.setValue(20);
       setPending({ options, resolve });
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 180,
-        useNativeDriver: true,
-      }).start();
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scale, {
+          toValue: 1,
+          damping: 25,
+          stiffness: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(translateY, {
+          toValue: 0,
+          damping: 25,
+          stiffness: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
     });
-  }, [opacity]);
+  }, [opacity, scale, translateY]);
 
   const handleResolve = useCallback(
     (value: boolean) => {
@@ -77,7 +96,12 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
         onRequestClose={() => handleResolve(false)}
       >
         <Animated.View style={[styles.overlay, { opacity }]}>
-          <View style={styles.card}>
+          <Animated.View
+            style={[
+              styles.card,
+              { transform: [{ scale }, { translateY }] },
+            ]}
+          >
             <Text style={styles.title}>{pending?.options.title}</Text>
             <Text style={styles.message}>{pending?.options.message}</Text>
             <View style={styles.actions}>
@@ -108,7 +132,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </Animated.View>
         </Animated.View>
       </Modal>
     </ConfirmContext.Provider>

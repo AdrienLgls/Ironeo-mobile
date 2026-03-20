@@ -37,6 +37,8 @@ export function ShareCardStats({
 
   return (
     <View style={statsStyles.card}>
+      {/* Radial glow background — simulates radial-gradient(circle, gold/6% 0%, transparent 70%) */}
+      <View style={statsStyles.radialGlow} pointerEvents="none" />
       <Text style={statsStyles.logo}>IRONEO</Text>
 
       <View style={statsStyles.userBlock}>
@@ -73,6 +75,8 @@ export function ShareCardStats({
 export function ShareCardPR({ exerciseName, weight, reps, date }: ShareCardPRProps) {
   return (
     <View style={prStyles.card}>
+      {/* Radial glow background — simulates radial-gradient(circle, gold/12% 0%, transparent 70%) */}
+      <View style={prStyles.radialGlow} pointerEvents="none" />
       <Text style={prStyles.trophy}>🏆</Text>
       <Text style={prStyles.label}>NOUVEAU RECORD</Text>
       <Text style={prStyles.exerciseName}>{exerciseName}</Text>
@@ -130,6 +134,17 @@ const statsStyles = StyleSheet.create({
     borderRadius: 20,
     padding: 28,
     justifyContent: 'space-between',
+    overflow: 'hidden',
+  },
+  radialGlow: {
+    position: 'absolute',
+    width: CARD_W * 0.8,
+    height: CARD_W * 0.8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(239,191,4,0.08)',
+    top: '10%',
+    left: '10%',
+    transform: [{ scaleX: 1.5 }],
   },
   logo: {
     fontFamily: 'Quilon-Medium',
@@ -200,6 +215,17 @@ const prStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
+    overflow: 'hidden',
+  },
+  radialGlow: {
+    position: 'absolute',
+    width: CARD_W * 0.8,
+    height: CARD_W * 0.8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(239,191,4,0.10)',
+    top: '10%',
+    left: '10%',
+    transform: [{ scaleX: 1.5 }],
   },
   trophy: {
     fontSize: 72,
@@ -258,14 +284,17 @@ const achStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+    overflow: 'hidden',
   },
   glowCircle: {
     position: 'absolute',
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(239,191,4,0.08)',
-    top: CARD_H / 2 - 100,
+    width: CARD_W * 0.8,
+    height: CARD_W * 0.8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(239,191,4,0.10)',
+    top: '10%',
+    left: '10%',
+    transform: [{ scaleX: 1.5 }],
   },
   badgeEmoji: {
     fontSize: 64,

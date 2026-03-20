@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   useWindowDimensions,
+  Animated,
+  Easing,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RenderHtml from 'react-native-render-html';
@@ -67,6 +69,32 @@ interface ProgressionTabProps {
   mastered: MasteredArticle[];
   stats: { totalRead: number; avgScore: number; streak: number } | null;
   onNavigate: (articleId: string) => void;
+}
+
+function ArticleProgressBar({ percent }: { percent: number }) {
+  const widthAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(widthAnim, {
+      toValue: percent,
+      duration: 800,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      useNativeDriver: false,
+    }).start();
+  }, [widthAnim, percent]);
+
+  return (
+    <View style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 10 }}>
+      <Animated.View
+        style={{
+          height: 3,
+          width: widthAnim.interpolate({ inputRange: [0, 100], outputRange: ['0%', '100%'] }),
+          backgroundColor: '#EFBF04',
+          borderRadius: 2,
+        }}
+      />
+    </View>
+  );
 }
 
 function ProgressionTab({ dueReviews, inProgress, mastered, stats, onNavigate }: ProgressionTabProps) {
@@ -165,9 +193,7 @@ function ProgressionTab({ dueReviews, inProgress, mastered, stats, onNavigate }:
                 <CategoryBadge category={article.category} />
               </View>
               {article.progressPercent !== undefined && (
-                <View style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 10 }}>
-                  <View style={{ height: 3, width: `${article.progressPercent}%`, backgroundColor: '#EFBF04', borderRadius: 2 }} />
-                </View>
+                <ArticleProgressBar percent={article.progressPercent} />
               )}
               <Text style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>Continuer →</Text>
             </TouchableOpacity>

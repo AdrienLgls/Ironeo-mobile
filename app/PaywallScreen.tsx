@@ -72,8 +72,22 @@ export default function PaywallScreen() {
         return (
           <View
             key={plan.id}
-            className={`rounded-2xl p-4 mb-3 border ${isCurrent ? 'border-accent bg-accent/10' : 'border-white/[0.08] bg-white/[0.04]'}`}
+            className={`rounded-2xl mb-3 border overflow-hidden ${isCurrent ? 'border-accent bg-accent/10' : 'border-white/[0.08] bg-white/[0.04]'}`}
           >
+            {/* Card highlight gradient — top glow */}
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 48,
+                backgroundColor: isCurrent ? 'rgba(239,191,4,0.10)' : 'rgba(239,191,4,0.06)',
+                opacity: 0.8,
+              }}
+              pointerEvents="none"
+            />
+            <View className="p-4">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-white text-base font-bold">{plan.name}</Text>
               {isCurrent && (
@@ -99,6 +113,7 @@ export default function PaywallScreen() {
                 <Text className="text-black font-bold text-sm">Upgrade to {plan.name}</Text>
               </TouchableOpacity>
             )}
+            </View>
           </View>
         );
       })}

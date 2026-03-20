@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Modal,
   Animated,
+  Easing,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -284,6 +285,18 @@ export default function PostSessionScreen({ route, navigation }: Props) {
     ? Math.round((stats.completedSets / stats.totalSets) * 100)
     : 0;
 
+  const completionAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (saving) return;
+    Animated.timing(completionAnim, {
+      toValue: completionRate,
+      duration: 800,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+      useNativeDriver: false,
+    }).start();
+  }, [completionAnim, completionRate, saving]);
+
   if (saving) {
     return (
       <View style={[styles.container, { paddingTop: insets.top + 32 }]}>
@@ -349,7 +362,17 @@ export default function PostSessionScreen({ route, navigation }: Props) {
               <Text style={styles.completionPct}>{completionRate}%</Text>
             </View>
             <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${completionRate}%` as unknown as number }]} />
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: completionAnim.interpolate({
+                      inputRange: [0, 100],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
+                ]}
+              />
             </View>
           </View>
 
