@@ -19,3 +19,82 @@ export async function getNextWorkout(): Promise<NextWorkout | null> {
     return null;
   }
 }
+
+export interface FollowedProgram {
+  _id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+  sessionsPerWeek?: number;
+  level?: string;
+}
+
+export interface DueReview {
+  _id: string;
+  articleId: string;
+  slug?: string;
+  title?: string;
+  dueDate: string;
+}
+
+export interface ActiveSessionInfo {
+  _id: string;
+  programId?: string;
+  programName?: string;
+  exerciseCount?: number;
+  startedAt: string;
+  status: string;
+}
+
+export interface PointsData {
+  totalXP: number;
+  level: number;
+  xpToNextLevel: number;
+  currentLevelXP: number;
+  rank?: string;
+}
+
+export async function getFollowedPrograms(): Promise<FollowedProgram[]> {
+  try {
+    const { data } = await api.get<FollowedProgram[]>('/programs/user/followed');
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getDueReviews(): Promise<DueReview[]> {
+  try {
+    const { data } = await api.get<{ reviews: DueReview[] }>('/quiz/reviews/due');
+    return data?.reviews || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getActiveSession(): Promise<ActiveSessionInfo | null> {
+  try {
+    const { data } = await api.get<ActiveSessionInfo>('/sessions/active');
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPoints(): Promise<PointsData | null> {
+  try {
+    const { data } = await api.get<PointsData>('/points/me');
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getTodaySession(): Promise<{ completed: boolean; programName?: string } | null> {
+  try {
+    const { data } = await api.get<{ completed: boolean; programName?: string }>('/sessions/today');
+    return data || null;
+  } catch {
+    return null;
+  }
+}

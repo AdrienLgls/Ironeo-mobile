@@ -40,3 +40,48 @@ export async function getWorkoutSessions(): Promise<WorkoutSession[]> {
   const { data } = await api.get<WorkoutSession[]>('/workout-sessions');
   return data;
 }
+
+export interface WeeklyStats {
+  weekStart: string;
+  totalVolume?: number;
+  sessions?: number;
+}
+
+export interface PersonalRecord {
+  exerciseId: string;
+  weight: number;
+  reps: number;
+  date: string;
+}
+
+export async function getVolumeStats(weeks = 12): Promise<WeeklyStats[]> {
+  try {
+    const { data } = await api.get<WeeklyStats[]>(`/stats/volume?weeks=${weeks}`);
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getSessionsStats(weeks = 12): Promise<WeeklyStats[]> {
+  try {
+    const { data } = await api.get<WeeklyStats[]>(`/stats/sessions?weeks=${weeks}`);
+    return data || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getPersonalRecord(exerciseId: string): Promise<PersonalRecord | null> {
+  try {
+    const { data } = await api.get<PersonalRecord>(`/exercises/${exerciseId}/personal-record`);
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getSessionById(id: string): Promise<WorkoutSession & { exercises?: unknown[] }> {
+  const { data } = await api.get<WorkoutSession & { exercises?: unknown[] }>(`/workout-sessions/${id}`);
+  return data;
+}

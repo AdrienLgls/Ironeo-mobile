@@ -1,0 +1,214 @@
+{
+  "branchName": "feat/03-audit-and-fix",
+  "webSourcePath": "Ironeo/frontend",
+  "mobileSourcePath": "Ironeo-mobile",
+  "description": "Audit et correction complète — chaque écran doit être IDENTIQUE au web en termes de design, data et fonctionnalités.",
+  "telegramBot": "8274734924:AAE-QYV40GCrRQpUS963R6uZ5sdeABK9RZc",
+  "telegramChatId": "8601364512",
+  "userStories": [
+    {
+      "id": "US-301",
+      "title": "HeroCard — 5 états contextuels (active-session/workout-completed/workout-day/rest-day/new-user)",
+      "acceptanceCriteria": [
+        "État active-session: gradient orange, bouton Reprendre",
+        "État workout-completed: gradient emerald, bouton Réviser quiz ou Continuer apprendre",
+        "État workout-day: gradient gold, bouton Démarrer la séance",
+        "État rest-day: gradient indigo, bouton quiz ou Apprendre, demain session si dispo",
+        "État new-user: gradient subtle, CTAs Programmes + Séance libre",
+        "API: GET /sessions/active → detecter si session en cours",
+        "API: GET /programs/user/followed → detecter si abonné à un programme",
+        "API: GET /quiz/reviews/due → count des quiz à réviser",
+        "API: GET /sessions/today → detecter si séance déjà faite aujourd'hui",
+        "Composant HeroCard mis à jour avec props: activeSession, workoutCompleted, todaySession, dueReviews, followedPrograms",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(hero): US-301 HeroCard context-aware 5 états"
+      ],
+      "priority": 1,
+      "passes": false,
+      "webSource": "frontend/src/components/dashboard/HeroCard.jsx"
+    },
+    {
+      "id": "US-302",
+      "title": "Dashboard HomeScreen — données enrichies (followed programs, due reviews, active session)",
+      "acceptanceCriteria": [
+        "HomeScreen charge: /programs/user/followed, /quiz/reviews/due, /sessions/active, /sessions?limit=1&status=Completed en parallèle",
+        "Passe ces données à HeroCard",
+        "Affiche le nombre de quiz à réviser si > 0 (badge sur tab Learn ou dans HeroCard)",
+        "XPProgressBar: barre XP avec niveau actuel, XP actuel, XP suivant — data depuis /points/me",
+        "StreakChain: utilise les vraies données de session (dates des séances récentes)",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(dashboard): US-302 HomeScreen données enrichies"
+      ],
+      "priority": 2,
+      "passes": false,
+      "webSource": "frontend/src/components/Dashboard.jsx"
+    },
+    {
+      "id": "US-303",
+      "title": "WorkoutScreen — onglet Méthode + charts dans Historique",
+      "acceptanceCriteria": [
+        "4ème onglet 'Méthode' ajouté: explique périodisation, rotation de cycles, tracking des PRs (texte + icônes)",
+        "Onglet 'Historique' affiche VolumeAreaChart et SessionsBarChart avec données réelles",
+        "API: GET /stats/volume?weeks=12 → données pour VolumeAreaChart",
+        "API: GET /stats/sessions?weeks=12 → données pour SessionsBarChart",
+        "Charts affichent ghost state quand pas assez de data (< 2 semaines)",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(workout): US-303 onglet Méthode + charts historique"
+      ],
+      "priority": 3,
+      "passes": false,
+      "webSource": "frontend/src/pages/Programs.jsx"
+    },
+    {
+      "id": "US-304",
+      "title": "ProgramCard + ExerciseCard — styling riche matching web",
+      "acceptanceCriteria": [
+        "ProgramCard: fond bg-white/[0.04] avec gradient subtil, badge difficulté coloré, durée séances, nombre sessions, icône play",
+        "ProgramCard web: rounded-2xl, padding px-5 py-4, hover bg-white/[0.06]",
+        "ExerciseGridCard: image de couverture (si dispo), badge muscle principal en couleur, badge difficulté (débutant=vert, intermédiaire=ambre, avancé=rouge), équipement requis",
+        "Session cards in history: date formatée, durée, volume total, nombre de sets",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(cards): US-304 ProgramCard + ExerciseCard styling riche"
+      ],
+      "priority": 4,
+      "passes": false,
+      "webSource": "frontend/src/components/workout/ProgramCard.jsx"
+    },
+    {
+      "id": "US-305",
+      "title": "ActiveSession — RPE échelle, volume running total, PR detection",
+      "acceptanceCriteria": [
+        "SetRow: RPE buttons déjà présents → vérifier qu'ils sont bien envoyés dans la donnée de set",
+        "Header de session: affiche volume total actuel (kg × reps, running sum) pendant la séance",
+        "Header: durée de la séance en temps réel (chrono depuis début)",
+        "Quand un set est complété: détecte si PR (poids > dernier max pour cet exercice) → affiche badge PR doré",
+        "API: GET /exercises/:id/personal-record → récupère le PR actuel pour comparaison",
+        "Note field par exercice (not per set — une note pour l'exercice entier)",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(session): US-305 ActiveSession RPE + volume + PR detection"
+      ],
+      "priority": 5,
+      "passes": false,
+      "webSource": "frontend/src/pages/WorkoutSession.jsx"
+    },
+    {
+      "id": "US-306",
+      "title": "LearnScreen — onglet 'Ma Progression' (in-progress, mastered, due reviews)",
+      "acceptanceCriteria": [
+        "3ème onglet 'Progression' ajouté avec: articles en cours, articles maîtrisés, quiz à réviser",
+        "API: GET /articles/user/in-progress → articles en cours de lecture",
+        "API: GET /articles/user/mastered → articles complétés avec score > seuil",
+        "API: GET /quiz/reviews/due → quiz SRS à réviser avec dates",
+        "Section quiz: affiche chaque quiz à réviser avec le nom de l'article parent",
+        "Section stats: nombre total articles lus, score moyen quiz, streak d'apprentissage",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(learn): US-306 onglet Progression + SRS reviews"
+      ],
+      "priority": 6,
+      "passes": false,
+      "webSource": "frontend/src/pages/Articles.jsx"
+    },
+    {
+      "id": "US-307",
+      "title": "ArticleDetail — rendu HTML riche (paragraphes, code, images, listes)",
+      "acceptanceCriteria": [
+        "Installe react-native-render-html (si pas déjà installé)",
+        "ArticleDetail: utilise RenderHtml pour parser le HTML content des articles",
+        "Styles custom: headings en Quilon-Medium, body en Rowan-Regular, code blocks bg-white/[0.06]",
+        "Images dans l'article: rendues avec dimensions max=screenWidth-32",
+        "Bouton quiz disponible en bas si article a un quiz associé",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(learn): US-307 ArticleDetail rendu HTML riche"
+      ],
+      "priority": 7,
+      "passes": false,
+      "webSource": "frontend/src/pages/Article.jsx"
+    },
+    {
+      "id": "US-308",
+      "title": "ExercisesScreen — search bar avec debounce + filtres équipement",
+      "acceptanceCriteria": [
+        "Search bar en haut: input texte avec icône loupe, debounce 300ms",
+        "Filtre catégorie existant → garder",
+        "Ajouter filtre équipement: Tous, Haltères, Barre, Machine, Poids corps, Élastique",
+        "Recherche côté client (filtre le tableau existant) ou API /exercises?search=...&equipment=...",
+        "EmptyState quand aucun résultat",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(exercises): US-308 search + filtre équipement"
+      ],
+      "priority": 8,
+      "passes": false,
+      "webSource": "frontend/src/pages/Programs.jsx (exercises tab)"
+    },
+    {
+      "id": "US-309",
+      "title": "PostSession screen — récap complet (volume, sets, RPE moyen, PRs)",
+      "acceptanceCriteria": [
+        "PostSessionScreen (déjà existant) affiche: volume total en kg, nombre de sets complétés, durée totale, RPE moyen",
+        "Section PRs: liste les nouveaux records personnels avec exercice + poids",
+        "Section par exercice: volume par exercice (exercice = sets × poids × reps)",
+        "Bouton 'Voir l'historique' navigue vers HistoryScreen",
+        "Bouton 'Retour accueil' navigue vers Home",
+        "Animation d'entrée (FadeInUp staggered)",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(session): US-309 PostSession récap complet"
+      ],
+      "priority": 9,
+      "passes": false,
+      "webSource": "frontend/src/pages/WorkoutSession.jsx (post-session state)"
+    },
+    {
+      "id": "US-310",
+      "title": "Services API — vérification complète des endpoints",
+      "acceptanceCriteria": [
+        "userService.ts: ajouter getFollowedPrograms() → GET /programs/user/followed",
+        "userService.ts: ajouter getDueReviews() → GET /quiz/reviews/due",
+        "userService.ts: ajouter getActiveSession() → GET /sessions/active",
+        "userService.ts: ajouter getPoints() → GET /points/me",
+        "workoutService.ts: ajouter getStats(weeks) → GET /stats/volume + /stats/sessions",
+        "workoutService.ts: ajouter getPersonalRecord(exerciseId) → GET /exercises/:id/personal-record",
+        "learnService.ts: ajouter getInProgressArticles() → GET /articles/user/in-progress",
+        "learnService.ts: ajouter getMasteredArticles() → GET /articles/user/mastered",
+        "Tous les services gèrent les erreurs avec .catch(() => null)",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(api): US-310 services API complets"
+      ],
+      "priority": 10,
+      "passes": false,
+      "webSource": "frontend/src/api/axios.js"
+    },
+    {
+      "id": "US-311",
+      "title": "HistoryScreen — détail de session + SessionDetail screen",
+      "acceptanceCriteria": [
+        "HistoryScreen: chaque session affiche durée, volume total, exercices (noms)",
+        "Tap sur une session → SessionDetailScreen",
+        "SessionDetailScreen: liste par exercice avec sets (poids × reps, RPE), total volume, durée",
+        "API: GET /sessions/:id → détail complet de la session",
+        "Navigation correcte depuis HistoryScreen",
+        "TypeScript compile sans erreurs",
+        "Commit: feat(history): US-311 SessionDetail screen"
+      ],
+      "priority": 11,
+      "passes": false,
+      "webSource": "frontend/src/pages/SessionDetail.jsx"
+    },
+    {
+      "id": "US-312",
+      "title": "Polish final — accessibilité, cohérence typo, safe areas, tsc clean",
+      "acceptanceCriteria": [
+        "Tous les écrans utilisent Quilon-Medium pour les titres (h1-h4 equivalents)",
+        "Tous les body text utilisent Rowan-Regular",
+        "Pas de console.log restants",
+        "tsc --noEmit: zero erreurs",
+        "Tous les commits poussés sur feat/03-audit-and-fix",
+        "progress.txt mis à jour avec toutes les stories",
+        "Telegram message COMPLETE envoyé",
+        "Commit: feat(polish): US-312 polish final typo + tsc clean"
+      ],
+      "priority": 12,
+      "passes": false,
+      "webSource": "global"
+    }
+  ]
+}

@@ -324,7 +324,7 @@
         "Git commit with all changes"
       ],
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/index.css — safe areas, scrollbar-hide",
       "notes": "Global polish pass. Check every screen. Fix inconsistencies. This is the final story before COMPLETE."
     }
