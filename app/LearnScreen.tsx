@@ -10,8 +10,12 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { getArticles, getArticleById, getQuizById } from '../services/learnService';
+import { getArticles, getArticleById, getQuizById, getInProgressArticles, getMasteredArticles, getLearnStats } from '../services/learnService';
+import type { InProgressArticle, MasteredArticle } from '../services/learnService';
+import { getDueReviews } from '../services/userService';
+import type { DueReview } from '../services/userService';
 import ArticleCard from '../components/learn/ArticleCard';
+import HubTabNavigation from '../components/ui/HubTabNavigation';
 import type { Article, Quiz, QuizQuestion } from '../types/learn';
 
 export type LearnStackParamList = {
@@ -24,6 +28,181 @@ const Stack = createNativeStackNavigator<LearnStackParamList>();
 
 const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie'] as const;
 
+const HUB_TABS = [
+  { id: 'articles', label: 'Articles' },
+  { id: 'progression', label: 'Progression' },
+];
+
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' });
+  } catch {
+    return iso;
+  }
+}
+
+function CategoryBadge({ category }: { category?: string }) {
+  if (!category) return null;
+  return (
+    <View style={{ backgroundColor: 'rgba(239,191,4,0.15)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
+      <Text style={{ color: '#EFBF04', fontSize: 11, fontFamily: 'Rowan-Regular', textTransform: 'capitalize' }}>
+        {category}
+      </Text>
+    </View>
+  );
+}
+
+interface ProgressionTabProps {
+  dueReviews: DueReview[];
+  inProgress: InProgressArticle[];
+  mastered: MasteredArticle[];
+  stats: { totalRead: number; avgScore: number; streak: number } | null;
+  onNavigate: (articleId: string) => void;
+}
+
+function ProgressionTab({ dueReviews, inProgress, mastered, stats, onNavigate }: ProgressionTabProps) {
+  return (
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}>
+      {/* Stats banner */}
+      {stats !== null && (
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          backgroundColor: 'rgba(255,255,255,0.04)',
+          borderRadius: 12,
+          padding: 14,
+          marginBottom: 20,
+        }}>
+          <View style={{ alignItems: 'center', flex: 1 }}>
+            <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 16 }}>{stats.totalRead}</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Rowan-Regular', fontSize: 11, marginTop: 2 }}>articles lus</Text>
+          </View>
+          <View style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.08)' }} />
+          <View style={{ alignItems: 'center', flex: 1 }}>
+            <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 16 }}>{stats.avgScore}%</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Rowan-Regular', fontSize: 11, marginTop: 2 }}>score moyen</Text>
+          </View>
+          <View style={{ width: 1, backgroundColor: 'rgba(255,255,255,0.08)' }} />
+          <View style={{ alignItems: 'center', flex: 1 }}>
+            <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 16 }}>{stats.streak}j</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Rowan-Regular', fontSize: 11, marginTop: 2 }}>streak</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Quiz à réviser */}
+      {dueReviews.length > 0 && (
+        <View style={{ marginBottom: 24 }}>
+          <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 13, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 12, opacity: 0.7 }}>
+            Quiz à réviser
+          </Text>
+          {dueReviews.map((review) => (
+            <TouchableOpacity
+              key={review._id}
+              activeOpacity={0.75}
+              onPress={() => onNavigate(review.articleId)}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                borderRadius: 12,
+                padding: 14,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 14, marginBottom: 6 }}>
+                📝 {review.title ?? review.articleId}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <Text style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                  Dû : {formatDate(review.dueDate)}
+                </Text>
+                {review.slug !== undefined && <CategoryBadge category={review.slug} />}
+              </View>
+              <View style={{
+                backgroundColor: '#EFBF04',
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                alignSelf: 'flex-start',
+              }}>
+                <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 12 }}>Réviser →</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* En cours */}
+      {inProgress.length > 0 && (
+        <View style={{ marginBottom: 24 }}>
+          <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 13, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 12, opacity: 0.7 }}>
+            En cours
+          </Text>
+          {inProgress.map((article) => (
+            <TouchableOpacity
+              key={article._id}
+              activeOpacity={0.75}
+              onPress={() => onNavigate(article._id)}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                borderRadius: 12,
+                padding: 14,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 14, marginBottom: 6 }}>
+                📖 {article.title}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <CategoryBadge category={article.category} />
+              </View>
+              {article.progressPercent !== undefined && (
+                <View style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 2, marginBottom: 10 }}>
+                  <View style={{ height: 3, width: `${article.progressPercent}%`, backgroundColor: '#EFBF04', borderRadius: 2 }} />
+                </View>
+              )}
+              <Text style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>Continuer →</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Maîtrisés */}
+      <View style={{ marginBottom: 8 }}>
+        <Text style={{ color: '#fafafa', fontFamily: 'Quilon-Medium', fontSize: 13, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 12, opacity: 0.7 }}>
+          Maîtrisés
+        </Text>
+        {mastered.length === 0 ? (
+          <Text style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Rowan-Regular', fontSize: 13, textAlign: 'center', marginTop: 8 }}>
+            Aucun article maîtrisé pour l'instant
+          </Text>
+        ) : (
+          mastered.map((article) => (
+            <TouchableOpacity
+              key={article._id}
+              activeOpacity={0.75}
+              onPress={() => onNavigate(article._id)}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                borderRadius: 12,
+                padding: 14,
+                marginBottom: 10,
+              }}
+            >
+              <Text style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'Quilon-Medium', fontSize: 14, marginBottom: 4 }}>
+                ✓ {article.title}
+              </Text>
+              <Text style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Rowan-Regular', fontSize: 12 }}>
+                Maîtrisé : {formatDate(article.masteredAt)}
+                {article.bestScore !== undefined ? `  ·  Score : ${article.bestScore}%` : ''}
+              </Text>
+            </TouchableOpacity>
+          ))
+        )}
+      </View>
+    </ScrollView>
+  );
+}
+
 function ArticlesListScreen({
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'ArticlesList'>) {
@@ -33,14 +212,30 @@ function ArticlesListScreen({
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('articles');
+
+  const [dueReviews, setDueReviews] = useState<DueReview[]>([]);
+  const [inProgress, setInProgress] = useState<InProgressArticle[]>([]);
+  const [mastered, setMastered] = useState<MasteredArticle[]>([]);
+  const [learnStats, setLearnStats] = useState<{ totalRead: number; avgScore: number; streak: number } | null>(null);
 
   useEffect(() => {
-    getArticles()
-      .then((data) => {
-        setArticles(data);
-        setFiltered(data);
+    Promise.all([
+      getArticles(),
+      getDueReviews(),
+      getInProgressArticles(),
+      getMasteredArticles(),
+      getLearnStats(),
+    ])
+      .then(([arts, reviews, inProg, mast, stats]) => {
+        setArticles(arts);
+        setFiltered(arts);
+        setDueReviews(reviews);
+        setInProgress(inProg);
+        setMastered(mast);
+        setLearnStats(stats);
       })
-      .catch(() => setError('Unable to load articles'))
+      .catch(() => setError('Unable to load data'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -62,16 +257,19 @@ function ArticlesListScreen({
 
   return (
     <View className="flex-1 bg-background">
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={{ paddingTop: insets.top + 16 }}>
-            <Text className="text-white text-h2 font-heading mb-4">Apprendre</Text>
+      {/* Header + tabs */}
+      <View style={{ paddingTop: insets.top + 16, paddingHorizontal: 16 }}>
+        <Text className="text-white text-h2 font-heading mb-4">Apprendre</Text>
+        <HubTabNavigation tabs={HUB_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
+      </View>
 
-            {/* Category filter pills */}
+      {activeTab === 'articles' ? (
+        <FlatList
+          data={filtered}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 {CATEGORIES.map((cat) => {
@@ -100,22 +298,30 @@ function ArticlesListScreen({
                 })}
               </View>
             </ScrollView>
-          </View>
-        }
-        ListEmptyComponent={
-          <View>
-            <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-              {error ?? 'Aucun article disponible'}
-            </Text>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <ArticleCard
-            article={item}
-            onPress={() => navigation.navigate('ArticleDetail', { articleId: item.id })}
-          />
-        )}
-      />
+          }
+          ListEmptyComponent={
+            <View>
+              <Text className="text-white/40 text-body-sm font-body text-center mt-8">
+                {error ?? 'Aucun article disponible'}
+              </Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <ArticleCard
+              article={item}
+              onPress={() => navigation.navigate('ArticleDetail', { articleId: item.id })}
+            />
+          )}
+        />
+      ) : (
+        <ProgressionTab
+          dueReviews={dueReviews}
+          inProgress={inProgress}
+          mastered={mastered}
+          stats={learnStats}
+          onNavigate={(articleId) => navigation.navigate('ArticleDetail', { articleId })}
+        />
+      )}
     </View>
   );
 }
