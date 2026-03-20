@@ -6,14 +6,39 @@ module.exports = {
     extend: {
       colors: {
         background: '#121212',
+        foreground: '#fafafa',
+        primary: {
+          DEFAULT: '#EFBF04',
+          foreground: '#0a0a0a',
+        },
         accent: '#EFBF04',
+        secondary: {
+          DEFAULT: '#1e1e1e',
+          foreground: '#fafafa',
+        },
+        muted: {
+          DEFAULT: '#1e1e1e',
+          foreground: '#a0a0a0',
+        },
+        border: 'rgba(212, 175, 55, 0.15)',
+        gold: {
+          vivid: '#EFBF04',
+          medium: '#D4A804',
+          pale: '#F5D54A',
+          dark: '#B8920A',
+          bg: '#FDF2CC',
+        },
+        // flat aliases for convenience
         'gold-vivid': '#EFBF04',
         'gold-medium': '#D4A804',
         'gold-pale': '#F5D54A',
         'gold-dark': '#B8920A',
         'gold-bg': '#FDF2CC',
-        secondary: '#1e1e1e',
-        muted: '#a0a0a0',
+        recovery: {
+          recovering: '#C49600',
+          almost: '#8B9A3F',
+          ready: '#5C8A5C',
+        },
         recovering: '#C49600',
         almost: '#8B9A3F',
         ready: '#5C8A5C',
@@ -39,7 +64,43 @@ module.exports = {
         'caption-sm': ['12.80px', { lineHeight: '1.65', letterSpacing: '0.03em', fontWeight: '300' }],
         overline: ['12.11px', { lineHeight: '1.65', letterSpacing: '0.03em', fontWeight: '500' }],
       },
+      boxShadow: {
+        glow: '0 0 20px rgba(212, 175, 55, 0.3)',
+        'glow-lg': '0 0 40px rgba(212, 175, 55, 0.4)',
+        card: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)',
+      },
+      borderRadius: {
+        lg: 10,
+        xl: 12,
+        '2xl': 16,
+        '3xl': 24,
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.card-primary': {
+          backgroundColor: 'rgba(255, 255, 255, 0.02)',
+          borderRadius: 16,
+        },
+        '.card-secondary': {
+          backgroundColor: 'rgba(255, 255, 255, 0.04)',
+          borderRadius: 12,
+        },
+        '.btn-primary': {
+          backgroundColor: '#EFBF04',
+          paddingHorizontal: 24,
+          paddingVertical: 12,
+          borderRadius: 8,
+        },
+        '.btn-secondary': {
+          backgroundColor: 'rgba(255, 255, 255, 0.06)',
+          paddingHorizontal: 24,
+          paddingVertical: 12,
+          borderRadius: 8,
+        },
+      });
+    },
+  ],
 };

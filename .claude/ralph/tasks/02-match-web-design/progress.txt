@@ -25,3 +25,18 @@ Goal: Reproduire EXACTEMENT le design du site Ironeo web dans l'app React Native
 
 ---
 
+## 2026-03-20 - US-202: Typography scale exact — letter-spacing, line-height, sizes
+- Files created/modified: tailwind.config.js (added h6), 17 screen/component files
+- Patterns importants: 
+  - Screen titles → text-h2 font-heading (25px Quilon)
+  - Branding "Ironeo" → text-h1 font-heading (31.25px Quilon)
+  - Stat numbers → text-h2 font-heading
+  - Quiz/section heading → text-h6 font-heading (17.89px)
+  - Card titles → text-body font-heading (16px Quilon)
+  - Body text → text-body-sm font-body (15.13px Rowan)
+  - Captions → text-caption font-body (13.53px Rowan)
+  - Overlines → text-overline font-body uppercase (12.11px Rowan)
+  - Buttons → text-body font-heading (Quilon for CTAs)
+  - Avatar initials → text-h4 font-heading (20px Quilon)
+- Composant web source → équivalent RN: tailwind.config.js fontSize → tailwind.config.js fontSize + NativeWind classes applied across all screens
+---

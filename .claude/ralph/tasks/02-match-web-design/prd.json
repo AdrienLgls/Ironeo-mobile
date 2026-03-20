@@ -22,7 +22,7 @@
     },
     {
       "id": "US-202",
-      "title": "Typography scale exact \u2014 letter-spacing, line-height, sizes",
+      "title": "Typography scale exact — letter-spacing, line-height, sizes",
       "acceptanceCriteria": [
         "tailwind.config.js updated with exact type scale from web (h1: 31.25px, h2: 25px, h3: 22.36px, body: 16px, caption: 13.53px, overline: 12.11px)",
         "Letter-spacing classes added: tracking-tight (0.015em), tracking-normal (0.02em), tracking-wide (0.03em)",
@@ -31,13 +31,13 @@
         "TypeScript compiles without errors"
       ],
       "priority": 2,
-      "passes": false,
-      "webSource": "frontend/tailwind.config.js \u2014 typography section",
+      "passes": true,
+      "webSource": "frontend/tailwind.config.js — typography section",
       "notes": "Read tailwind.config.js from web. Match EXACTLY. NativeWind supports custom fontSize/lineHeight/letterSpacing in tailwind.config.js extend."
     },
     {
       "id": "US-203",
-      "title": "Design tokens \u2014 card patterns, glow shadow, buttons",
+      "title": "Design tokens — card patterns, glow shadow, buttons",
       "acceptanceCriteria": [
         "tailwind.config.js updated with: card-primary (bg-white/[0.02] rounded-2xl), card-secondary (bg-white/[0.04] rounded-xl)",
         "Gold glow shadow defined: boxShadow '0 0 20px rgba(212,175,55,0.3)'",
@@ -49,17 +49,17 @@
       ],
       "priority": 3,
       "passes": false,
-      "webSource": "frontend/tailwind.config.js \u2014 colors, shadows, components layer",
+      "webSource": "frontend/tailwind.config.js — colors, shadows, components layer",
       "notes": "Read tailwind.config.js colors + index.css component layer. Shadows in RN use elevation on Android and shadowColor/shadowRadius on iOS. NativeWind v4 supports custom box-shadow."
     },
     {
       "id": "US-204",
-      "title": "Bottom nav \u2014 5 items avec indicateur gold anim\u00e9",
+      "title": "Bottom nav — 5 items avec indicateur gold animé",
       "acceptanceCriteria": [
         "TabNavigator updated from 4 to 5 items: Home, Workout, + (FAB center), Learn, Profile",
         "Center FAB (+ button): gold circle, elevated, navigates to a session start screen",
         "Active tab indicator: animated gold gradient underline (like web BottomNav)",
-        "Tab icons updated to match web: Home=\ud83c\udfe0, Workout=\ud83d\udcaa, Learn=\ud83d\udcda, Social/Profile=\ud83d\udc64",
+        "Tab icons updated to match web: Home=🏠, Workout=💪, Learn=📚, Social/Profile=👤",
         "Tab bar height: 60px minimum with safe area padding",
         "Gold tint on active icon",
         "TypeScript compiles"
@@ -71,7 +71,7 @@
     },
     {
       "id": "US-205",
-      "title": "HomeScreen \u2014 HeroCard avec greeting contextuel et XP bar",
+      "title": "HomeScreen — HeroCard avec greeting contextuel et XP bar",
       "acceptanceCriteria": [
         "HeroCard component: greeting changes by time of day (Bonjour/Bonsoir/Bonne nuit)",
         "User name displayed (from GET /users/me)",
@@ -88,7 +88,7 @@
     },
     {
       "id": "US-206",
-      "title": "HomeScreen \u2014 StreakChain anim\u00e9e",
+      "title": "HomeScreen — StreakChain animée",
       "acceptanceCriteria": [
         "StreakChain component: 7 circles for each day of week",
         "Completed days: gold fill with checkmark",
@@ -105,9 +105,9 @@
     },
     {
       "id": "US-207",
-      "title": "HomeScreen \u2014 WeeklyProgressRings (volume, sessions, intensit\u00e9)",
+      "title": "HomeScreen — WeeklyProgressRings (volume, sessions, intensité)",
       "acceptanceCriteria": [
-        "3 circular progress rings: Volume, Sessions, Intensit\u00e9",
+        "3 circular progress rings: Volume, Sessions, Intensité",
         "Each ring: gold arc on dark circle background",
         "Percentage and value label in center",
         "Data from GET /users/stats",
@@ -121,11 +121,11 @@
     },
     {
       "id": "US-208",
-      "title": "ActiveSessionScreen \u2014 redesign fid\u00e8le au web (SetRow, RPE, poids)",
+      "title": "ActiveSessionScreen — redesign fidèle au web (SetRow, RPE, poids)",
       "acceptanceCriteria": [
         "Each set has: weight input, reps input, RPE selector (1-10), complete checkbox",
         "Completed set: strikethrough + gold checkmark",
-        "PR indicator badge (\u26a1 PR) when applicable",
+        "PR indicator badge (⚡ PR) when applicable",
         "Add set / remove set buttons",
         "Exercise name in Quilon font, large",
         "Set type badge: Warmup / Working / Drop Set",
@@ -139,7 +139,7 @@
     },
     {
       "id": "US-209",
-      "title": "RestTimer \u2014 cercle SVG anim\u00e9 (comme RestTimerCircle.jsx du web)",
+      "title": "RestTimer — cercle SVG animé (comme RestTimerCircle.jsx du web)",
       "acceptanceCriteria": [
         "Circular timer: SVG arc that shrinks as time passes (strokeDashoffset animation)",
         "Gold arc on dark circle",
@@ -156,7 +156,7 @@
     },
     {
       "id": "US-210",
-      "title": "WorkoutScreen \u2014 Hub tabs (Programmes / Exercices / Historique)",
+      "title": "WorkoutScreen — Hub tabs (Programmes / Exercices / Historique)",
       "acceptanceCriteria": [
         "WorkoutScreen shows 3 tabs: Programmes, Exercices, Historique",
         "Tabs use same visual as web HubTabNavigation: underline indicator gold animated",
@@ -172,7 +172,7 @@
     },
     {
       "id": "US-211",
-      "title": "ExercisesScreen \u2014 cards avec images, badges cat\u00e9gorie, difficult\u00e9",
+      "title": "ExercisesScreen — cards avec images, badges catégorie, difficulté",
       "acceptanceCriteria": [
         "Exercise card: image (from exercise.imageUrl), name in Quilon, category badge (gold/20 bg), difficulty badge",
         "Muscle group chips: colored by muscle group",
@@ -188,22 +188,22 @@
     },
     {
       "id": "US-212",
-      "title": "LearnScreen \u2014 ArticleCard avec image et ParcoursCard avec progress ring",
+      "title": "LearnScreen — ArticleCard avec image et ParcoursCard avec progress ring",
       "acceptanceCriteria": [
         "ArticleCard: cover image (full width), category badge (colored), title in Quilon, read time",
         "ParcoursCard: thumbnail image, title, modules count, progress ring (SVG circle)",
-        "Category filter pills: Tous, Technique, Nutrition, Mentalit\u00e9, Anatomie",
+        "Category filter pills: Tous, Technique, Nutrition, Mentalité, Anatomie",
         "Matches web ArticleCard.jsx + ParcoursCard.jsx visual",
         "TypeScript compiles"
       ],
       "priority": 12,
       "passes": false,
       "webSource": "frontend/src/components/ArticleCard.jsx + ParcoursCard.jsx",
-      "notes": "Read both files. Articles/parcours from GET /articles and GET /parcours. Category color map: Technique=blue, Nutrition=green, Mentalit\u00e9=purple, Anatomie=red."
+      "notes": "Read both files. Articles/parcours from GET /articles and GET /parcours. Category color map: Technique=blue, Nutrition=green, Mentalité=purple, Anatomie=red."
     },
     {
       "id": "US-213",
-      "title": "ProfileScreen \u2014 stats, level badge, ActivityHeatmap",
+      "title": "ProfileScreen — stats, level badge, ActivityHeatmap",
       "acceptanceCriteria": [
         "Profile hero: large avatar (initials fallback), name in Quilon, level badge gold",
         "Stats grid: total workouts, current streak, PRs count, XP total",
@@ -218,7 +218,7 @@
     },
     {
       "id": "US-214",
-      "title": "Skeleton loading \u2014 shimmer sur tous les \u00e9crans",
+      "title": "Skeleton loading — shimmer sur tous les écrans",
       "acceptanceCriteria": [
         "SkeletonBox component: animated shimmer (Animated.loop LinearGradient or opacity pulse)",
         "SkeletonText component: lines of varying width",
@@ -229,11 +229,11 @@
       "priority": 14,
       "passes": false,
       "webSource": "frontend/src/components/ui/Skeleton.jsx + SkeletonPatterns.jsx",
-      "notes": "Read Skeleton.jsx. Use Animated.loop with interpolate opacity 0.3\u21920.7\u21920.3. Or use react-native-linear-gradient for shimmer. Create components/ui/Skeleton.tsx."
+      "notes": "Read Skeleton.jsx. Use Animated.loop with interpolate opacity 0.3→0.7→0.3. Or use react-native-linear-gradient for shimmer. Create components/ui/Skeleton.tsx."
     },
     {
       "id": "US-215",
-      "title": "Toast notifications \u2014 style identique au web (useToast hook)",
+      "title": "Toast notifications — style identique au web (useToast hook)",
       "acceptanceCriteria": [
         "ToastContext with useToast() hook: .success(), .error(), .info(), .loading()",
         "Toast UI: dark bg (white/[0.08]), icon colored (green/red/blue/gold), slide-in from top",
@@ -249,7 +249,7 @@
     },
     {
       "id": "US-216",
-      "title": "EmptyState component \u2014 identique au web",
+      "title": "EmptyState component — identique au web",
       "acceptanceCriteria": [
         "EmptyState component: icon (large, centered), title in Quilon, description in Rowan, optional CTA button",
         "Props: icon (string emoji or component), title, description, cta?: { label, onPress }",
@@ -264,7 +264,7 @@
     },
     {
       "id": "US-217",
-      "title": "Workout \u2014 PlateCalculator (calculateur de disques)",
+      "title": "Workout — PlateCalculator (calculateur de disques)",
       "acceptanceCriteria": [
         "PlateCalculator component: input a target weight, shows which plates to add each side",
         "Barbell weight selector (20kg default)",
@@ -280,7 +280,7 @@
     },
     {
       "id": "US-218",
-      "title": "Charts \u2014 Historique avec VolumeAreaChart et SessionsBarChart",
+      "title": "Charts — Historique avec VolumeAreaChart et SessionsBarChart",
       "acceptanceCriteria": [
         "HistoryScreen shows charts section: Volume par semaine (area chart), Sessions par semaine (bar chart)",
         "Install victory-native or react-native-chart-kit",
@@ -296,11 +296,11 @@
     },
     {
       "id": "US-219",
-      "title": "Animations \u2014 fadeInUp, scaleIn sur les cartes et transitions",
+      "title": "Animations — fadeInUp, scaleIn sur les cartes et transitions",
       "acceptanceCriteria": [
-        "FadeIn wrapper component using Animated.timing (opacity 0\u21921, translateY 20\u21920)",
+        "FadeIn wrapper component using Animated.timing (opacity 0→1, translateY 20→0)",
         "Applied on card lists (staggered delay per item index)",
-        "ScaleIn for modals and dialogs (scale 0.9\u21921)",
+        "ScaleIn for modals and dialogs (scale 0.9→1)",
         "Respects reduced motion preference (no animation if enabled)",
         "Matches web Framer Motion animations (visual equivalent)",
         "TypeScript compiles"
@@ -312,7 +312,7 @@
     },
     {
       "id": "US-220",
-      "title": "Polish final \u2014 grain texture, safe areas, scroll behaviors",
+      "title": "Polish final — grain texture, safe areas, scroll behaviors",
       "acceptanceCriteria": [
         "useSafeAreaInsets applied on all screens (replace pt-12 manual padding)",
         "Scrollbar hidden on all ScrollViews",
@@ -325,7 +325,7 @@
       ],
       "priority": 20,
       "passes": false,
-      "webSource": "frontend/src/index.css \u2014 safe areas, scrollbar-hide",
+      "webSource": "frontend/src/index.css — safe areas, scrollbar-hide",
       "notes": "Global polish pass. Check every screen. Fix inconsistencies. This is the final story before COMPLETE."
     }
   ]
