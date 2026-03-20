@@ -182,7 +182,7 @@
         "TypeScript compiles"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/ExerciseCard.jsx",
       "notes": "Read ExerciseCard.jsx from web root components. Add imageUrl to Exercise type if missing. Use Image component with fallback. Grid with numColumns={2} in FlatList."
     },

@@ -10,6 +10,7 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { getArticles, getArticleById, getQuizById } from '../services/learnService';
+import ArticleCard from '../components/learn/ArticleCard';
 import type { Article, Quiz, QuizQuestion } from '../types/learn';
 
 export type LearnStackParamList = {
@@ -20,19 +21,34 @@ export type LearnStackParamList = {
 
 const Stack = createNativeStackNavigator<LearnStackParamList>();
 
+const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie'] as const;
+
 function ArticlesListScreen({
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'ArticlesList'>) {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [filtered, setFiltered] = useState<Article[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>('Tous');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getArticles()
-      .then(setArticles)
+      .then((data) => {
+        setArticles(data);
+        setFiltered(data);
+      })
       .catch(() => setError('Unable to load articles'))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (activeCategory === 'Tous') {
+      setFiltered(articles);
+    } else {
+      setFiltered(articles.filter((a) => a.category.toLowerCase() === activeCategory.toLowerCase()));
+    }
+  }, [activeCategory, articles]);
 
   if (loading) {
     return (
@@ -45,36 +61,57 @@ function ArticlesListScreen({
   return (
     <View className="flex-1 bg-background">
       <FlatList
-        data={articles}
+        data={filtered}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="px-4 pb-6"
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <Text className="text-white text-h2 font-heading pt-12 mb-6">Learn</Text>
+          <View style={{ paddingTop: 48 }}>
+            <Text className="text-white text-h2 font-heading mb-4">Apprendre</Text>
+
+            {/* Category filter pills */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 16 }}>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                {CATEGORIES.map((cat) => {
+                  const isActive = activeCategory === cat;
+                  return (
+                    <TouchableOpacity
+                      key={cat}
+                      onPress={() => setActiveCategory(cat)}
+                      activeOpacity={0.7}
+                      style={{
+                        paddingHorizontal: 14,
+                        paddingVertical: 7,
+                        borderRadius: 20,
+                        backgroundColor: isActive ? '#EFBF04' : 'rgba(255,255,255,0.08)',
+                      }}
+                    >
+                      <Text style={{
+                        color: isActive ? '#000' : 'rgba(255,255,255,0.6)',
+                        fontFamily: 'Rowan-Regular',
+                        fontSize: 13,
+                      }}>
+                        {cat}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </View>
         }
         ListEmptyComponent={
-          <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-            {error ?? 'No articles available'}
-          </Text>
+          <View>
+            <Text className="text-white/40 text-body-sm font-body text-center mt-8">
+              {error ?? 'Aucun article disponible'}
+            </Text>
+          </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <ArticleCard
+            article={item}
             onPress={() => navigation.navigate('ArticleDetail', { articleId: item.id })}
-            className="bg-white/[0.04] rounded-2xl p-4 mb-3"
-          >
-            <View className="flex-row items-start justify-between mb-2">
-              <View className="bg-accent/20 rounded-full px-2 py-0.5">
-                <Text className="text-accent text-caption font-body capitalize">{item.category}</Text>
-              </View>
-              <Text className="text-white/30 text-caption font-body">{item.readTimeMinutes} min</Text>
-            </View>
-            <Text className="text-white text-body-sm font-heading leading-snug">{item.title}</Text>
-            {item.summary != null && (
-              <Text className="text-white/40 text-caption font-body mt-1" numberOfLines={2}>
-                {item.summary}
-              </Text>
-            )}
-          </TouchableOpacity>
+          />
         )}
       />
     </View>
@@ -116,22 +153,22 @@ function ArticleDetailScreen({
   return (
     <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
 
       <View className="flex-row items-center gap-3 mb-3">
         <View className="bg-accent/20 rounded-full px-2 py-0.5">
           <Text className="text-accent text-caption font-body capitalize">{article.category}</Text>
         </View>
-        <Text className="text-white/30 text-caption font-body">{article.readTimeMinutes} min read</Text>
+        <Text className="text-white/30 text-caption font-body">{article.readTimeMinutes} min de lecture</Text>
       </View>
 
-      <Text className="text-white text-h2 font-heading mb-6 leading-tight">{article.title}</Text>
+      <Text className="text-white text-h2 font-heading mb-6">{article.title}</Text>
 
       {article.content != null ? (
-        <Text className="text-white/70 text-body-sm font-body leading-relaxed">{article.content}</Text>
+        <Text className="text-white/70 text-body-sm font-body">{article.content}</Text>
       ) : (
-        <Text className="text-white/30 text-body-sm font-body italic">Content unavailable</Text>
+        <Text className="text-white/30 text-body-sm font-body italic">Contenu indisponible</Text>
       )}
     </ScrollView>
   );
@@ -183,16 +220,16 @@ function QuizScreen({
     return (
       <View className="flex-1 bg-background items-center justify-center px-6">
         <Text className="text-5xl mb-4">🎯</Text>
-        <Text className="text-white text-h2 font-heading mb-2">Quiz complete!</Text>
+        <Text className="text-white text-h2 font-heading mb-2">Quiz terminé !</Text>
         <Text className="text-white/50 text-body-sm font-body mb-8">
-          {score} / {quiz.questions.length} correct
+          {score} / {quiz.questions.length} bonnes réponses
         </Text>
         <TouchableOpacity
           className="bg-accent rounded-2xl py-4 w-full items-center"
           activeOpacity={0.8}
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-black text-body font-heading">Back to articles</Text>
+          <Text className="text-background text-body font-heading">Retour aux articles</Text>
         </TouchableOpacity>
       </View>
     );
@@ -201,13 +238,13 @@ function QuizScreen({
   return (
     <View className="flex-1 bg-background px-4 pt-12">
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
 
       <Text className="text-white/40 text-caption font-body mb-2">
-        Question {currentIndex + 1} of {quiz.questions.length}
+        Question {currentIndex + 1} / {quiz.questions.length}
       </Text>
-      <Text className="text-white text-h6 font-heading mb-6 leading-snug">{question.text}</Text>
+      <Text className="text-white text-h6 font-heading mb-6">{question.text}</Text>
 
       <View className="gap-3">
         {question.options.map((option, idx) => (
@@ -234,7 +271,7 @@ function QuizScreen({
           activeOpacity={0.8}
           onPress={handleNext}
         >
-          <Text className="text-black text-body font-heading">{isLast ? 'Finish' : 'Next'}</Text>
+          <Text className="text-background text-body font-heading">{isLast ? 'Terminer' : 'Suivant'}</Text>
         </TouchableOpacity>
       )}
     </View>

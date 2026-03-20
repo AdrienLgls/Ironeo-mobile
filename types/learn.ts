@@ -3,8 +3,18 @@ export interface Article {
   title: string;
   category: string;
   readTimeMinutes: number;
+  imageUrl?: string;
   content?: string;
   summary?: string;
+}
+
+export interface Parcours {
+  id: string;
+  title: string;
+  category: string;
+  imageUrl?: string;
+  articlesCount: number;
+  progressPercent?: number;
 }
 
 export interface Quiz {
