@@ -53,7 +53,7 @@
         "TypeScript compiles"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Create ProgressWidget component. Use accent color #EFBF04 for progress bar."
     },
     {

@@ -40,3 +40,11 @@ Feature: 01-react-native-migration
 - Éviter `cat >>` pour les services — utiliser Read + Edit pour garder les imports propres
 
 ---
+
+## 2026-03-20 - US-004: Weight/goals progress widget
+- Fichiers : components/home/ProgressWidget.tsx (créé), app/HomeScreen.tsx (modifié)
+- Retourne null si pas de données weight → pas de widget vide affiché
+- Progress bar : View avec style={{ width: `${pct}%` }} (style dynamique inline ok pour %)
+- Utiliser python3 -c pour modifier HomeScreen quand Edit échoue (file-not-read issue)
+
+---
