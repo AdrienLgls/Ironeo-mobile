@@ -243,7 +243,7 @@
         "TypeScript compiles"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/context/ToastContext.jsx",
       "notes": "Read ToastContext.jsx. Use Animated.timing for slide-in. Render toasts in a fixed position overlay (top-safe-area). Create context/ToastContext.tsx and hooks/useToast.ts."
     },
