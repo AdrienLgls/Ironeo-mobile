@@ -1,0 +1,303 @@
+{
+  "branchName": "feat/01-react-native-migration",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Home screen stats header (streak + workouts this week)",
+      "acceptanceCriteria": [
+        "HomeScreen.tsx created at app/screens/HomeScreen.tsx",
+        "Displays streak count from GET /api/users/stats",
+        "Displays workouts this week count",
+        "NativeWind styles, bg #121212, accent #EFBF04",
+        "Loading state with ActivityIndicator",
+        "TypeScript compiles without errors"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Use axios instance from services/api.ts. Follow pattern from existing screens."
+    },
+    {
+      "id": "US-002",
+      "title": "Home screen last session widget",
+      "acceptanceCriteria": [
+        "Widget shows last workout session (name, date, duration)",
+        "Calls GET /api/workouts/recent",
+        "Shows 'No recent workout' state if empty",
+        "Tappable → navigates to workout detail (placeholder for now)",
+        "TypeScript compiles"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Create a RecentSessionCard component in components/home/"
+    },
+    {
+      "id": "US-003",
+      "title": "Home screen next workout widget",
+      "acceptanceCriteria": [
+        "Widget shows next scheduled workout if any",
+        "Calls GET /api/programs/next or similar endpoint",
+        "Shows 'Start a workout' CTA if nothing scheduled",
+        "TypeScript compiles"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Create NextWorkoutCard component in components/home/"
+    },
+    {
+      "id": "US-004",
+      "title": "Home screen weight/goals progress widget",
+      "acceptanceCriteria": [
+        "Widget shows current weight vs goal weight",
+        "Progress bar with NativeWind",
+        "Calls GET /api/users/stats",
+        "TypeScript compiles"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Create ProgressWidget component. Use accent color #EFBF04 for progress bar."
+    },
+    {
+      "id": "US-005",
+      "title": "Programs list screen",
+      "acceptanceCriteria": [
+        "WorkoutScreen shows list of programs",
+        "Calls GET /api/programs",
+        "Each card: program name, days/week, duration",
+        "Tappable → navigates to ProgramDetailScreen",
+        "Loading + empty states",
+        "TypeScript compiles"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Create app/screens/WorkoutScreen.tsx and app/screens/ProgramDetailScreen.tsx"
+    },
+    {
+      "id": "US-006",
+      "title": "Program detail screen with exercises",
+      "acceptanceCriteria": [
+        "ProgramDetailScreen shows program info + list of exercises per day",
+        "Calls GET /api/programs/:id",
+        "Start Session button → navigates to ActiveSessionScreen",
+        "TypeScript compiles"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Group exercises by day. Create ExerciseCard component."
+    },
+    {
+      "id": "US-007",
+      "title": "Active workout session screen (without timer)",
+      "acceptanceCriteria": [
+        "ActiveSessionScreen shows current exercise, sets, reps",
+        "Mark set as done button",
+        "Navigate to next exercise",
+        "POST /api/workout-sessions to create session",
+        "PATCH to update as exercises completed",
+        "TypeScript compiles"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "This is the core workout screen. Timer added separately in US-008."
+    },
+    {
+      "id": "US-008",
+      "title": "Rest timer in active session (countdown per set)",
+      "acceptanceCriteria": [
+        "Countdown timer starts automatically after completing a set",
+        "Configurable rest duration (from program data)",
+        "Visual countdown with NativeWind progress indicator",
+        "Skip rest button",
+        "Timer runs correctly, no drift",
+        "TypeScript compiles"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": "Use React state + useEffect for local timer first. Foreground service added in US-009."
+    },
+    {
+      "id": "US-009",
+      "title": "Foreground notification with active timer",
+      "acceptanceCriteria": [
+        "expo-notifications installed and configured",
+        "expo-task-manager installed and configured",
+        "When session is active, persistent notification shows current exercise + timer",
+        "Notification updates every second",
+        "Notification has Stop button",
+        "Works in background (Android foreground service)",
+        "TypeScript compiles"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "CRITICAL FEATURE. Use expo-task-manager defineTask + expo-notifications. Check context7 docs for Expo Notifications and Task Manager before implementing. Requires expo-dev-client (not Expo Go)."
+    },
+    {
+      "id": "US-010",
+      "title": "Session summary screen",
+      "acceptanceCriteria": [
+        "PostSessionScreen shows: duration, exercises completed, sets done, PRs",
+        "Save session button → PATCH /api/workout-sessions/:id with completion",
+        "Share button (optional, can be placeholder)",
+        "Return to Home button",
+        "TypeScript compiles"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": "Create app/screens/PostSessionScreen.tsx"
+    },
+    {
+      "id": "US-011",
+      "title": "Exercises catalog screen",
+      "acceptanceCriteria": [
+        "ExercisesScreen shows list of all exercises",
+        "Calls GET /api/exercises",
+        "Search bar to filter by name",
+        "TypeScript compiles"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Create app/screens/ExercisesScreen.tsx"
+    },
+    {
+      "id": "US-012",
+      "title": "Exercise filter by muscle group",
+      "acceptanceCriteria": [
+        "Filter chips for muscle groups (chest, back, legs, arms, shoulders, core)",
+        "Filters the exercises list reactively",
+        "Can combine with search",
+        "TypeScript compiles"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Add filter state to ExercisesScreen or custom useExerciseFilter hook"
+    },
+    {
+      "id": "US-013",
+      "title": "Exercise detail screen",
+      "acceptanceCriteria": [
+        "ExerciseDetailScreen shows: name, muscle groups, instructions, tips",
+        "Calls GET /api/exercises/:id",
+        "TypeScript compiles"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "Create app/screens/ExerciseDetailScreen.tsx"
+    },
+    {
+      "id": "US-014",
+      "title": "Workout history screen",
+      "acceptanceCriteria": [
+        "HistoryScreen shows past workout sessions",
+        "Calls GET /api/workout-sessions",
+        "Each item: date, program, duration",
+        "Tappable → session detail",
+        "TypeScript compiles"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "Create app/screens/HistoryScreen.tsx. Add to Workout tab or Profile tab."
+    },
+    {
+      "id": "US-015",
+      "title": "Articles list screen (Learn tab)",
+      "acceptanceCriteria": [
+        "LearnScreen shows list of articles",
+        "Calls GET /api/articles",
+        "Each card: title, category, read time",
+        "TypeScript compiles"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "Create app/screens/LearnScreen.tsx"
+    },
+    {
+      "id": "US-016",
+      "title": "Article reader screen",
+      "acceptanceCriteria": [
+        "ArticleScreen renders article content",
+        "Calls GET /api/articles/:id",
+        "Scrollable content with proper typography",
+        "TypeScript compiles"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Use ScrollView. Content may be HTML/markdown — use a RN markdown renderer if needed."
+    },
+    {
+      "id": "US-017",
+      "title": "Quiz screen",
+      "acceptanceCriteria": [
+        "QuizScreen shows quiz questions one by one",
+        "Calls GET /api/quizzes/:id",
+        "Multiple choice answers",
+        "Shows score at end",
+        "TypeScript compiles"
+      ],
+      "priority": 17,
+      "passes": false,
+      "notes": "Create app/screens/QuizScreen.tsx"
+    },
+    {
+      "id": "US-018",
+      "title": "Profile screen",
+      "acceptanceCriteria": [
+        "ProfileScreen shows user info (name, avatar, subscription status)",
+        "Calls GET /api/users/me",
+        "Edit profile button → EditProfileScreen",
+        "TypeScript compiles"
+      ],
+      "priority": 18,
+      "passes": false,
+      "notes": "Create app/screens/ProfileScreen.tsx"
+    },
+    {
+      "id": "US-019",
+      "title": "Edit profile screen",
+      "acceptanceCriteria": [
+        "EditProfileScreen has form: name, weight, height, goal",
+        "PATCH /api/users/me on save",
+        "Success toast on save",
+        "TypeScript compiles"
+      ],
+      "priority": 19,
+      "passes": false,
+      "notes": "Reuse form pattern from Register screen"
+    },
+    {
+      "id": "US-020",
+      "title": "Notification settings screen",
+      "acceptanceCriteria": [
+        "NotificationSettingsScreen has toggles: workout reminders, rest day reminders",
+        "Saves to backend PATCH /api/users/notifications",
+        "TypeScript compiles"
+      ],
+      "priority": 20,
+      "passes": false,
+      "notes": "Create app/screens/NotificationSettingsScreen.tsx"
+    },
+    {
+      "id": "US-021",
+      "title": "Settings screen (logout + app info)",
+      "acceptanceCriteria": [
+        "SettingsScreen has: logout button, app version, account deletion option",
+        "Logout clears JWT from SecureStore and redirects to AuthNavigator",
+        "TypeScript compiles"
+      ],
+      "priority": 21,
+      "passes": false,
+      "notes": "Create app/screens/SettingsScreen.tsx. Use AuthContext to trigger logout."
+    },
+    {
+      "id": "US-022",
+      "title": "LemonSqueezy subscription WebView",
+      "acceptanceCriteria": [
+        "PaywallScreen shows subscription plans (Free / Premium / Premium+)",
+        "Tapping a plan opens WebView with LemonSqueezy checkout URL",
+        "On WebView close, refresh subscription status from GET /api/users/me",
+        "TypeScript compiles"
+      ],
+      "priority": 22,
+      "passes": false,
+      "notes": "Use react-native-webview. Checkout URLs from backend config. Plans: Free, 6.99€/mois Premium, 12.99€/mois Premium+."
+    }
+  ]
+}

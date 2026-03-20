@@ -1,0 +1,34 @@
+# Ralph Progress Log
+Started: 2026-03-19
+Feature: 01-react-native-migration
+
+## Codebase Patterns
+
+- Screens vivent dans `app/` (pas de sous-dossier `screens/`)
+- TabNavigator importe depuis `./ScreenName` (relatif à app/)
+- Types dans `types/` — un fichier par domaine (auth.ts, user.ts...)
+- Services dans `services/` — pattern : `const { data } = await api.get<Type>('/endpoint'); return data`
+- NativeWind : `bg-background` (#121212), `text-accent` (#EFBF04), `bg-white/[0.05]` pour surfaces
+- ScrollView avec `contentContainerClassName` pour le padding interne
+- État local : useState + useEffect dans le screen
+- Pattern erreur : `.catch(() => setError('message')).finally(() => setLoading(false))`
+
+---
+
+## 2026-03-19 - US-001: Home screen stats header
+- Fichiers : app/HomeScreen.tsx (modifié), types/user.ts (créé), services/userService.ts (créé)
+- Stats : streak, workoutsThisWeek, totalWorkouts depuis GET /users/stats
+- Loading avec ActivityIndicator color="#EFBF04"
+
+---
+
+
+## 2026-03-19 - US-002: Last session widget
+- Fichiers : components/home/RecentSessionCard.tsx (créé), app/HomeScreen.tsx (modifié)
+- Pattern composant : `interface Props { session: T; onPress: () => void }` 
+- Promise.all pour fetch parallèle de plusieurs endpoints au mount
+- Composants dans `components/<domaine>/ComponentName.tsx`
+- formatDate helper local dans le fichier composant (pas de lib externe)
+- Empty state : `bg-white/[0.03]` pour contraste léger
+
+---

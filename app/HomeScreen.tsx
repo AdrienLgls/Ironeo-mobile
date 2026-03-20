@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
-import { getUserStats, getRecentSessions } from '../services/userService';
+import { getUserStats, getRecentSessions, getNextWorkout } from '../services/userService';
 import RecentSessionCard from '../components/home/RecentSessionCard';
-import type { UserStats, RecentSession } from '../types/user';
+import NextWorkoutCard from '../components/home/NextWorkoutCard';
+import type { UserStats, RecentSession, NextWorkout } from '../types/user';
 
 export default function HomeScreen() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [recentSession, setRecentSession] = useState<RecentSession | null>(null);
+  const [nextWorkout, setNextWorkout] = useState<NextWorkout | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getUserStats(), getRecentSessions()])
-      .then(([statsData, sessions]) => {
+    Promise.all([getUserStats(), getRecentSessions(), getNextWorkout()])
+      .then(([statsData, sessions, next]) => {
         setStats(statsData);
         setRecentSession(sessions[0] ?? null);
+        setNextWorkout(next);
       })
       .catch(() => setError('Unable to load stats'))
       .finally(() => setLoading(false));
@@ -47,6 +50,10 @@ export default function HomeScreen() {
             <Text className="text-white/60 text-xs mt-1">Total</Text>
           </View>
         </View>
+      )}
+
+      {!loading && (
+        <NextWorkoutCard nextWorkout={nextWorkout} onStart={() => undefined} />
       )}
 
       {!loading && recentSession && (

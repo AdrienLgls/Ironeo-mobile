@@ -12,3 +12,8 @@ export interface RecentSession {
   date: string;
   durationMinutes: number;
 }
+
+export interface NextWorkout {
+  programName: string;
+  dayLabel: string;
+}
