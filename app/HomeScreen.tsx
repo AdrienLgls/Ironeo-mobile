@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
 import { getUserStats, getRecentSessions, getNextWorkout } from '../services/userService';
 import RecentSessionCard from '../components/home/RecentSessionCard';
 import NextWorkoutCard from '../components/home/NextWorkoutCard';
+import ProgressWidget from '../components/home/ProgressWidget';
 import type { UserStats, RecentSession, NextWorkout } from '../types/user';
 
 export default function HomeScreen() {
@@ -50,6 +51,10 @@ export default function HomeScreen() {
             <Text className="text-white/60 text-xs mt-1">Total</Text>
           </View>
         </View>
+      )}
+
+      {!loading && stats && (
+        <ProgressWidget currentWeight={stats.currentWeight} goalWeight={stats.goalWeight} />
       )}
 
       {!loading && (

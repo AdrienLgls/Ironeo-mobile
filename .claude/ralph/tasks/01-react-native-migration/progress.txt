@@ -32,3 +32,11 @@ Feature: 01-react-native-migration
 - Empty state : `bg-white/[0.03]` pour contraste léger
 
 ---
+
+## 2026-03-20 - US-003: Next workout widget
+- Fichiers : components/home/NextWorkoutCard.tsx (créé), types/user.ts (NextWorkout ajouté), services/userService.ts (getNextWorkout), app/HomeScreen.tsx (modifié)
+- getNextWorkout retourne null si 404/erreur (try/catch silencieux — normal si pas de prochain workout)
+- NextWorkoutCard affiche un CTA "Go" même si pas de workout planifié
+- Éviter `cat >>` pour les services — utiliser Read + Edit pour garder les imports propres
+
+---

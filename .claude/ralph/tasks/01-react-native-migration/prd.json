@@ -40,7 +40,7 @@
         "TypeScript compiles"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Create NextWorkoutCard component in components/home/"
     },
     {
