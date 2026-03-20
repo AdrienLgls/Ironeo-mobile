@@ -115,7 +115,7 @@
         "TypeScript compiles"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "webSource": "frontend/src/components/dashboard/WeeklyProgressRing.jsx + ProgressRings.jsx",
       "notes": "Read WeeklyProgressRing.jsx. Use react-native-svg Svg+Circle with strokeDashoffset for the arc. Install react-native-svg if not present."
     },

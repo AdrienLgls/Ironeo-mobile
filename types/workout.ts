@@ -15,9 +15,13 @@ export interface Exercise {
   tips?: string;
 }
 
+export type SetType = 'Normal' | 'Warmup' | 'Dropset';
+
 export interface WorkoutSet {
   reps: number;
   weight?: number;
+  rpe?: number;
+  type?: SetType;
   durationSeconds?: number;
   completed: boolean;
 }
