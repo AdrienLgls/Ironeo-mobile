@@ -37,3 +37,21 @@ export interface WorkoutSession {
   durationMinutes?: number;
   exercises: SessionExercise[];
 }
+
+export interface ProgramExercise {
+  exerciseId: string;
+  exerciseName: string;
+  sets: number;
+  reps: number | string;
+  restSeconds?: number;
+}
+
+export interface ProgramDay {
+  dayNumber: number;
+  label: string;
+  exercises: ProgramExercise[];
+}
+
+export interface ProgramDetail extends Program {
+  days: ProgramDay[];
+}

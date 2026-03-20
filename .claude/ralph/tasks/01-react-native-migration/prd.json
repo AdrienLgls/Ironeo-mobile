@@ -68,7 +68,7 @@
         "TypeScript compiles"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Create app/screens/WorkoutScreen.tsx and app/screens/ProgramDetailScreen.tsx"
     },
     {

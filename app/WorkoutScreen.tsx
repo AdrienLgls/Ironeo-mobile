@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ProgramCard from '../components/workout/ProgramCard';
-import { getPrograms } from '../services/workoutService';
-import type { Program } from '../types/workout';
+import ExerciseCard from '../components/workout/ExerciseCard';
+import { getPrograms, getProgramDetail } from '../services/workoutService';
+import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
 
 export type WorkoutStackParamList = {
   ProgramsList: undefined;
@@ -59,11 +61,68 @@ function ProgramsListScreen({ navigation }: { navigation: { navigate: (screen: s
   );
 }
 
-function ProgramDetailPlaceholder() {
+type ProgramDetailProps = NativeStackScreenProps<WorkoutStackParamList, 'ProgramDetail'>;
+
+function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
+  const { programId } = route.params;
+  const [program, setProgram] = useState<ProgramDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getProgramDetail(programId)
+      .then(setProgram)
+      .catch(() => setError('Unable to load program'))
+      .finally(() => setLoading(false));
+  }, [programId]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-background items-center justify-center">
+        <ActivityIndicator color="#EFBF04" size="large" />
+      </View>
+    );
+  }
+
+  if (error || !program) {
+    return (
+      <View className="flex-1 bg-background items-center justify-center">
+        <Text className="text-red-400 text-sm">{error ?? 'Program not found'}</Text>
+      </View>
+    );
+  }
+
   return (
-    <View className="flex-1 bg-background items-center justify-center">
-      <Text className="text-white/40">Program detail — coming soon</Text>
-    </View>
+    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-6">
+      <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
+        <Text className="text-accent text-sm">← Back</Text>
+      </TouchableOpacity>
+
+      <Text className="text-white text-2xl font-bold mb-1">{program.name}</Text>
+      <Text className="text-white/40 text-xs mb-6">
+        {program.daysPerWeek}×/week · {program.durationWeeks} weeks
+      </Text>
+
+      {program.days.map((day: ProgramDay) => (
+        <View key={day.dayNumber} className="mb-6">
+          <Text className="text-accent text-xs font-semibold uppercase tracking-wider mb-2">
+            {day.label}
+          </Text>
+          <View className="bg-white/[0.04] rounded-2xl px-4">
+            {day.exercises.map((ex, idx) => (
+              <ExerciseCard key={ex.exerciseId} exercise={ex} index={idx} />
+            ))}
+          </View>
+        </View>
+      ))}
+
+      <TouchableOpacity
+        className="bg-accent rounded-2xl py-4 items-center mt-2"
+        activeOpacity={0.8}
+      >
+        <Text className="text-black font-bold text-base">Start Session</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -71,7 +130,7 @@ export default function WorkoutScreen() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProgramsList" component={ProgramsListScreen} />
-      <Stack.Screen name="ProgramDetail" component={ProgramDetailPlaceholder} />
+      <Stack.Screen name="ProgramDetail" component={ProgramDetailScreen} />
     </Stack.Navigator>
   );
 }

@@ -30,3 +30,8 @@ export async function updateWorkoutSession(id: string, updates: Partial<WorkoutS
   const { data } = await api.patch<WorkoutSession>(`/workout-sessions/${id}`, updates);
   return data;
 }
+
+export async function getProgramDetail(id: string): Promise<import('../types/workout').ProgramDetail> {
+  const { data } = await api.get<import('../types/workout').ProgramDetail>(`/programs/${id}`);
+  return data;
+}

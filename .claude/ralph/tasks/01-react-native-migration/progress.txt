@@ -48,3 +48,13 @@ Feature: 01-react-native-migration
 - Utiliser python3 -c pour modifier HomeScreen quand Edit échoue (file-not-read issue)
 
 ---
+
+## 2026-03-20 - US-005: Programs list screen
+- Fichiers : app/WorkoutScreen.tsx (réécrit), types/workout.ts (créé), services/workoutService.ts (créé), components/workout/ProgramCard.tsx (créé)
+- WorkoutScreen contient un Stack.Navigator (ProgramsList + ProgramDetail placeholder)
+- FlatList avec ListHeaderComponent pour le titre
+- ListEmptyComponent gère erreur ET état vide
+- Utiliser `cat > file << 'ENDOFFILE'` quand Write échoue (file-not-read-yet)
+- Types workout : Program, Exercise, WorkoutSet, SessionExercise, WorkoutSession
+
+---
