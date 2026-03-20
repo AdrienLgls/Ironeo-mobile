@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
@@ -14,6 +15,7 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
 };
 
 export default function ActiveSessionScreen({ navigation, program }: Props) {
+  const insets = useSafeAreaInsets();
   const { state, startSession, completeSet, currentExercise, currentSet, progress, completedSets, totalSets } =
     useWorkoutSession(program);
   const [showRestTimer, setShowRestTimer] = useState(false);
@@ -48,7 +50,7 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       {/* Header */}
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Text className="text-accent text-body-sm font-body">✕ Terminer la séance</Text>

@@ -15,6 +15,7 @@ import api from '../services/api';
 import { getUserStats } from '../services/userService';
 import ActivityHeatmap from '../components/profile/ActivityHeatmap';
 import type { UserStats } from '../types/user';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
 import PaywallScreen from './PaywallScreen';
@@ -36,6 +37,7 @@ function ProfileHomeScreen({
 }: NativeStackScreenProps<ProfileStackParamList, 'ProfileHome'>) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -60,7 +62,7 @@ function ProfileHomeScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       {/* Profile hero */}
       <View className="bg-white/[0.04] rounded-2xl p-6 mb-6 items-center">
         {/* Avatar */}
@@ -151,6 +153,7 @@ function ProfileHomeScreen({
 function EditProfileScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'EditProfile'>) {
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
@@ -187,7 +190,7 @@ function EditProfileScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
@@ -233,6 +236,7 @@ function EditProfileScreen({
 function NotificationSettingsScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'NotificationSettings'>) {
+  const insets = useSafeAreaInsets();
   const [settings, setSettings] = useState<NotificationSettings>({
     workoutReminders: false,
     restDayReminders: false,
@@ -262,7 +266,7 @@ function NotificationSettingsScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>
@@ -305,6 +309,7 @@ function NotificationSettingsScreen({
 function SettingsScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'Settings'>) {
+  const insets = useSafeAreaInsets();
   const { logout } = useAuthContext();
 
   function handleLogout() {
@@ -337,7 +342,7 @@ function SettingsScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>

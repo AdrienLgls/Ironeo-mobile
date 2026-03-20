@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
@@ -9,6 +10,7 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ExerciseDetail'>;
 
 export default function ExerciseDetailScreen({ route, navigation }: Props) {
   const { exerciseId } = route.params;
+  const insets = useSafeAreaInsets();
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
         <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>

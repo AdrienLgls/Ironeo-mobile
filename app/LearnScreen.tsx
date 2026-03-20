@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { getArticles, getArticleById, getQuizById } from '../services/learnService';
@@ -26,6 +27,7 @@ const CATEGORIES = ['Tous', 'Technique', 'Nutrition', 'Mentalité', 'Anatomie'] 
 function ArticlesListScreen({
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'ArticlesList'>) {
+  const insets = useSafeAreaInsets();
   const [articles, setArticles] = useState<Article[]>([]);
   const [filtered, setFiltered] = useState<Article[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
@@ -66,7 +68,7 @@ function ArticlesListScreen({
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <View style={{ paddingTop: 48 }}>
+          <View style={{ paddingTop: insets.top + 16 }}>
             <Text className="text-white text-h2 font-heading mb-4">Apprendre</Text>
 
             {/* Category filter pills */}
@@ -123,6 +125,7 @@ function ArticleDetailScreen({
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'ArticleDetail'>) {
   const { articleId } = route.params;
+  const insets = useSafeAreaInsets();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -151,7 +154,7 @@ function ArticleDetailScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-8">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
         <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
@@ -179,6 +182,7 @@ function QuizScreen({
   navigation,
 }: NativeStackScreenProps<LearnStackParamList, 'Quiz'>) {
   const { quizId } = route.params;
+  const insets = useSafeAreaInsets();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -236,7 +240,7 @@ function QuizScreen({
   }
 
   return (
-    <View className="flex-1 bg-background px-4 pt-12">
+    <View className="flex-1 bg-background px-4" style={{ paddingTop: insets.top + 16 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
         <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>

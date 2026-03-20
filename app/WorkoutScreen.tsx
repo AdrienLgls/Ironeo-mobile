@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -32,6 +33,7 @@ const HUB_TABS = [
 ];
 
 function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackParamList, "ProgramsList">) {
+  const insets = useSafeAreaInsets();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
@@ -59,7 +61,7 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
   }
 
   const ListHeader = (
-    <View className="pt-12 pb-4">
+    <View style={{ paddingTop: insets.top + 16, paddingBottom: 16 }}>
       <Text className="text-white text-h2 font-heading mb-6">Workout</Text>
       <HubTabNavigation tabs={HUB_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
     </View>
@@ -165,6 +167,7 @@ type ProgramDetailProps = NativeStackScreenProps<WorkoutStackParamList, 'Program
 
 function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   const { programId } = route.params;
+  const insets = useSafeAreaInsets();
   const [program, setProgram] = useState<ProgramDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -193,7 +196,7 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-6">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
         <Text className="text-accent text-body-sm font-body">← Back</Text>
       </TouchableOpacity>

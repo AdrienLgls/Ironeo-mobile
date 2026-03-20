@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { getWorkoutSessions } from '../services/workoutService';
 import type { WorkoutSession } from '../types/workout';
@@ -9,6 +10,7 @@ function formatDate(iso: string): string {
 }
 
 export default function HistoryScreen() {
+  const insets = useSafeAreaInsets();
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function HistoryScreen() {
         keyExtractor={(item) => item.id}
         contentContainerClassName="px-4 pb-6"
         ListHeaderComponent={
-          <Text className="text-white text-h2 font-heading pt-12 mb-6">History</Text>
+          <Text className="text-white text-h2 font-heading mb-6" style={{ paddingTop: insets.top + 16 }}>History</Text>
         }
         ListEmptyComponent={
           <Text className="text-white/40 text-body-sm font-body text-center mt-8">

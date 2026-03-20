@@ -53,3 +53,48 @@ Goal: Reproduire EXACTEMENT le design du site Ironeo web dans l'app React Native
   - card-primary/card-secondary/btn-primary/btn-secondary via addUtilities plugin
 - Composant web source → équivalent RN: tailwind.config.js colors/shadows/borderRadius
 ---
+## 2026-03-20 - US-212: Learn tab — articles, quiz (HubTabNavigation, ArticleCard, ParcoursCard)
+- Files créés/modifiés: LearnScreen.tsx, components/learn/ArticleCard.tsx, components/learn/ParcoursCard.tsx, components/ui/HubTabNavigation.tsx
+- Patterns: HubTabNavigation avec spring indicator gold, ArticleCard cover image + category badge, ParcoursCard SVG progress ring 40px
+- Composant web source → RN: ArticlesListScreen.jsx → LearnScreen.tsx
+---
+## 2026-03-20 - US-213: ProfileScreen — stats, level badge, ActivityHeatmap 26 semaines
+- Files créés/modifiés: ProfileScreen.tsx, components/profile/ActivityHeatmap.tsx, types/user.ts
+- Patterns: 4-column stats grid (Séances/Série🔥/PRs⚡/XP), avatar w-20 h-20, level badge, ActivityHeatmap 26×7 grid gold intensity
+- Composant web source → RN: ProfileHomeScreen.jsx → ProfileScreen.tsx
+---
+## 2026-03-20 - US-214: Skeleton loading shimmer
+- Files créés/modifiés: components/ui/Skeleton.tsx
+- Patterns: SkeletonBase (Animated.loop translateX -1→1, 2500ms), SkeletonBox, SkeletonText, SkeletonCircle
+- Composant web source → RN: Skeleton.jsx → components/ui/Skeleton.tsx
+---
+## 2026-03-20 - US-215: Toast notifications
+- Files créés/modifiés: context/ToastContext.tsx, App.tsx
+- Patterns: ToastProvider wraps app, useToast() hook, animated slide-in (spring) per toast, 4 types (success/error/warning/info)
+- Composant web source → RN: ToastContext.jsx → context/ToastContext.tsx
+---
+## 2026-03-20 - US-216: EmptyState component
+- Files créés/modifiés: components/ui/EmptyState.tsx
+- Patterns: icon float loop (Animated.loop y:0→-3→0), fade-in entrance, compact mode, error type
+- Composant web source → RN: EmptyState.jsx → components/ui/EmptyState.tsx
+---
+## 2026-03-20 - US-217: PlateCalculator
+- Files créés/modifiés: components/workout/PlateCalculator.tsx
+- Patterns: calculatePlates() greedy algo, visual plate stack SVG-like (View avec height/width per plate), PlateCalculatorToggle
+- Composant web source → RN: PlateCalculator.jsx → components/workout/PlateCalculator.tsx
+---
+## 2026-03-20 - US-218: Charts SVG — VolumeAreaChart + SessionsBarChart
+- Files créés/modifiés: components/charts/VolumeAreaChart.tsx, components/charts/SessionsBarChart.tsx
+- Patterns: react-native-svg Polyline/Path/Rect, LinearGradient area fill, ghost state pour < 2 data points
+- Composant web source → RN: VolumeAreaChart.jsx/SessionsBarChart.jsx → components SVG pure
+---
+## 2026-03-20 - US-219: Animations — FadeIn, FadeInUp, ScaleIn, SlideInLeft, StaggerChildren
+- Files créés/modifiés: components/ui/FadeIn.tsx
+- Patterns: Animated.timing/spring, all animations useNativeDriver:true, StaggerChildren maps delay per child
+- Composant web source → RN: framer-motion variants → React Native Animated API
+---
+## 2026-03-20 - US-220: Polish final — safe areas, pull-to-refresh, scrollbar hide
+- Files modifiés: HomeScreen, WorkoutScreen, LearnScreen, ProfileScreen, ExercisesScreen, ExerciseDetailScreen, ActiveSessionScreen, HistoryScreen
+- Patterns: useSafeAreaInsets().top + 16 pour paddingTop, showsVerticalScrollIndicator={false} sur tous les ScrollViews, RefreshControl avec tintColor "#EFBF04", loadData useCallback pour réutilisation dans onRefresh
+- Composant web source → RN: CSS safe-area-inset-top → useSafeAreaInsets
+---

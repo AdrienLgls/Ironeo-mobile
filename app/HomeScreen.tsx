@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { TabParamList } from './TabNavigator';
@@ -22,9 +23,11 @@ export default function HomeScreen() {
   const [recentSession, setRecentSession] = useState<RecentSession | null>(null);
   const [nextWorkout, setNextWorkout] = useState<NextWorkout | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadData = useCallback(() =>
     Promise.all([
       api.get<UserProfile>('/users/me').then(({ data }) => data),
       getUserStats(),
@@ -38,8 +41,17 @@ export default function HomeScreen() {
         setNextWorkout(next);
       })
       .catch(() => setError('Unable to load stats'))
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false)),
+  []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadData().finally(() => setRefreshing(false));
+  }, [loadData]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -50,7 +62,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-4 pt-12 pb-6">
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       {error && (
         <Text className="text-red-400 text-body-sm font-body text-center mb-4">{error}</Text>
       )}

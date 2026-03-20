@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
@@ -11,6 +12,7 @@ const MUSCLE_GROUPS = ['chest', 'back', 'legs', 'arms', 'shoulders', 'core'] as 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'ExercisesList'>;
 
 export default function ExercisesScreen({ navigation }: Props) {
+  const insets = useSafeAreaInsets();
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [filtered, setFiltered] = useState<Exercise[]>([]);
   const [search, setSearch] = useState('');
@@ -56,7 +58,7 @@ export default function ExercisesScreen({ navigation }: Props) {
         columnWrapperStyle={{ paddingHorizontal: 12 }}
         contentContainerStyle={{ paddingBottom: 24 }}
         ListHeaderComponent={
-          <View style={{ paddingTop: 48, paddingHorizontal: 16, paddingBottom: 8 }}>
+          <View style={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 8 }}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 12 }}>
               <Text className="text-accent text-body-sm font-body">← Retour</Text>
             </TouchableOpacity>
