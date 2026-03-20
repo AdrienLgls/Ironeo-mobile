@@ -34,3 +34,7 @@ export async function getUnreadCount(): Promise<number> {
     return 0;
   }
 }
+
+export async function registerPushToken(token: string, platform: string): Promise<void> {
+  await api.post('/notifications/push-token', { token, platform });
+}

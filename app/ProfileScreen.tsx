@@ -19,11 +19,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
 import PaywallScreen from './PaywallScreen';
+import WorkoutReminderSettings from './NotificationSettingsScreen';
 
 export type ProfileStackParamList = {
   ProfileHome: undefined;
   EditProfile: undefined;
   NotificationSettings: undefined;
+  WorkoutReminders: undefined;
   Settings: undefined;
   Paywall: undefined;
 };
@@ -124,6 +126,15 @@ function ProfileHomeScreen({
         className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
         <Text className="text-white text-body-sm font-body">Notifications</Text>
+        <Text className="text-white/30 text-body-sm font-body">›</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('WorkoutReminders')}
+        className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-body-sm font-body">Rappels d'entraînement</Text>
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
@@ -370,12 +381,19 @@ function SettingsScreen({
 
 // --- Stack Navigator ---
 
+function WorkoutRemindersScreen({
+  navigation,
+}: NativeStackScreenProps<ProfileStackParamList, 'WorkoutReminders'>) {
+  return <WorkoutReminderSettings onBack={() => navigation.goBack()} />;
+}
+
 export default function ProfileScreen() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProfileHome" component={ProfileHomeScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+      <Stack.Screen name="WorkoutReminders" component={WorkoutRemindersScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Paywall" component={PaywallScreen} />
     </Stack.Navigator>
