@@ -10,4 +10,4 @@
 ✅ US-506 Year in Review animated carousel — commit 14fc750
 ✅ US-507 Push notifications Expo + rappels séance — commit 01505f1
 ✅ US-508 ProfileScreen bell + liens features — commit dd957c1
-✅ US-509 Polish final Phase 5 — commit <hash>
+✅ US-509 Polish final Phase 5 — commit 28b2916
