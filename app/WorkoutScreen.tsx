@@ -9,6 +9,7 @@ import ActiveSessionScreen from './ActiveSessionScreen';
 import PostSessionScreen from './PostSessionScreen';
 import ExercisesScreen from './ExercisesScreen';
 import ExerciseDetailScreen from './ExerciseDetailScreen';
+import HistoryScreen from './HistoryScreen';
 import type { Program, ProgramDetail, ProgramDay } from '../types/workout';
 
 export type WorkoutStackParamList = {
@@ -18,6 +19,7 @@ export type WorkoutStackParamList = {
   PostSession: { sessionId: string };
   ExercisesList: undefined;
   ExerciseDetail: { exerciseId: string };
+  History: undefined;
 };
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
@@ -51,9 +53,14 @@ function ProgramsListScreen({ navigation }: { navigation: { navigate: (screen: s
         ListHeaderComponent={
           <View className="flex-row items-center justify-between mb-6">
             <Text className="text-white text-2xl font-bold">Programs</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ExercisesList')} activeOpacity={0.7}>
-              <Text className="text-accent text-sm">Exercises →</Text>
-            </TouchableOpacity>
+            <View className="flex-row gap-4">
+              <TouchableOpacity onPress={() => navigation.navigate('History')} activeOpacity={0.7}>
+                <Text className="text-white/50 text-sm">History</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('ExercisesList')} activeOpacity={0.7}>
+                <Text className="text-accent text-sm">Exercises</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         }
         ListEmptyComponent={
@@ -154,6 +161,7 @@ export default function WorkoutScreen() {
       <Stack.Screen name="PostSession" component={PostSessionScreen} />
       <Stack.Screen name="ExercisesList" component={ExercisesScreen} />
       <Stack.Screen name="ExerciseDetail" component={ExerciseDetailScreen} />
+      <Stack.Screen name="History" component={HistoryScreen} />
     </Stack.Navigator>
   );
 }
