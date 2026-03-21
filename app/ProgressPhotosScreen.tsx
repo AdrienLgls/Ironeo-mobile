@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   Modal,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -233,7 +234,7 @@ function UploadModal({ imageUri, onCancel, onSave, saving }: UploadModalProps) {
             </TouchableOpacity>
             <TouchableOpacity onPress={handleSave} style={styles.saveBtn} disabled={saving}>
               {saving ? (
-                <ActivityIndicator color="#000" size="small" />
+                <ActivityIndicator color="#EFBF04" size="small" />
               ) : (
                 <Text style={styles.saveBtnText}>Enregistrer</Text>
               )}
@@ -316,6 +317,7 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
   const insets = useSafeAreaInsets();
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [mode, setMode] = useState<Mode>('gallery');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -332,6 +334,19 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
       Alert.alert('Erreur', 'Impossible de charger les photos.');
     } finally {
       setLoading(false);
+    }
+  }, [activeCategory]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const cat = activeCategory === 'all' ? undefined : activeCategory;
+      const data = await getPhotos(cat);
+      setPhotos(data);
+    } catch {
+      Alert.alert('Erreur', 'Impossible de charger les photos.');
+    } finally {
+      setRefreshing(false);
     }
   }, [activeCategory]);
 
@@ -457,6 +472,9 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
             renderItem={({ item, index }) => (
               <GridCell photo={item} onPress={() => setLightboxIndex(index)} />
             )}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />
+            }
           />
         )
       ) : (
@@ -471,7 +489,7 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
         style={[styles.fab, { bottom: insets.bottom + 24 }]}
         activeOpacity={0.85}
       >
-        <Ionicons name="camera" size={26} color="#000" />
+        <Ionicons name="camera" size={26} color="#EFBF04" />
       </TouchableOpacity>
 
       {/* Lightbox */}

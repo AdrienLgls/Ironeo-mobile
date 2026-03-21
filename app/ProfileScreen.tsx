@@ -381,7 +381,7 @@ function ProfileHomeScreen({
         className="flex-row items-center justify-center bg-white/[0.04] rounded-2xl px-4 py-4"
       >
         {deleteLoading ? (
-          <ActivityIndicator color="#ef4444" size="small" />
+          <ActivityIndicator color="#EFBF04" size="small" />
         ) : (
           <Text style={{ color: '#ef4444', fontSize: 14, fontFamily: 'Rowan-Regular' }}>
             Supprimer mon compte
@@ -532,7 +532,7 @@ function EditProfileScreen({
         disabled={saving}
       >
         {saving ? (
-          <ActivityIndicator color="#121212" size="small" />
+          <ActivityIndicator color="#EFBF04" size="small" />
         ) : (
           <Text style={{ color: '#121212', fontSize: 16, fontFamily: 'Quilon-Medium' }}>Enregistrer</Text>
         )}

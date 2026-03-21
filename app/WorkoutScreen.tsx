@@ -476,7 +476,7 @@ function ProgramDetailScreen({ route, navigation }: ProgramDetailProps) {
           disabled={unfollowing}
         >
           {unfollowing ? (
-            <ActivityIndicator color="#ef4444" size="small" />
+            <ActivityIndicator color="#EFBF04" size="small" />
           ) : (
             <Text style={{ color: '#ef4444', fontFamily: 'Quilon-Medium', fontSize: 16 }}>
               Ne plus suivre

@@ -298,7 +298,7 @@ export default function UserProfileScreen({
                     }}
                   >
                     {actionLoading ? (
-                      <ActivityIndicator color="rgba(248,113,113,0.8)" size="small" />
+                      <ActivityIndicator color="#EFBF04" size="small" />
                     ) : (
                       <Text
                         style={{
@@ -343,7 +343,7 @@ export default function UserProfileScreen({
                     }}
                   >
                     {actionLoading ? (
-                      <ActivityIndicator color="#000" size="small" />
+                      <ActivityIndicator color="#EFBF04" size="small" />
                     ) : (
                       <Text
                         style={{

@@ -225,7 +225,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator color="#000" size="small" />
+              <ActivityIndicator color="#EFBF04" size="small" />
             ) : (
               <Text style={styles.saveBtnText}>Enregistrer</Text>
             )}

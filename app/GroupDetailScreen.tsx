@@ -3,6 +3,7 @@ import {
   View,
   Text,
   ScrollView,
+  RefreshControl,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
@@ -546,7 +547,7 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
             }}
           >
             {leaving ? (
-              <ActivityIndicator color="#ef4444" size="small" />
+              <ActivityIndicator color="#EFBF04" size="small" />
             ) : (
               <Text
                 style={{
