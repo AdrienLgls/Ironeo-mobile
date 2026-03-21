@@ -106,7 +106,14 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
               textAlign: 'center',
             }}
             value={weight}
-            onChangeText={setWeight}
+            onChangeText={(text) => {
+              const val = parseFloat(text);
+              if (!isNaN(val) && val >= 0) {
+                setWeight(text);
+              } else if (text === '' || text === '.') {
+                setWeight(text);
+              }
+            }}
             keyboardType="decimal-pad"
             returnKeyType="done"
             onSubmitEditing={() => Keyboard.dismiss()}
@@ -128,7 +135,14 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
               textAlign: 'center',
             }}
             value={reps}
-            onChangeText={setReps}
+            onChangeText={(text) => {
+              const val = parseFloat(text);
+              if (!isNaN(val) && val >= 0) {
+                setReps(text);
+              } else if (text === '') {
+                setReps(text);
+              }
+            }}
             keyboardType="number-pad"
             returnKeyType="done"
             onSubmitEditing={() => Keyboard.dismiss()}

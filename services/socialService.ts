@@ -86,9 +86,27 @@ export async function searchUsers(query: string): Promise<Friend[]> {
   }
 }
 
-export async function getUserProfile(userId: string): Promise<unknown> {
+export interface UserProfile {
+  _id: string;
+  pseudo: string;
+  avatar?: string;
+  level?: number;
+  xp?: number;
+  bio?: string;
+  isPrivate?: boolean;
+  isFriend?: boolean;
+  requestPending?: boolean;
+  stats?: {
+    totalSessions: number;
+    totalVolume: number;
+    longestStreak: number;
+  };
+  heatmapData?: Array<{ date: string; count: number }>;
+}
+
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   try {
-    const { data } = await api.get<unknown>(`/profile/${userId}`);
+    const { data } = await api.get<UserProfile>(`/profile/${userId}`);
     return data;
   } catch {
     return null;
