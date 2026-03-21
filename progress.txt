@@ -11,3 +11,27 @@
 ✅ US-507 Push notifications Expo + rappels séance — commit 01505f1
 ✅ US-508 ProfileScreen bell + liens features — commit dd957c1
 ✅ US-509 Polish final Phase 5 — commit 28b2916
+
+## Phase 6 stories complétées
+
+✅ US-601 Auto-PR detection post-session — commit 2281037
+✅ US-602 Articles search + filters + favorites — commit 2c8c01b
+✅ US-603 Parcours learning paths + articles cliquables — commit b6aed7e, c0b98d6
+✅ US-604 Quiz submission et résultats — commit eedffbb
+✅ US-605 Leaderboard groupe — commit 8e34fb4
+✅ US-606 Toast + Confirm context globaux — commit 4e3d63a
+✅ US-607 Programme unfollow + exercice custom — commit 8dba787
+✅ US-608 Export données CSV/JSON — commit fccc6d6
+✅ US-609 Edition séance — commit 28831fb
+✅ US-610 Polish final Phase 6 — commit 0eacc8d
+
+## Phase 7 stories complétées
+
+✅ US-701 Forgot password + reset password — commit cb935ed
+✅ US-702 Edit profil + avatar + portail LemonSqueezy — commit 6eba51b
+✅ US-703 Token refresh + auto-logout 401 — commit b37b7f0
+✅ US-704 Onboarding first-time user — commit d22ef54
+✅ US-705 1RM calculator + US-706 exercise history chart — commit a77dbd1
+✅ US-707 Portail LemonSqueezy (inclus dans US-702) — commit 6eba51b
+✅ US-708 Deep linking notifications push — commit 85d6423
+✅ US-709 Polish final Phase 7 — commit (en cours)
