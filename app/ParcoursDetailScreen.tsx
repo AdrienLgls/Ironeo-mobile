@@ -146,7 +146,7 @@ export default function ParcoursDetailScreen({
               justifyContent: 'center',
             }}>
               <Text style={{
-                color: article.isCompleted ? '#000' : 'rgba(255,255,255,0.4)',
+                color: article.isCompleted ? '#121212' : 'rgba(255,255,255,0.4)',
                 fontFamily: 'Quilon-Medium',
                 fontSize: 12,
               }}>

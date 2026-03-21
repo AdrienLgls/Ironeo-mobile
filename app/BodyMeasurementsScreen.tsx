@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Rowan-Regular',
   },
   pillTextActive: {
-    color: '#000',
+    color: '#121212',
     fontFamily: 'Quilon-Medium',
   },
   // Chart
@@ -825,7 +825,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   saveButtonText: {
-    color: '#000',
+    color: '#121212',
     fontSize: 15,
     fontFamily: 'Quilon-Medium',
   },

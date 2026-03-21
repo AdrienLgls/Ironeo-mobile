@@ -69,7 +69,7 @@ const Pill = memo(function Pill({
         style={{
           fontSize: 13,
           fontFamily: active ? 'Quilon-Medium' : 'Rowan-Regular',
-          color: active ? '#000' : 'rgba(255,255,255,0.6)',
+          color: active ? '#121212' : 'rgba(255,255,255,0.6)',
         }}
       >
         {label}

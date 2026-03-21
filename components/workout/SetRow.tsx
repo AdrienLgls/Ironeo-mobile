@@ -57,7 +57,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
         }}
       >
         <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#EFBF04', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-          <Text style={{ color: '#000', fontSize: 12, fontWeight: '700' }}>✓</Text>
+          <Text style={{ color: '#121212', fontSize: 12, fontWeight: '700' }}>✓</Text>
         </View>
         <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Rowan-Regular', fontSize: 13, flex: 1 }}>
           Set {index + 1}
@@ -177,7 +177,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
                 activeOpacity={0.7}
               >
                 <Text style={{
-                  color: selectedRpe === rpe ? '#000' : 'rgba(255,255,255,0.5)',
+                  color: selectedRpe === rpe ? '#121212' : 'rgba(255,255,255,0.5)',
                   fontFamily: 'Rowan-Regular',
                   fontSize: 10,
                   fontWeight: selectedRpe === rpe ? '700' : '400',
@@ -202,7 +202,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 15 }}>
+          <Text style={{ color: '#121212', fontFamily: 'Quilon-Medium', fontSize: 15 }}>
             Valider le set ✓
           </Text>
         </TouchableOpacity>
