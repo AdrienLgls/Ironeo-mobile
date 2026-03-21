@@ -740,12 +740,21 @@ function NotificationsScreenInline({
   const insets = useSafeAreaInsets();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    getNotifications()
-      .then(setNotifications)
-      .finally(() => setLoading(false));
+  const loadNotifications = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    try {
+      const data = await getNotifications();
+      setNotifications(data);
+    } finally {
+      if (isRefresh) setRefreshing(false);
+      else setLoading(false);
+    }
   }, []);
+
+  useEffect(() => { void loadNotifications(); }, [loadNotifications]);
 
   async function handleMarkAllRead() {
     await markAllAsRead();
@@ -764,19 +773,27 @@ function NotificationsScreenInline({
         </TouchableOpacity>
       </View>
 
-      {loading ? (
+      {loading && !refreshing ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator color="#EFBF04" size="large" />
-        </View>
-      ) : notifications.length === 0 ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular' }}>Aucune notification</Text>
         </View>
       ) : (
         <FlatList
           data={notifications}
           keyExtractor={(item) => item._id}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => loadNotifications(true)}
+              tintColor="#EFBF04"
+            />
+          }
+          ListEmptyComponent={
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 }}>
+              <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular' }}>Aucune notification</Text>
+            </View>
+          }
           renderItem={({ item }) => (
             <View
               style={{
