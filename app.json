@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ironeo",
-    "slug": "ironeo-mobile",
+    "slug": "ironeo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +13,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.adrienlgls.ironeo"
+      "bundleIdentifier": "com.ironeo.app",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +30,8 @@
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.WAKE_LOCK"
       ],
-      "package": "com.adrienlgls.ironeo"
+      "package": "com.ironeo.app",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +40,8 @@
       [
         "expo-notifications",
         {
+          "icon": "./assets/notification-icon.png",
+          "color": "#EFBF04",
           "sounds": []
         }
       ],
