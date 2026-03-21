@@ -1,0 +1,46 @@
+{
+  "phase": 38,
+  "slug": "notifications-refresh-haptic-send",
+  "title": "Phase 38 — Notifications pull-to-refresh + haptic on create/send",
+  "branch": "feat/38-notifications-refresh-haptic-send",
+  "passes": true,
+  "stories": [
+    {
+      "id": "38-1",
+      "title": "NotificationsScreenInline: add pull-to-refresh",
+      "priority": "MEDIUM",
+      "description": "NotificationsScreenInline in app/ProfileScreen.tsx (around line 737) loads notifications once via useEffect but has no pull-to-refresh. Add the standard pattern: refreshing state, loadNotifications(isRefresh) function with useCallback, RefreshControl on FlatList with tintColor='#EFBF04'.\n\nNote: The FlatList is inside a conditional render (loading ? ... : notifications.length === 0 ? ... : <FlatList>). RefreshControl should be on the FlatList prop. Also convert the empty state to show even when refreshing (so user can still pull-to-refresh from empty state).",
+      "files": ["app/ProfileScreen.tsx"],
+      "acceptance": [
+        "NotificationsScreenInline has refreshing state and loadNotifications(isRefresh) with useCallback",
+        "FlatList has refreshControl prop with tintColor='#EFBF04'",
+        "Initial load shows ActivityIndicator, pull-to-refresh does not show full-screen spinner",
+        "No other changes to ProfileScreen outside NotificationsScreenInline"
+      ]
+    },
+    {
+      "id": "38-2",
+      "title": "ExerciseCreatorModal: haptic on successful create",
+      "priority": "LOW",
+      "description": "handleCreate() in components/workout/ExerciseCreatorModal.tsx calls createExercise() on success but gives no haptic feedback. Add hapticSuccess() after the successful API call (before calling onCreated()).",
+      "files": ["components/workout/ExerciseCreatorModal.tsx"],
+      "acceptance": [
+        "hapticSuccess() called after successful createExercise()",
+        "Import from utils/haptics",
+        "No other changes"
+      ]
+    },
+    {
+      "id": "38-3",
+      "title": "GroupChatTab: haptic on message send",
+      "priority": "LOW",
+      "description": "handleSend() in components/social/GroupChatTab.tsx sends a message via sendMessage() but gives no haptic feedback. Add hapticImpact() (light/medium) after successfully sending the message (after setSending(false) or at start of try block).",
+      "files": ["components/social/GroupChatTab.tsx"],
+      "acceptance": [
+        "hapticImpact() called on successful message send",
+        "Import from utils/haptics",
+        "No other changes"
+      ]
+    }
+  ]
+}
