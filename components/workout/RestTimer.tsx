@@ -34,26 +34,31 @@ function getTimerColor(remaining: number, total: number): string {
 export default function RestTimer({ durationSeconds, exerciseName = 'Workout', onComplete, onSkip }: Props) {
   const [remaining, setRemaining] = useState(durationSeconds);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  const exerciseNameRef = useRef(exerciseName);
   const arcAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+  useEffect(() => { exerciseNameRef.current = exerciseName; }, [exerciseName]);
 
   useEffect(() => {
     setRemaining(durationSeconds);
     arcAnim.setValue(0);
-    startTimerNotification(durationSeconds, exerciseName).catch(() => undefined);
+    startTimerNotification(durationSeconds, exerciseNameRef.current).catch(() => undefined);
   }, [durationSeconds]);
 
   useEffect(() => {
     if (remaining <= 0) {
       stopTimerNotification().catch(() => undefined);
       hapticSuccess().catch(() => undefined);
-      onComplete();
+      onCompleteRef.current();
       return;
     }
 
     intervalRef.current = setInterval(() => {
       setRemaining((prev) => {
         const next = prev <= 1 ? 0 : prev - 1;
-        updateTimerNotification(next, exerciseName).catch(() => undefined);
+        updateTimerNotification(next, exerciseNameRef.current).catch(() => undefined);
         if (next <= 0 && intervalRef.current) clearInterval(intervalRef.current);
         return next;
       });
