@@ -120,7 +120,7 @@ export function ShareCardAchievement({
 
 const CARD_W = 320;
 const CARD_H = 480;
-const BG = '#1A1A1A';
+const BG = '#121212';
 const GOLD = '#EFBF04';
 const WHITE = '#FAFAFA';
 const WHITE_40 = 'rgba(250,250,250,0.4)';
@@ -170,7 +170,7 @@ const statsStyles = StyleSheet.create({
   levelText: {
     fontFamily: 'Quilon-Medium',
     fontSize: 13,
-    color: '#0A0A0A',
+    color: '#121212',
   },
   grid: {
     flexDirection: 'row',

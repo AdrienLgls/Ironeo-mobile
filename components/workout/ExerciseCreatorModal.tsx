@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#121212',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 20,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
   },
   pillTextActive: {
-    color: '#000000',
+    color: '#121212',
   },
   createButton: {
     backgroundColor: '#EFBF04',
@@ -255,6 +255,6 @@ const styles = StyleSheet.create({
   createButtonText: {
     fontFamily: 'Quilon-Medium',
     fontSize: 16,
-    color: '#000000',
+    color: '#121212',
   },
 });

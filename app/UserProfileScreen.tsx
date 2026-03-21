@@ -351,7 +351,7 @@ export default function UserProfileScreen({
                     ) : (
                       <Text
                         style={{
-                          color: '#000000',
+                          color: '#121212',
                           fontFamily: 'Quilon-Medium',
                           fontSize: 14,
                         }}

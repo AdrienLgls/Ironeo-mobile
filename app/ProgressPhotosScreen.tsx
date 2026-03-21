@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   uploadSheet: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#121212',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
