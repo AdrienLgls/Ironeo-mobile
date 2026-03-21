@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   Modal,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Switch,
@@ -370,18 +371,27 @@ export default function GroupsScreen({ onGroupPress }: GroupsScreenProps) {
   const [myGroups, setMyGroups] = useState<Group[]>([]);
   const [discovered, setDiscovered] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [joinModalVisible, setJoinModalVisible] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
 
-  const loadData = useCallback(() => {
-    setLoading(true);
-    Promise.all([getMyGroups(), discoverGroups()])
-      .then(([mine, discover]) => {
-        setMyGroups(mine);
-        setDiscovered(discover);
-      })
-      .finally(() => setLoading(false));
+  const loadData = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    try {
+      const [mine, discover] = await Promise.all([getMyGroups(), discoverGroups()]);
+      setMyGroups(mine);
+      setDiscovered(discover);
+    } catch {
+      // silently ignore — data stays stale
+    } finally {
+      if (isRefresh) setRefreshing(false);
+      else setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -430,6 +440,13 @@ export default function GroupsScreen({ onGroupPress }: GroupsScreenProps) {
           renderItem={null}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => loadData(true)}
+              tintColor="#EFBF04"
+            />
+          }
           ListHeaderComponent={
             <>
               {/* Mes groupes */}
