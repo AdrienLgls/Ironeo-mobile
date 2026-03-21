@@ -9,6 +9,7 @@ import {
   Modal,
   Animated,
   Easing,
+  Alert,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -281,8 +282,9 @@ export default function PostSessionScreen({ route, navigation }: Props) {
   }
 
   useEffect(() => {
-    updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() })
-      .then(async (saved) => {
+    (async () => {
+      try {
+        const saved = await updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() });
         setSession(saved);
         await hapticSuccess();
         await maybeRequestReview();
@@ -300,9 +302,18 @@ export default function PostSessionScreen({ route, navigation }: Props) {
           trackPRDetected(prs.length);
           await hapticSuccess();
         }
-      })
-      .catch(() => undefined)
-      .finally(() => setSaving(false));
+      } catch (e) {
+        if (__DEV__) console.warn('Session update failed:', e);
+        Alert.alert(
+          'Séance non sauvegardée',
+          "La séance n'a pas pu être enregistrée. Tu peux réessayer depuis l'historique.",
+          [{ text: 'OK' }]
+        );
+        // NE PAS bloquer la navigation — l'utilisateur doit pouvoir continuer
+      } finally {
+        setSaving(false);
+      }
+    })();
   }, [sessionId]);
 
   const stats = useMemo(() => {
