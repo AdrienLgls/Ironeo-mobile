@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   confirmText: {
     fontSize: 14,
     fontFamily: 'Quilon-Medium',
-    color: '#000000',
+    color: '#121212',
   },
   destructiveText: {
     color: '#ffffff',

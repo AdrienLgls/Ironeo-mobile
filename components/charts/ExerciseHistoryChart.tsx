@@ -127,7 +127,7 @@ const ExerciseHistoryChart = memo(function ExerciseHistoryChart({
             cy={py(d.weight)}
             r={3}
             fill={LINE_COLOR}
-            stroke="#1a1a1a"
+            stroke="#121212"
             strokeWidth={1.5}
           />
         ))}

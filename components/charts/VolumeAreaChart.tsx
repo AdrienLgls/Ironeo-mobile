@@ -143,7 +143,7 @@ const VolumeAreaChart = memo(function VolumeAreaChart({ data, height = 180 }: Vo
             cy={py(d.volume)}
             r={3}
             fill={VOLUME_COLOR}
-            stroke="#1a1a1a"
+            stroke="#121212"
             strokeWidth={1.5}
           />
         ))}

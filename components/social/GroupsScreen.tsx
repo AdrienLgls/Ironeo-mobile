@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#121212',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,

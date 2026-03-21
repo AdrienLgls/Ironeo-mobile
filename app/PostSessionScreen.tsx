@@ -179,7 +179,7 @@ const modalStyles = StyleSheet.create({
   },
   sheet: {
     width: '100%',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#121212',
     borderRadius: 24,
     paddingHorizontal: 20,
     maxHeight: '80%',
@@ -302,8 +302,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
           trackPRDetected(prs.length);
           await hapticSuccess();
         }
-      } catch (e) {
-        if (__DEV__) console.warn('Session update failed:', e);
+      } catch {
         Alert.alert(
           'Séance non sauvegardée',
           "La séance n'a pas pu être enregistrée. Tu peux réessayer depuis l'historique.",
@@ -373,7 +372,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
 
       <Modal visible={showPushModal} transparent animationType="slide">
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <View style={{ backgroundColor: '#1a1a1a', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
+          <View style={{ backgroundColor: '#121212', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
             <Text style={{ color: '#fff', fontSize: 22, fontFamily: 'Quilon-Medium', marginBottom: 8 }}>Activez les notifications</Text>
             <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Rowan-Regular', fontSize: 15, marginBottom: 24 }}>
               Soyez alerté quand vous battez un record personnel 🏆 ou quand vos amis vous envoient un message.
