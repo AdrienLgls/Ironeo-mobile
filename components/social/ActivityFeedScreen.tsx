@@ -332,6 +332,6 @@ const styles = StyleSheet.create({
     color: '#EFBF04',
   },
   bravoMuted: {
-    color: '#666',
+    color: 'rgba(255,255,255,0.3)',
   },
 });
