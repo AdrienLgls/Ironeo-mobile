@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -12,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useConfirm } from '../../context/ConfirmContext';
+import { useToast } from '../../context/ToastContext';
 import { hapticImpact } from '../../utils/haptics';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
@@ -131,6 +131,7 @@ interface RequestCardProps {
 
 function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   async function handleAccept() {
     if (busy) return;
@@ -140,7 +141,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
       await acceptFriendRequest(request.from._id);
       onAccept(request.from._id, request._id);
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      toast.error('Une erreur est survenue. Réessaie.');
       setBusy(false);
     }
   }
@@ -153,7 +154,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
       await rejectFriendRequest(request._id);
       onReject(request._id);
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      toast.error('Une erreur est survenue. Réessaie.');
       setBusy(false);
     }
   }
@@ -230,6 +231,7 @@ interface FriendsScreenProps {
 
 export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScreenProps) {
   const confirm = useConfirm();
+  const toast = useToast();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -292,9 +294,9 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
     sendFriendRequest(userId).catch(() => {
       sentRequests.current.delete(userId);
       onError();
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      toast.error('Une erreur est survenue. Réessaie.');
     });
-  }, []);
+  }, [toast]);
 
   const handleAccept = useCallback((fromId: string, requestId: string) => {
     setRequests((prev) => prev.filter((r) => r._id !== requestId));
@@ -321,9 +323,9 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
       await removeFriend(friendId);
       setFriends((prev) => prev.filter((f) => f._id !== friendId));
     } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      toast.error('Une erreur est survenue. Réessaie.');
     }
-  }, [confirm]);
+  }, [confirm, toast]);
 
   // ── Derived ──────────────────────────────────────────────────────────────────
   const isSearching = debouncedQuery.length >= 2 || searchQuery.length >= 2;

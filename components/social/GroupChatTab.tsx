@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
 import { formatChatTimestamp } from '../../utils/formatters';
 import {
@@ -146,6 +147,7 @@ interface Props {
 }
 
 export default function GroupChatTab({ groupId }: Props) {
+  const toast = useToast();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [inputText, setInputText] = useState('');
@@ -211,7 +213,7 @@ export default function GroupChatTab({ groupId }: Props) {
       });
       setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     } catch {
-      Alert.alert('Erreur', 'Impossible d\'envoyer le message.');
+      toast.error('Impossible d\'envoyer le message.');
     } finally {
       setSending(false);
     }
@@ -229,7 +231,7 @@ export default function GroupChatTab({ groupId }: Props) {
             await deleteMessage(groupId, message._id);
             setMessages((prev) => prev.filter((m) => m._id !== message._id));
           } catch {
-            Alert.alert('Erreur', 'Impossible de supprimer ce message.');
+            toast.error('Impossible de supprimer ce message.');
           }
         },
       },

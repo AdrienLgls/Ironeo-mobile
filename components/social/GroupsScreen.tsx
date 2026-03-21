@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Modal,
   ScrollView,
@@ -13,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useToast } from '../../context/ToastContext';
 import { hapticImpact } from '../../utils/haptics';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
@@ -324,6 +324,7 @@ interface DiscoverCardProps {
 
 function DiscoverCard({ group, onRequestSent }: DiscoverCardProps) {
   const [state, setState] = useState<'idle' | 'loading' | 'sent'>('idle');
+  const toast = useToast();
 
   async function handleRequest() {
     if (state !== 'idle') return;
@@ -335,7 +336,7 @@ function DiscoverCard({ group, onRequestSent }: DiscoverCardProps) {
       onRequestSent(group._id);
     } catch {
       setState('idle');
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      toast.error('Une erreur est survenue. Réessaie.');
     }
   }
 
