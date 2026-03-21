@@ -3,6 +3,7 @@ import {
   View,
   Text,
   FlatList,
+  RefreshControl,
   TouchableOpacity,
   StyleSheet,
   ListRenderItemInfo,
@@ -217,10 +218,15 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const load = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
     try {
       const response = await getLeaderboard(selectedType, selectedPeriod);
@@ -229,7 +235,8 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
     } catch {
       setError('Impossible de charger le classement');
     } finally {
-      setLoading(false);
+      if (isRefresh) setRefreshing(false);
+      else setLoading(false);
     }
   }, [selectedType, selectedPeriod]);
 
@@ -277,7 +284,7 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
 
       {/* List area */}
       <View style={styles.listArea}>
-        {loading ? (
+        {loading && !refreshing ? (
           <LeaderboardSkeleton />
         ) : error !== null ? (
           <EmptyState
@@ -302,6 +309,13 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
               renderItem={renderItem}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContent}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={() => load(true)}
+                  tintColor="#EFBF04"
+                />
+              }
             />
             {showPaywall && (
               <PaywallOverlay onPress={() => { /* handled by parent via navigation */ }} />
