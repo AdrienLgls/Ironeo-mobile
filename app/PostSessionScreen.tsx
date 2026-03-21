@@ -26,6 +26,7 @@ import { ShareCardStats } from '../components/share/ShareCard';
 import ShareButton from '../components/share/ShareButton';
 import { hapticSuccess } from '../utils/haptics';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { formatVolume, formatDuration } from '../utils/formatters';
 
 async function maybeRequestReview(): Promise<void> {
   try {
@@ -46,20 +47,6 @@ async function maybeRequestReview(): Promise<void> {
 }
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'PostSession'>;
-
-function formatVolume(kg: number): string {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
-  return `${Math.round(kg)}kg`;
-}
-
-function formatDuration(minutes: number): string {
-  if (minutes >= 60) {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return m > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
-  }
-  return `${minutes} min`;
-}
 
 function prTypeLabel(type: PRResult['type']): string {
   switch (type) {

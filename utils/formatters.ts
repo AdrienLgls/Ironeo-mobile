@@ -51,9 +51,21 @@ export function formatChatTimestamp(isoDate: string): string {
 }
 
 /**
- * Format workout volume in kg.
+ * Format workout volume in kg (rounded to nearest integer).
  */
 export function formatVolume(volume: number): string {
   if (volume >= 1000) return `${(volume / 1000).toFixed(1)}t`;
-  return `${volume}kg`;
+  return `${Math.round(volume)}kg`;
+}
+
+/**
+ * Format workout duration in minutes: "45 min", "1h30", "2h".
+ */
+export function formatDuration(minutes: number): string {
+  if (minutes >= 60) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h}h${String(m).padStart(2, '0')}` : `${h}h`;
+  }
+  return `${minutes} min`;
 }
