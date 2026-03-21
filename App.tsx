@@ -3,15 +3,36 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
+import { CommonActions } from '@react-navigation/native';
 import { AuthProvider } from './hooks/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
-import RootNavigator from './app/RootNavigator';
+import RootNavigator, { navigationRef } from './app/RootNavigator';
 import { initNotifications, requestNotificationPermissions } from './services/timerNotificationService';
 import { configurePushNotifications, registerForPushNotifications } from './services/pushNotificationService';
 
 SplashScreen.preventAutoHideAsync();
 configurePushNotifications();
+
+type NotificationData =
+  | { type: 'group_message'; groupId: string }
+  | { type: 'friend_request' }
+  | { type: 'notification' }
+  | { type: string };
+
+function handleNotificationTap(data: NotificationData): void {
+  if (data.type === 'group_message' && 'groupId' in data) {
+    navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Profile' }));
+    navigationRef.current?.dispatch(
+      CommonActions.navigate({ name: 'GroupDetail', params: { groupId: data.groupId } }),
+    );
+  } else if (data.type === 'friend_request') {
+    navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Profile' }));
+  } else {
+    navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Profile' }));
+    navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Notifications' }));
+  }
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -28,7 +49,10 @@ export default function App() {
     registerForPushNotifications().catch(() => undefined);
 
     notificationListener.current = Notifications.addNotificationReceivedListener(() => undefined);
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(() => undefined);
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data as NotificationData;
+      handleNotificationTap(data);
+    });
 
     return () => {
       notificationListener.current?.remove();
