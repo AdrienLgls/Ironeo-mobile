@@ -9,10 +9,12 @@ import {
   ActivityIndicator,
   Linking,
 } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from './AuthNavigator';
 import { login } from '../services/authService';
 import { useGoogleAuth, exchangeGoogleToken } from '../services/googleAuth';
+import { signInWithApple } from '../services/appleAuth';
 import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '../hooks/AuthContext';
 
@@ -25,6 +27,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { request, response: googleResponse, promptAsync } = useGoogleAuth();
@@ -56,6 +59,30 @@ export default function LoginScreen() {
       setError('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleAppleSignIn() {
+    setAppleLoading(true);
+    setError(null);
+    try {
+      await signInWithApple();
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === 'ERR_CANCELED') {
+        return;
+      }
+      const isAxiosError =
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        (err as { response?: { status?: number } }).response?.status === 404;
+      if (isAxiosError) {
+        setError('Apple Sign-In bientôt disponible');
+      } else {
+        setError('Apple Sign-In failed. Please try again.');
+      }
+    } finally {
+      setAppleLoading(false);
     }
   }
 
@@ -106,7 +133,7 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="bg-white/[0.06] rounded-xl py-4 items-center mb-6"
+          className="bg-white/[0.06] rounded-xl py-4 items-center mb-3"
           onPress={() => promptAsync()}
           disabled={!request || loading || googleLoading}
           activeOpacity={0.8}
@@ -117,6 +144,18 @@ export default function LoginScreen() {
             <Text className="text-white text-body font-heading">Continue with Google</Text>
           )}
         </TouchableOpacity>
+
+        {Platform.OS === 'ios' && (
+          <AppleAuthentication.AppleAuthenticationButton
+            buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+            buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+            cornerRadius={12}
+            style={{ width: '100%', height: 52, marginBottom: 24 }}
+            onPress={() => { if (!appleLoading) { void handleAppleSignIn(); } }}
+          />
+        )}
+
+        {Platform.OS !== 'ios' && <View className="mb-6" />}
 
         <Text className="text-white/30 text-caption font-body text-center mb-4">
           En continuant, vous acceptez nos{' '}

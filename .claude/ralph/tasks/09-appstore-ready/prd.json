@@ -1,0 +1,132 @@
+{
+  "branchName": "feat/09-appstore-ready",
+  "userStories": [
+    {
+      "id": "US-901",
+      "title": "Créer notification-icon.png manquant",
+      "acceptanceCriteria": [
+        "assets/notification-icon.png existe (96x96 PNG blanc transparent ou copie de icon.png)",
+        "app.json reference valide",
+        "tsc --noEmit passe"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "app.json référence ./assets/notification-icon.png mais le fichier n'existe pas. Utiliser node pour créer un PNG minimal ou copier icon.png. Le fichier doit être un PNG valide sinon EAS build échoue."
+    },
+    {
+      "id": "US-902",
+      "title": "Déclarer permissions iOS/Android caméra et photos",
+      "acceptanceCriteria": [
+        "app.json ios.infoPlist contient NSCameraUsageDescription",
+        "app.json ios.infoPlist contient NSPhotoLibraryUsageDescription",
+        "app.json ios.infoPlist contient NSPhotoLibraryAddUsageDescription",
+        "app.json android.permissions inclut READ_MEDIA_IMAGES",
+        "tsc --noEmit passe"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "expo-image-picker est installé mais les descriptions de permissions iOS ne sont pas déclarées. L'app crashera sur iOS 14+ si l'utilisateur tente d'accéder à la caméra/photos sans ces declarations."
+    },
+    {
+      "id": "US-903",
+      "title": "Ajouter Apple Sign-In (obligatoire App Store)",
+      "acceptanceCriteria": [
+        "expo-apple-authentication installé via pnpm expo install",
+        "Bouton Apple Sign-In dans LoginScreen.tsx sous Google Sign-In",
+        "Service appleAuth.ts créé: signInWithApple() → POST /auth/apple",
+        "app.json ios.usesAppleSignIn: true",
+        "Bouton visible seulement sur iOS (Platform.OS === 'ios')",
+        "tsc --noEmit passe"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "App Store règle: si une app offre un tiers sign-in (Google), elle DOIT offrir Apple Sign-In sur iOS. Backend endpoint POST /auth/apple probablement absent — faire un fallback gracieux avec Toast 'Bientôt disponible' si la route retourne 404."
+    },
+    {
+      "id": "US-904",
+      "title": "Configurer expo-updates pour OTA",
+      "acceptanceCriteria": [
+        "expo-updates installé via pnpm expo install",
+        "app.json updates configuré (checkAutomatically: ON_LOAD)",
+        "App.tsx vérifie les updates au démarrage avec Updates.checkForUpdateAsync()",
+        "Si update dispo: fetchUpdateAsync() + reloadAsync()",
+        "tsc --noEmit passe"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Sans expo-updates, chaque correction JS nécessite une nouvelle soumission App Store. Entourer le check dans try/catch car il échoue en dev. Utiliser __DEV__ pour conditionner."
+    },
+    {
+      "id": "US-905",
+      "title": "Intégrer Sentry pour crash monitoring",
+      "acceptanceCriteria": [
+        "@sentry/react-native installé",
+        "Sentry.init() dans App.tsx avec dsn depuis constants/config.ts",
+        "constants/config.ts créé avec SENTRY_DSN placeholder",
+        "ErrorBoundary.tsx envoie Sentry.captureException(error) dans componentDidCatch",
+        "tsc --noEmit passe"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "DSN Sentry sera un placeholder à remplacer avant prod. Sentry.init avec enabled: !!SENTRY_DSN && !__DEV__ pour ne pas crasher si vide et ne pas polluer en dev."
+    },
+    {
+      "id": "US-906",
+      "title": "Ajouter iOS Privacy Manifest (iOS 17+)",
+      "acceptanceCriteria": [
+        "app.json ios.privacyManifests configuré avec NSPrivacyAccessedAPITypes",
+        "Inclut NSPrivacyAccessedAPICategoryUserDefaults",
+        "Inclut NSPrivacyAccessedAPICategoryFileTimestamp",
+        "Inclut NSPrivacyAccessedAPICategorySystemBootTime",
+        "tsc --noEmit passe"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Requis depuis iOS 17. Les 3 catégories couvrent AsyncStorage (UserDefaults), expo-file-system (FileTimestamp), et expo-network (SystemBootTime). Format Expo: ios.privacyManifests.NSPrivacyAccessedAPITypes array."
+    },
+    {
+      "id": "US-907",
+      "title": "Demande de review après 5 séances complétées",
+      "acceptanceCriteria": [
+        "expo-store-review installé",
+        "PostSessionScreen.tsx incrémente compteur AsyncStorage 'sessions_completed_count'",
+        "Après la 5e séance: StoreReview.requestReview()",
+        "Ne demande qu'une seule fois (flag AsyncStorage 'review_requested')",
+        "tsc --noEmit passe"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Placer le requestReview dans PostSessionScreen au useEffect mount si count >= 5 et !review_requested. Mettre à jour review_requested immédiatement après pour éviter double prompt."
+    },
+    {
+      "id": "US-908",
+      "title": "Verrouillage biométrique Face ID / Touch ID",
+      "acceptanceCriteria": [
+        "expo-local-authentication installé",
+        "Toggle 'Verrouillage biométrique' dans ProfileScreen section Sécurité",
+        "Préférence stockée dans SecureStore 'biometric_lock_enabled'",
+        "App.tsx: AppState change background→active déclenche auth biométrique si activé",
+        "Si auth échoue: BlurView ou overlay noir avec bouton Réessayer",
+        "tsc --noEmit passe"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "AppState listener dans App.tsx. Utiliser useRef pour tracker l'état précédent (background). Vérifier LocalAuthentication.hasHardwareAsync() avant d'activer le toggle."
+    },
+    {
+      "id": "US-909",
+      "title": "Guard Google Sign-In vide + SETUP.md + polish final Phase 9",
+      "acceptanceCriteria": [
+        "googleAuth.ts: si clientId vide → Toast 'Google Sign-In non configuré' au lieu de crash",
+        "SETUP.md créé à la racine avec instructions pour remplir les credentials",
+        "0 console.log dans tous les fichiers Phase 9",
+        "tsc --noEmit retourne 0 erreurs",
+        "git push origin feat/09-appstore-ready",
+        "Merge feat/09-appstore-ready dans main et git push origin main"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": "SETUP.md documente: Google OAuth client IDs (console.cloud.google.com), Sentry DSN (sentry.io), EAS project ID (expo.dev). Polish final: tsc clean, 0 console.log, push et merge dans main."
+    }
+  ]
+}
