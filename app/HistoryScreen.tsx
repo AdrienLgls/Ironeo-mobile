@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,8 @@ import type { WorkoutStackParamList } from './WorkoutScreen';
 // Matches web SessionDetail link list — date fr-FR, durée, volume, exercices
 
 type HistoryNav = NativeStackNavigationProp<WorkoutStackParamList, 'History'>;
+
+const PAGE_SIZE = 20;
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('fr-FR', {
@@ -28,30 +30,43 @@ export default function HistoryScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<HistoryNav>();
   const [sessions, setSessions] = useState<WorkoutSession[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSessions = useCallback(() =>
-    getWorkoutSessions()
-      .then(setSessions)
-      .catch(() => setError("Impossible de charger l'historique"))
-      .finally(() => setLoading(false)),
-  []);
+  async function loadSessions(pageNum: number, replace = false) {
+    if (loadingMore && !replace) return;
+    setLoadingMore(true);
+    try {
+      const data = await getWorkoutSessions(pageNum, PAGE_SIZE);
+      if (replace) {
+        setSessions(data);
+      } else {
+        setSessions(prev => [...prev, ...data]);
+      }
+      setHasMore(data.length === PAGE_SIZE);
+      setPage(pageNum);
+    } catch {
+      setError("Impossible de charger l'historique");
+    } finally {
+      setLoadingMore(false);
+      setRefreshing(false);
+    }
+  }
 
-  const onRefresh = useCallback(() => {
+  useEffect(() => { loadSessions(1, true); }, []);
+
+  function handleRefresh() {
     setRefreshing(true);
-    loadSessions().finally(() => setRefreshing(false));
-  }, [loadSessions]);
+    loadSessions(1, true);
+  }
 
-  useEffect(() => { loadSessions(); }, [loadSessions]);
-
-  if (loading) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator color="#EFBF04" size="large" />
-      </View>
-    );
+  function handleLoadMore() {
+    if (hasMore && !loadingMore) {
+      loadSessions(page + 1);
+    }
   }
 
   return (
@@ -61,14 +76,25 @@ export default function HistoryScreen() {
       style={styles.list}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.3}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#EFBF04" />
       }
       ListHeaderComponent={
         <Text style={[styles.title, { paddingTop: insets.top + 16 }]}>Historique</Text>
       }
       ListEmptyComponent={
-        <Text style={styles.empty}>{error ?? "Aucune séance pour l'instant"}</Text>
+        !loadingMore ? (
+          <Text style={styles.empty}>{error ?? "Aucune séance pour l'instant"}</Text>
+        ) : null
+      }
+      ListFooterComponent={
+        loadingMore && !refreshing ? (
+          <View style={styles.footer}>
+            <ActivityIndicator color="#EFBF04" />
+          </View>
+        ) : null
       }
       renderItem={({ item }) => {
         const totalVolume = item.exercises.flatMap((e) => e.sets).reduce(
@@ -130,6 +156,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingBottom: 24 },
   title: { fontFamily: 'Quilon-Medium', fontSize: 25, color: '#fafafa', marginBottom: 16 },
   empty: { fontFamily: 'Rowan-Regular', fontSize: 14, color: '#a0a0a0', textAlign: 'center', marginTop: 32 },
+  footer: { paddingVertical: 16, alignItems: 'center' },
   card: {
     backgroundColor: 'rgba(255,255,255,0.04)',
     borderRadius: 16,
