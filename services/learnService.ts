@@ -125,6 +125,10 @@ export async function submitQuiz(
   articleId: string,
   answers: QuizAnswer[],
 ): Promise<QuizSubmitResult> {
-  const { data } = await api.post<QuizSubmitResult>('/quiz/submit', { articleId, answers });
-  return data;
+  try {
+    const { data } = await api.post<QuizSubmitResult>('/quiz/submit', { articleId, answers });
+    return data;
+  } catch (e) {
+    throw e;
+  }
 }

@@ -29,8 +29,9 @@ export function useAuth() {
     try {
       const { data } = await api.get<UserProfile>('/users/me');
       setProfile(data);
-    } catch {
-      // Silent fail — stale profile stays in place
+    } catch (e) {
+      if (__DEV__) console.warn('refreshProfile failed:', e);
+      // Pas de throw — l'app continue avec le profil stale
     }
   }, []);
 

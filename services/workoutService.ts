@@ -81,8 +81,8 @@ export async function getPersonalRecord(exerciseId: string): Promise<PersonalRec
   }
 }
 
-export async function getSessionById(id: string): Promise<WorkoutSession & { exercises?: unknown[] }> {
-  const { data } = await api.get<WorkoutSession & { exercises?: unknown[] }>(`/sessions/${id}`);
+export async function getSessionById(id: string): Promise<WorkoutSession> {
+  const { data } = await api.get<WorkoutSession>(`/sessions/${id}`);
   return data;
 }
 

@@ -56,7 +56,11 @@ export default function OnboardingScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   async function handleFinish() {
-    await AsyncStorage.setItem('onboarding_completed', 'true');
+    try {
+      await AsyncStorage.setItem('onboarding_completed', 'true');
+    } catch {
+      // Storage failure is non-blocking — proceed to Login anyway
+    }
     navigation.navigate('Login');
   }
 

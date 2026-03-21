@@ -32,7 +32,17 @@ export async function uploadPhoto(
   category: string,
   weight?: number,
   notes?: string,
+  fileSize?: number,
+  mimeType?: string,
 ): Promise<ProgressPhoto> {
+  if (fileSize !== undefined && fileSize > 5 * 1024 * 1024) {
+    throw new Error("L'image ne doit pas dépasser 5 MB");
+  }
+  const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if (mimeType !== undefined && !validTypes.includes(mimeType)) {
+    throw new Error('Format non supporté. Utilise JPG, PNG ou WebP.');
+  }
+
   const formData = new FormData();
   formData.append('photo', { uri, type: 'image/jpeg', name: 'photo.jpg' } as unknown as Blob);
   formData.append('category', category);

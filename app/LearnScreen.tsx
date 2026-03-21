@@ -22,6 +22,7 @@ import { getParcours } from '../services/parcoursService';
 import { getDueReviews } from '../services/userService';
 import type { DueReview } from '../services/userService';
 import ArticleCard from '../components/learn/ArticleCard';
+import EmptyState from '../components/ui/EmptyState';
 import ParcoursListTab from '../components/learn/ParcoursListTab';
 import ParcoursDetailScreen from './ParcoursDetailScreen';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
@@ -436,10 +437,10 @@ function ArticlesListScreen({
             <View>
               {searchLoading ? (
                 <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
+              ) : error !== null ? (
+                <EmptyState type="error" title="Impossible de charger les articles" description={error} />
               ) : (
-                <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-                  {error ?? 'Aucun article disponible'}
-                </Text>
+                <EmptyState title="Aucun article disponible" />
               )}
             </View>
           }
@@ -515,10 +516,10 @@ function ArticleDetailScreen({
     );
   }
 
-  if (error || !article) {
+  if (error !== null || !article) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-red-400 text-body-sm font-body">{error ?? 'Article not found'}</Text>
+        <EmptyState type="error" title="Impossible de charger l'article" description={error ?? 'Article introuvable'} />
       </View>
     );
   }

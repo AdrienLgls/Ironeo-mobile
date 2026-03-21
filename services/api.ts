@@ -92,6 +92,10 @@ api.interceptors.response.use(
         { headers: { 'Content-Type': 'application/json' } },
       );
 
+      if (!data?.token || typeof data.token !== 'string' || data.token.length < 10) {
+        throw new Error('Invalid refresh response');
+      }
+
       await SecureStore.setItemAsync(TOKEN_KEY, data.token);
       if (data.refreshToken) {
         await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, data.refreshToken);
