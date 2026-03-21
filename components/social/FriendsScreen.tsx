@@ -236,6 +236,9 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
   // Track requests sent optimistically during this session
   const sentRequests = useRef<Set<string>>(new Set());
 
+  // Prevent stale search results from overwriting newer ones
+  const searchRequestIdRef = useRef(0);
+
   // ── Load data ────────────────────────────────────────────────────────────────
   const loadData = useCallback(async () => {
     const [f, r] = await Promise.all([getFriends(), getFriendRequests()]);
@@ -270,10 +273,21 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
       setSearchResults([]);
       return;
     }
+    const requestId = ++searchRequestIdRef.current;
     setSearchLoading(true);
     searchUsers(debouncedQuery)
-      .then(setSearchResults)
-      .finally(() => setSearchLoading(false));
+      .then((results) => {
+        if (requestId !== searchRequestIdRef.current) return;
+        setSearchResults(results);
+      })
+      .catch(() => {
+        if (requestId !== searchRequestIdRef.current) return;
+        setSearchResults([]);
+      })
+      .finally(() => {
+        if (requestId !== searchRequestIdRef.current) return;
+        setSearchLoading(false);
+      });
   }, [debouncedQuery]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
