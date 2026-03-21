@@ -55,6 +55,11 @@
       ],
       "expo-sharing"
     ],
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "scheme": "ironeo",
     "extra": {
       "googleAndroidClientId": "",

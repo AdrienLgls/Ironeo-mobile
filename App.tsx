@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
+import * as Updates from 'expo-updates';
 import { CommonActions } from '@react-navigation/native';
 import { AuthProvider } from './hooks/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -44,6 +45,22 @@ export default function App() {
 
   const notificationListener = useRef<Notifications.EventSubscription | null>(null);
   const responseListener = useRef<Notifications.EventSubscription | null>(null);
+
+  useEffect(() => {
+    async function checkForUpdates() {
+      if (__DEV__) return;
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (_e: unknown) {
+        // Silent fail — user continues with cached version
+      }
+    }
+    checkForUpdates();
+  }, []);
 
   useEffect(() => {
     initNotifications().catch(() => undefined);
