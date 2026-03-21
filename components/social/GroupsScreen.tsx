@@ -275,6 +275,7 @@ function CreateGroupModal({ visible, onClose, onSuccess }: CreateModalProps) {
             multiline
             numberOfLines={3}
             autoCapitalize="sentences"
+            textAlignVertical="top"
           />
 
           <View style={styles.toggleRow}>
