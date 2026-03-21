@@ -42,6 +42,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
 
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [editMode, setEditMode] = useState(false);
@@ -49,8 +50,10 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
   const [draftRpe, setDraftRpe] = useState<number | undefined>(undefined);
   const [saving, setSaving] = useState(false);
 
-  const loadSession = useCallback(() => {
-    setLoading(true);
+  const loadSession = useCallback((isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
     getSessionById(sessionId)
       .then((s) => {
         setSession(s);
@@ -58,7 +61,10 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
         setDraftRpe(s.rpe);
       })
       .catch(() => setError('Séance introuvable'))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, [sessionId]);
 
   useFocusEffect(
@@ -121,7 +127,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
     });
   }
 
-  if (loading) {
+  if (loading && !refreshing) {
     return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
         <ActivityIndicator color="#EFBF04" size="large" />
@@ -158,6 +164,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
       style={styles.scroll}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}
       showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadSession(true)} tintColor="#EFBF04" />}
     >
       {/* Back + edit header */}
       <View style={styles.topRow}>
