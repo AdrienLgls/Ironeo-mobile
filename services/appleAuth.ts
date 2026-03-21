@@ -10,19 +10,14 @@ export async function signInWithApple(): Promise<void> {
     ],
   });
 
-  try {
-    const response = await api.post('/auth/apple', {
-      identityToken: credential.identityToken,
-      authorizationCode: credential.authorizationCode,
-      fullName: credential.fullName,
-      email: credential.email,
-    });
-    await SecureStore.setItemAsync(TOKEN_KEY, response.data.token);
-    if (response.data.refreshToken) {
-      await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, response.data.refreshToken);
-    }
-  } catch (error: unknown) {
-    // Backend may not have Apple auth yet
-    throw error;
+  const response = await api.post('/auth/apple', { // Backend may not have Apple auth yet
+    identityToken: credential.identityToken,
+    authorizationCode: credential.authorizationCode,
+    fullName: credential.fullName,
+    email: credential.email,
+  });
+  await SecureStore.setItemAsync(TOKEN_KEY, response.data.token);
+  if (response.data.refreshToken) {
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, response.data.refreshToken);
   }
 }

@@ -21,33 +21,21 @@ function getMimeType(filename: string): string {
 }
 
 export async function exportSessionsCSV(): Promise<void> {
-  try {
-    const { data } = await api.get<string>('/export/workouts/csv', {
-      responseType: 'text',
-    });
-    await writeAndShare(data, 'sessions.csv');
-  } catch (err) {
-    throw err;
-  }
+  const { data } = await api.get<string>('/export/workouts/csv', {
+    responseType: 'text',
+  });
+  await writeAndShare(data, 'sessions.csv');
 }
 
 export async function exportSessionsJSON(): Promise<void> {
-  try {
-    const { data } = await api.get<unknown>('/export/workouts/json');
-    const content = JSON.stringify(data, null, 2);
-    await writeAndShare(content, 'sessions.json');
-  } catch (err) {
-    throw err;
-  }
+  const { data } = await api.get<unknown>('/export/workouts/json');
+  const content = JSON.stringify(data, null, 2);
+  await writeAndShare(content, 'sessions.json');
 }
 
 export async function exportPRsCSV(): Promise<void> {
-  try {
-    const { data } = await api.get<string>('/export/prs/csv', {
-      responseType: 'text',
-    });
-    await writeAndShare(data, 'records.csv');
-  } catch (err) {
-    throw err;
-  }
+  const { data } = await api.get<string>('/export/prs/csv', {
+    responseType: 'text',
+  });
+  await writeAndShare(data, 'records.csv');
 }
