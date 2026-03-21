@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Rowan-Regular',
   },
   pillTextActive: {
-    color: '#000',
+    color: '#121212',
     fontFamily: 'Quilon-Medium',
   },
   pillTextInactive: {
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   paywallButtonText: {
-    color: '#000',
+    color: '#121212',
     fontSize: 14,
     fontFamily: 'Quilon-Medium',
   },

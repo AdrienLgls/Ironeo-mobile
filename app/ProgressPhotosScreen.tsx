@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
   },
   pillTextActive: {
-    color: '#000',
+    color: '#121212',
     fontFamily: 'Quilon-Medium',
   },
   modeToggle: {
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
   categoryBadgeText: {
     fontSize: 9,
     fontFamily: 'Quilon-Medium',
-    color: '#000',
+    color: '#121212',
   },
   cellDate: {
     fontSize: 9,
@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
   saveBtnText: {
     fontFamily: 'Quilon-Medium',
     fontSize: 15,
-    color: '#000',
+    color: '#121212',
   },
   // Before/After
   compareContainer: {

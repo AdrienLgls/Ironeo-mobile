@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#EFBF04',
-    borderRadius: 12,
+    borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
   },

@@ -373,14 +373,14 @@ function Slide5({ data, onBack }: { data: YearInReview; onBack: () => void }) {
         activeOpacity={0.8}
         style={{
           backgroundColor: GOLD,
-          borderRadius: 24,
+          borderRadius: 16,
           paddingHorizontal: 40,
           paddingVertical: 16,
           width: '100%',
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: '#000', fontSize: 16, fontWeight: '700' }}>Continuer l'aventure</Text>
+        <Text style={{ color: '#121212', fontSize: 16, fontWeight: '700' }}>Continuer l'aventure</Text>
       </TouchableOpacity>
     </View>
   );

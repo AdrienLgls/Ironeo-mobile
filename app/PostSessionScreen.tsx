@@ -254,7 +254,7 @@ const modalStyles = StyleSheet.create({
   btnText: {
     fontFamily: 'Quilon-Medium',
     fontSize: 16,
-    color: '#0a0a0a',
+    color: '#121212',
   },
 });
 
@@ -385,7 +385,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
                 await registerForPushNotifications().catch(() => undefined);
               }}
             >
-              <Text style={{ color: '#000', fontSize: 16, fontFamily: 'Quilon-Medium' }}>Activer les notifications</Text>
+              <Text style={{ color: '#121212', fontSize: 16, fontFamily: 'Quilon-Medium' }}>Activer les notifications</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{ padding: 12, alignItems: 'center' }}
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
   },
-  ctaPrimaryText: { fontFamily: 'Quilon-Medium', fontSize: 16, color: '#0a0a0a' },
+  ctaPrimaryText: { fontFamily: 'Quilon-Medium', fontSize: 16, color: '#121212' },
   ctaSecondary: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 16,

@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#000' },
+  saveBtnText: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#121212' },
   // Notes / RPE display (read mode)
   notesDisplay: {
     backgroundColor: 'rgba(255,255,255,0.04)',

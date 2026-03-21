@@ -61,7 +61,7 @@ export default function ProgramCard({ program, onPress }: Props) {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: '#000', fontSize: 14, marginLeft: 2 }}>{'▶'}</Text>
+          <Text style={{ color: '#121212', fontSize: 14, marginLeft: 2 }}>{'▶'}</Text>
         </View>
       </View>
 

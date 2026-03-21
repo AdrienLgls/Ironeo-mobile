@@ -155,7 +155,7 @@ function ProgressionTab({ dueReviews, inProgress, mastered, stats, onNavigate }:
                 paddingVertical: 6,
                 alignSelf: 'flex-start',
               }}>
-                <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 12 }}>Réviser →</Text>
+                <Text style={{ color: '#121212', fontFamily: 'Quilon-Medium', fontSize: 12 }}>Réviser →</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -413,7 +413,7 @@ function ArticlesListScreen({
                         }}
                       >
                         <Text style={{
-                          color: isActive ? '#000' : 'rgba(255,255,255,0.6)',
+                          color: isActive ? '#121212' : 'rgba(255,255,255,0.6)',
                           fontFamily: 'Rowan-Regular',
                           fontSize: 13,
                         }}>
@@ -560,7 +560,7 @@ function ArticleDetailScreen({
             alignItems: 'center',
           }}
         >
-          <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 15 }}>📝 Faire le quiz</Text>
+          <Text style={{ color: '#121212', fontFamily: 'Quilon-Medium', fontSize: 15 }}>📝 Faire le quiz</Text>
         </TouchableOpacity>
       )}
     </ScrollView>
@@ -725,7 +725,7 @@ function QuizScreen({
               alignItems: 'center',
             }}
           >
-            <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 15 }}>⭐ Marquer comme maîtrisé</Text>
+            <Text style={{ color: '#121212', fontFamily: 'Quilon-Medium', fontSize: 15 }}>⭐ Marquer comme maîtrisé</Text>
           </TouchableOpacity>
         )}
 

@@ -162,7 +162,7 @@ function CustomTabBar({ state, descriptors, navigation, badgeCount, clearBadge }
             }}
             accessibilityLabel="Démarrer une séance"
           >
-            <Text style={{ fontSize: 22, color: '#000', fontWeight: '700', lineHeight: 26 }}>+</Text>
+            <Text style={{ fontSize: 22, color: '#121212', fontWeight: '700', lineHeight: 26 }}>+</Text>
           </TouchableOpacity>
         </View>
 

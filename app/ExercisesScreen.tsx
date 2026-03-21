@@ -129,7 +129,7 @@ export default function ExercisesScreen({ navigation }: Props) {
                         fontFamily: 'Rowan-Regular',
                         fontSize: 12,
                         textTransform: 'capitalize',
-                        color: activeGroup === group ? '#000' : 'rgba(255,255,255,0.6)',
+                        color: activeGroup === group ? '#121212' : 'rgba(255,255,255,0.6)',
                       }}
                     >
                       {group}
@@ -163,7 +163,7 @@ export default function ExercisesScreen({ navigation }: Props) {
                       style={{
                         fontFamily: 'Rowan-Regular',
                         fontSize: 12,
-                        color: selectedEquipment === equip ? '#000' : 'rgba(255,255,255,0.6)',
+                        color: selectedEquipment === equip ? '#121212' : 'rgba(255,255,255,0.6)',
                       }}
                     >
                       {equip}

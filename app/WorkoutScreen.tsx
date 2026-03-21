@@ -195,8 +195,8 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
               paddingVertical: 16,
             }}
           >
-            <Text style={{ color: '#000', fontSize: 16, lineHeight: 18 }}>+</Text>
-            <Text style={{ color: '#000', fontFamily: 'Quilon-Medium', fontSize: 13 }}>Créer</Text>
+            <Text style={{ color: '#121212', fontSize: 16, lineHeight: 18 }}>+</Text>
+            <Text style={{ color: '#121212', fontFamily: 'Quilon-Medium', fontSize: 13 }}>Créer</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -236,7 +236,7 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
                   </Text>
                   {item.isCustom ? (
                     <View style={{ backgroundColor: '#EFBF04', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
-                      <Text style={{ color: '#000', fontFamily: 'Rowan-Regular', fontSize: 11 }}>Perso</Text>
+                      <Text style={{ color: '#121212', fontFamily: 'Rowan-Regular', fontSize: 11 }}>Perso</Text>
                     </View>
                   ) : null}
                 </View>

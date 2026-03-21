@@ -112,7 +112,7 @@ export default function StreakChain({ currentStreak, last7Days }: Props) {
                 }}
               >
                 {day.completed && (
-                  <Text style={{ fontSize: 12, color: '#000', fontWeight: '700' }}>✓</Text>
+                  <Text style={{ fontSize: 12, color: '#121212', fontWeight: '700' }}>✓</Text>
                 )}
               </View>
 
