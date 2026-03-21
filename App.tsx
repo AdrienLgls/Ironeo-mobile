@@ -48,8 +48,7 @@ const BIOMETRIC_KEY = 'biometric_lock_enabled';
 type NotificationData =
   | { type: 'group_message'; groupId: string }
   | { type: 'friend_request' }
-  | { type: 'notification' }
-  | { type: string };
+  | { type: 'notification' };
 
 function handleNotificationTap(data: NotificationData): void {
   if (data.type === 'group_message' && 'groupId' in data) {
