@@ -4,10 +4,13 @@ enableScreens();
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN, POSTHOG_API_KEY, POSTHOG_HOST } from './constants/config';
 
+export const sentryNavigationIntegration = Sentry.reactNavigationIntegration();
+
 Sentry.init({
   dsn: SENTRY_DSN,
   enabled: !!SENTRY_DSN && !__DEV__,
   tracesSampleRate: 0.2,
+  integrations: [sentryNavigationIntegration],
 });
 
 import PostHog, { PostHogProvider } from 'posthog-react-native';
