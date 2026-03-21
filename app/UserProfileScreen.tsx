@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -110,9 +111,12 @@ export default function UserProfileScreen({
     setLoading(false);
   }, [userId]);
 
-  useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+      return () => {};
+    }, [loadProfile]),
+  );
 
   async function handleAddFriend() {
     if (!profile) return;
