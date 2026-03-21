@@ -302,8 +302,11 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
         setGroup(groupData);
         setActivity(activityData);
       })
+      .catch(() => {
+        toast.error('Impossible de charger le groupe. Réessayez.');
+      })
       .finally(() => setLoading(false));
-  }, [groupId]);
+  }, [groupId, toast]);
 
   const handleLeave = useCallback(async () => {
     const ok = await confirm({

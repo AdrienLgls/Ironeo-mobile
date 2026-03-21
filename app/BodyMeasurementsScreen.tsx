@@ -507,11 +507,13 @@ export default function BodyMeasurementsScreen({ onBack }: BodyMeasurementsScree
       try {
         const data = await getMeasurements(months);
         setTrends(data);
+      } catch {
+        toast.error('Impossible de charger les mensurations.');
       } finally {
         setLoading(false);
       }
     },
-    []
+    [toast]
   );
 
   useEffect(() => {

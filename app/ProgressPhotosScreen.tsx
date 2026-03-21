@@ -328,10 +328,15 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
 
   const load = useCallback(async () => {
     setLoading(true);
-    const cat = activeCategory === 'all' ? undefined : activeCategory;
-    const data = await getPhotos(cat);
-    setPhotos(data);
-    setLoading(false);
+    try {
+      const cat = activeCategory === 'all' ? undefined : activeCategory;
+      const data = await getPhotos(cat);
+      setPhotos(data);
+    } catch {
+      Alert.alert('Erreur', 'Impossible de charger les photos.');
+    } finally {
+      setLoading(false);
+    }
   }, [activeCategory]);
 
   useEffect(() => {
