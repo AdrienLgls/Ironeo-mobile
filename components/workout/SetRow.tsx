@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import type { WorkoutSet, SetType } from '../../types/workout';
 
 interface Props {
@@ -108,6 +108,8 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
             value={weight}
             onChangeText={setWeight}
             keyboardType="decimal-pad"
+            returnKeyType="done"
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder="—"
             placeholderTextColor="rgba(255,255,255,0.2)"
           />
@@ -128,6 +130,8 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
             value={reps}
             onChangeText={setReps}
             keyboardType="number-pad"
+            returnKeyType="done"
+            onSubmitEditing={() => Keyboard.dismiss()}
             placeholder="—"
             placeholderTextColor="rgba(255,255,255,0.2)"
           />

@@ -8,6 +8,7 @@ import WorkoutScreen from './WorkoutScreen';
 import LearnScreen from './LearnScreen';
 import SocialScreen from './SocialScreen';
 import ProfileScreen from './ProfileScreen';
+import { useSocialBadge } from '../hooks/useSocialBadge';
 
 export type TabParamList = {
   Home: undefined;
@@ -35,7 +36,12 @@ const TAB_ICONS: Record<keyof TabParamList, string> = {
   Profile: '👤',
 };
 
-function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+interface CustomTabBarProps extends BottomTabBarProps {
+  badgeCount: number;
+  clearBadge: () => void;
+}
+
+function CustomTabBar({ state, descriptors, navigation, badgeCount, clearBadge }: CustomTabBarProps) {
   const insets = useSafeAreaInsets();
   const indicatorAnim = useRef(new Animated.Value(0)).current;
 
@@ -165,6 +171,8 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           const actualIndex = index + 2;
           const { options } = descriptors[route.key];
           const isActive = state.index === actualIndex;
+          const isSocial = route.name === 'Social';
+          const showBadge = isSocial && badgeCount > 0;
 
           return (
             <TouchableOpacity
@@ -172,6 +180,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               accessibilityRole="button"
               accessibilityLabel={options.tabBarAccessibilityLabel}
               onPress={() => {
+                if (isSocial) clearBadge();
                 const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                 if (!isActive && !event.defaultPrevented) {
                   navigation.navigate(route.name);
@@ -187,9 +196,31 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               }}
               activeOpacity={0.7}
             >
-              <Text style={{ fontSize: 22, opacity: isActive ? 1 : 0.5 }}>
-                {TAB_ICONS[route.name as keyof TabParamList]}
-              </Text>
+              <View style={{ position: 'relative' }}>
+                <Text style={{ fontSize: 22, opacity: isActive ? 1 : 0.5 }}>
+                  {TAB_ICONS[route.name as keyof TabParamList]}
+                </Text>
+                {showBadge && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: -4,
+                      right: -8,
+                      minWidth: 16,
+                      height: 16,
+                      borderRadius: 8,
+                      backgroundColor: '#ef4444',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingHorizontal: 3,
+                    }}
+                  >
+                    <Text style={{ color: '#ffffff', fontSize: 10, fontWeight: '700', lineHeight: 14 }}>
+                      {badgeCount >= 10 ? '9+' : String(badgeCount)}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
           );
         })}
@@ -199,9 +230,11 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 export default function TabNavigator() {
+  const { badgeCount, clearBadge } = useSocialBadge();
+
   return (
     <Tab.Navigator
-      tabBar={(props) => <CustomTabBar {...props} />}
+      tabBar={(props) => <CustomTabBar {...props} badgeCount={badgeCount} clearBadge={clearBadge} />}
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen name="Home" component={HomeScreen} />

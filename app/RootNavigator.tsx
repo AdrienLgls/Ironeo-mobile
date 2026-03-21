@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { useAuthContext } from '../hooks/AuthContext';
+import { sentryNavigationIntegration } from '../App';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
 
@@ -30,7 +31,12 @@ export default function RootNavigator() {
   }
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        sentryNavigationIntegration.registerNavigationContainer(navigationRef);
+      }}
+    >
       {authState.status === 'authenticated' ? <TabNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

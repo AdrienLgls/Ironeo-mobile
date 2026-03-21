@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { updateWorkoutSession } from '../services/workoutService';
 import { checkPRs, type PRResult } from '../services/prService';
+import { registerForPushNotifications } from '../services/pushNotificationService';
 import { FadeInUp, StaggerChildren } from '../components/ui/FadeIn';
 import type { WorkoutSession } from '../types/workout';
 import { ShareCardStats } from '../components/share/ShareCard';
@@ -266,7 +267,18 @@ export default function PostSessionScreen({ route, navigation }: Props) {
   const [saving, setSaving] = useState(true);
   const [detectedPRs, setDetectedPRs] = useState<PRResult[]>([]);
   const [showPRModal, setShowPRModal] = useState(false);
+  const [showPushModal, setShowPushModal] = useState(false);
   const shareCardRef = useRef<ViewShot>(null);
+
+  async function maybeAskForPushPermission(): Promise<void> {
+    try {
+      const asked = await AsyncStorage.getItem('push_permission_asked');
+      if (asked) return;
+      setShowPushModal(true);
+    } catch {
+      // Silent fail
+    }
+  }
 
   useEffect(() => {
     updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() })
@@ -274,6 +286,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
         setSession(saved);
         await hapticSuccess();
         await maybeRequestReview();
+        await maybeAskForPushPermission();
         const allSets = saved.exercises.flatMap((ex) => ex.sets);
         const doneSets = allSets.filter((s) => s.completed);
         trackSessionCompleted(
@@ -346,6 +359,36 @@ export default function PostSessionScreen({ route, navigation }: Props) {
         prs={detectedPRs}
         onClose={() => setShowPRModal(false)}
       />
+
+      <Modal visible={showPushModal} transparent animationType="slide">
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <View style={{ backgroundColor: '#1a1a1a', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
+            <Text style={{ color: '#fff', fontSize: 22, fontFamily: 'Quilon-Medium', marginBottom: 8 }}>Activez les notifications</Text>
+            <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Rowan-Regular', fontSize: 15, marginBottom: 24 }}>
+              Soyez alerté quand vous battez un record personnel 🏆 ou quand vos amis vous envoient un message.
+            </Text>
+            <TouchableOpacity
+              style={{ backgroundColor: '#EFBF04', borderRadius: 14, padding: 16, alignItems: 'center', marginBottom: 12 }}
+              onPress={async () => {
+                setShowPushModal(false);
+                await AsyncStorage.setItem('push_permission_asked', 'true');
+                await registerForPushNotifications().catch(() => undefined);
+              }}
+            >
+              <Text style={{ color: '#000', fontSize: 16, fontFamily: 'Quilon-Medium' }}>Activer les notifications</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ padding: 12, alignItems: 'center' }}
+              onPress={async () => {
+                setShowPushModal(false);
+                await AsyncStorage.setItem('push_permission_asked', 'true');
+              }}
+            >
+              <Text style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Rowan-Regular', fontSize: 14 }}>Plus tard</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <ScrollView
         style={styles.scroll}

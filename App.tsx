@@ -1,10 +1,16 @@
+import { enableScreens } from 'react-native-screens';
+enableScreens();
+
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN, POSTHOG_API_KEY, POSTHOG_HOST } from './constants/config';
+
+export const sentryNavigationIntegration = Sentry.reactNavigationIntegration();
 
 Sentry.init({
   dsn: SENTRY_DSN,
   enabled: !!SENTRY_DSN && !__DEV__,
   tracesSampleRate: 0.2,
+  integrations: [sentryNavigationIntegration],
 });
 
 import PostHog, { PostHogProvider } from 'posthog-react-native';
@@ -29,9 +35,10 @@ import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
 import RootNavigator, { navigationRef } from './app/RootNavigator';
 import { initNotifications, requestNotificationPermissions } from './services/timerNotificationService';
-import { configurePushNotifications, registerForPushNotifications } from './services/pushNotificationService';
+import { configurePushNotifications } from './services/pushNotificationService';
 import ErrorBoundary from './components/ErrorBoundary';
 import NetworkBanner from './components/NetworkBanner';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 configurePushNotifications();
@@ -133,7 +140,6 @@ export default function App() {
   useEffect(() => {
     initNotifications().catch(() => undefined);
     requestNotificationPermissions().catch(() => undefined);
-    registerForPushNotifications().catch(() => undefined);
 
     notificationListener.current = Notifications.addNotificationReceivedListener(() => undefined);
     responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
@@ -158,6 +164,7 @@ export default function App() {
   }
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <PostHogProvider client={posthog}>
       <ErrorBoundary>
         <NetworkBanner />
@@ -184,5 +191,6 @@ export default function App() {
         </AuthProvider>
       </ErrorBoundary>
     </PostHogProvider>
+    </GestureHandlerRootView>
   );
 }

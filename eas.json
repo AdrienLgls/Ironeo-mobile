@@ -1,5 +1,10 @@
 {
   "cli": { "version": ">= 14.0.0" },
+  "extra": {
+    "eas": {
+      "projectId": "YOUR_EAS_PROJECT_ID"
+    }
+  },
   "build": {
     "development": {
       "developmentClient": true,

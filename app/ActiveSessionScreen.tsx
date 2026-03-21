@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useKeepAwake } from 'expo-keep-awake';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
@@ -20,6 +21,7 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
 };
 
 export default function ActiveSessionScreen({ navigation, program }: Props) {
+  useKeepAwake();
   const insets = useSafeAreaInsets();
   const { trackSessionStarted } = useAnalytics();
   const { state, startSession, completeSet, currentExercise, currentSet, progress, completedSets, totalSets } =
@@ -127,6 +129,11 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
   const hasPR = newPRs.has(currentExerciseId);
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+    >
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       {/* Header */}
       <TouchableOpacity
@@ -232,5 +239,6 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
         </Text>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
