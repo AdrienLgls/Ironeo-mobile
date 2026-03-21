@@ -118,13 +118,20 @@ export default function LoginScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          className="items-center py-2"
+          className="items-center py-2 mb-2"
           onPress={() => navigation.navigate('Register')}
         >
           <Text className="text-white/50 text-body-sm font-body">
             No account yet?{' '}
             <Text className="text-accent font-heading">Sign up</Text>
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="items-center py-2"
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
+          <Text className="text-white/40 text-body-sm font-body">Mot de passe oublié ?</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
