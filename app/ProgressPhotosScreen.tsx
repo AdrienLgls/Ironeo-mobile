@@ -26,6 +26,7 @@ import {
   type PhotoCompare,
   type ProgressPhoto,
 } from '../services/progressPhotoService';
+import { formatDate } from '../utils/formatters';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CELL_SIZE = (SCREEN_WIDTH - 32 - 4) / 3; // 16px side padding, 2px gaps
@@ -47,11 +48,6 @@ const UPLOAD_CATEGORIES: { label: string; value: Exclude<Category, 'all'> }[] = 
   { label: 'Side', value: 'side' },
   { label: 'Other', value: 'other' },
 ];
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('fr-CA', { day: '2-digit', month: 'short', year: 'numeric' });
-}
 
 function categoryLabel(cat: ProgressPhoto['category']): string {
   const map: Record<ProgressPhoto['category'], string> = {

@@ -6,6 +6,7 @@ import {
   updateTimerNotification,
   stopTimerNotification,
 } from '../../services/timerNotificationService';
+import { hapticSuccess } from '../../utils/haptics';
 
 interface Props {
   durationSeconds: number;
@@ -44,6 +45,7 @@ export default function RestTimer({ durationSeconds, exerciseName = 'Workout', o
   useEffect(() => {
     if (remaining <= 0) {
       stopTimerNotification().catch(() => undefined);
+      hapticSuccess().catch(() => undefined);
       onComplete();
       return;
     }

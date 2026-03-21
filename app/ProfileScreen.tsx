@@ -43,6 +43,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuthContext } from '../hooks/AuthContext';
 import type { UserProfile, NotificationSettings } from '../types/user';
 import PaywallScreen from './PaywallScreen';
+import { formatDate } from '../utils/formatters';
 import WorkoutReminderSettings from './NotificationSettingsScreen';
 import BodyMeasurementsScreenComponent from './BodyMeasurementsScreen';
 import ProgressPhotosScreenComponent from './ProgressPhotosScreen';
@@ -778,7 +779,7 @@ function NotificationsScreenInline({
             >
               <Text style={{ color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular' }}>{item.message}</Text>
               <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, fontFamily: 'Rowan-Regular', marginTop: 4 }}>
-                {new Date(item.createdAt).toLocaleDateString('fr-CA')}
+                {formatDate(item.createdAt)}
               </Text>
             </View>
           )}

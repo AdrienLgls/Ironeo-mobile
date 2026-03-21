@@ -22,6 +22,7 @@ import {
 } from '../services/groupService';
 import type { GroupDetail, GroupMember } from '../services/groupService';
 import type { ActivityItem } from '../services/socialService';
+import { formatRelativeTime } from '../utils/formatters';
 
 // ─── Navigation types ────────────────────────────────────────────────────────
 
@@ -49,16 +50,6 @@ function getInitials(pseudo: string): string {
     .join('')
     .toUpperCase()
     .slice(0, 2);
-}
-
-function formatRelativeTime(isoDate: string): string {
-  const diff = Date.now() - new Date(isoDate).getTime();
-  const minutes = Math.floor(diff / 60_000);
-  if (minutes < 60) return `${minutes}min`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}j`;
 }
 
 function getActivityDescription(item: ActivityItem): string {

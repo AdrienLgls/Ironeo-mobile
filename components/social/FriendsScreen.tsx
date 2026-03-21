@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TextInput,
@@ -231,6 +232,8 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
+  const [refreshing, setRefreshing] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Friend[]>([]);
@@ -239,15 +242,27 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
   // Track requests sent optimistically during this session
   const sentRequests = useRef<Set<string>>(new Set());
 
+  // ── Load data ────────────────────────────────────────────────────────────────
+  const loadData = useCallback(async () => {
+    const [f, r] = await Promise.all([getFriends(), getFriendRequests()]);
+    setFriends(f);
+    setRequests(r);
+  }, []);
+
   // ── Initial load ────────────────────────────────────────────────────────────
   useEffect(() => {
-    Promise.all([getFriends(), getFriendRequests()])
-      .then(([f, r]) => {
-        setFriends(f);
-        setRequests(r);
-      })
-      .finally(() => setLoadingData(false));
-  }, []);
+    loadData().finally(() => setLoadingData(false));
+  }, [loadData]);
+
+  // ── Pull-to-refresh ──────────────────────────────────────────────────────────
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadData]);
 
   // ── Debounce search ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -366,6 +381,13 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
           renderItem={null}
           contentContainerStyle={styles.section}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#EFBF04"
+            />
+          }
           ListHeaderComponent={
             <>
               {/* Demandes reçues */}

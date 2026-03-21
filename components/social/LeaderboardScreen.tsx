@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ListRenderItemInfo,
 } from 'react-native';
+import { hapticSelection } from '../../utils/haptics';
 import { getLeaderboard } from '../../services/socialService';
 import type { LeaderboardEntry } from '../../services/socialService';
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '../ui/Skeleton';
@@ -73,7 +74,7 @@ const Pill = memo(function Pill({
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      onPress={onPress}
+      onPress={() => { hapticSelection().catch(() => undefined); onPress(); }}
       style={[styles.pill, active ? styles.pillActive : styles.pillInactive]}
     >
       <Text style={[styles.pillText, active ? styles.pillTextActive : styles.pillTextInactive]}>

@@ -29,6 +29,8 @@ import {
   type Measurement,
   type MeasurementTrends,
 } from '../services/measurementService';
+import { formatDate } from '../utils/formatters';
+import { hapticSuccess } from '../utils/haptics';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -73,11 +75,6 @@ const METRICS: MetricKey[] = ['weight', 'bodyFat', 'chest', 'waist', 'hips', 'sh
 function formatDateShort(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
-
-function formatDateFull(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function getDeltaColor(delta: number, metric: MetricKey): string {
@@ -394,6 +391,7 @@ function AddMeasurementForm({ onSaved }: AddMeasurementFormProps) {
     setSaving(true);
     try {
       await addMeasurement(payload);
+      await hapticSuccess();
       setForm(EMPTY_FORM);
       onSaved();
     } catch {
@@ -469,7 +467,7 @@ function HistoryList({ measurements, onDelete }: HistoryListProps) {
           style={styles.historyRow}
         >
           <View style={styles.historyLeft}>
-            <Text style={styles.historyDate}>{formatDateFull(m.date)}</Text>
+            <Text style={styles.historyDate}>{formatDate(m.date)}</Text>
             <Text style={styles.historyDetails}>
               {[
                 m.weight != null && `${m.weight} kg`,

@@ -20,6 +20,7 @@ import ExerciseDetailScreen from './ExerciseDetailScreen';
 import HistoryScreen from './HistoryScreen';
 import SessionDetailScreen from './SessionDetailScreen';
 import type { Program, ProgramDetail, ProgramDay, Exercise, WorkoutSession } from '../types/workout';
+import { formatDate } from '../utils/formatters';
 
 export type WorkoutStackParamList = {
   ProgramsList: undefined;
@@ -232,11 +233,7 @@ function ProgramsListScreen({ navigation }: NativeStackScreenProps<WorkoutStackP
             )
           }
           renderItem={({ item }) => {
-            const date = new Date(item.startedAt).toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            });
+            const date = formatDate(item.startedAt);
 
             const totalVolumeKg = item.exercises.reduce((acc, ex) => {
               return acc + ex.sets.reduce((setAcc, s) => {

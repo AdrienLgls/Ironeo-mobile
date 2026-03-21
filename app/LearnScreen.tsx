@@ -27,6 +27,7 @@ import ParcoursListTab from '../components/learn/ParcoursListTab';
 import ParcoursDetailScreen from './ParcoursDetailScreen';
 import HubTabNavigation from '../components/ui/HubTabNavigation';
 import type { Article, Quiz, QuizQuestion, Parcours } from '../types/learn';
+import { formatDate } from '../utils/formatters';
 
 export type LearnStackParamList = {
   ArticlesList: undefined;
@@ -44,14 +45,6 @@ const HUB_TABS = [
   { id: 'parcours', label: 'Parcours' },
   { id: 'progression', label: 'Progression' },
 ];
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' });
-  } catch {
-    return iso;
-  }
-}
 
 function CategoryBadge({ category }: { category?: string }) {
   if (!category) return null;
