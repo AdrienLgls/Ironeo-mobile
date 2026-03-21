@@ -39,7 +39,7 @@ export default function LoginScreen() {
         setGoogleLoading(true);
         exchangeGoogleToken(idToken)
           .then((res) => onAuthSuccess(res.token))
-          .catch(() => setError('Google sign-in failed. Please try again.'))
+          .catch(() => setError('Échec de la connexion Google. Veuillez réessayer.'))
           .finally(() => setGoogleLoading(false));
       }
     }
@@ -47,7 +47,7 @@ export default function LoginScreen() {
 
   async function handleLogin() {
     if (!email.trim() || !password.trim()) {
-      setError('Email and password are required.');
+      setError('Email et mot de passe requis.');
       return;
     }
     setLoading(true);
@@ -56,7 +56,7 @@ export default function LoginScreen() {
       const res = await login({ email: email.trim(), password });
       onAuthSuccess(res.token);
     } catch {
-      setError('Invalid credentials. Please try again.');
+      setError('Identifiants invalides. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function LoginScreen() {
       if (isAxiosError) {
         setError('Apple Sign-In bientôt disponible');
       } else {
-        setError('Apple Sign-In failed. Please try again.');
+        setError('Échec de la connexion Apple. Veuillez réessayer.');
       }
     } finally {
       setAppleLoading(false);
@@ -93,7 +93,7 @@ export default function LoginScreen() {
     >
       <View className="flex-1 justify-center px-6">
         <Text className="text-accent text-h1 font-heading mb-2">Ironeo</Text>
-        <Text className="text-white/60 text-body font-body mb-10">Train smarter. Live better.</Text>
+        <Text className="text-white/60 text-body font-body mb-10">Entraîne-toi mieux. Vis mieux.</Text>
 
         {error !== null && (
           <View className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-4">
@@ -112,7 +112,7 @@ export default function LoginScreen() {
         />
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-6 text-base"
-          placeholder="Password"
+          placeholder="Mot de passe"
           placeholderTextColor="#666"
           secureTextEntry
           value={password}
@@ -128,7 +128,7 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="#121212" />
           ) : (
-            <Text className="text-background text-body font-heading">Sign In</Text>
+            <Text className="text-background text-body font-heading">Connexion</Text>
           )}
         </TouchableOpacity>
 
@@ -141,7 +141,7 @@ export default function LoginScreen() {
           {googleLoading ? (
             <ActivityIndicator color="#EFBF04" />
           ) : (
-            <Text className="text-white text-body font-heading">Continue with Google</Text>
+            <Text className="text-white text-body font-heading">Continuer avec Google</Text>
           )}
         </TouchableOpacity>
 
@@ -172,8 +172,8 @@ export default function LoginScreen() {
           onPress={() => navigation.navigate('Register')}
         >
           <Text className="text-white/50 text-body-sm font-body">
-            No account yet?{' '}
-            <Text className="text-accent font-heading">Sign up</Text>
+            Pas encore de compte ?{' '}
+            <Text className="text-accent font-heading">S'inscrire</Text>
           </Text>
         </TouchableOpacity>
 
