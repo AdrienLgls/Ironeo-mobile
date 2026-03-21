@@ -14,6 +14,7 @@ import {
 import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
 import { formatChatTimestamp } from '../../utils/formatters';
+import { hapticImpact } from '../../utils/haptics';
 import {
   deleteMessage,
   getMessages,
@@ -203,6 +204,7 @@ export default function GroupChatTab({ groupId }: Props) {
     setSending(true);
     try {
       const sent = await sendMessage(groupId, text, replyTo?._id);
+      await hapticImpact();
       setInputText('');
       setReplyTo(null);
       setMessages((prev) => {
