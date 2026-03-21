@@ -71,7 +71,7 @@ export default function PaywallScreen() {
       <Text className="text-white text-2xl font-bold mb-2">Subscription</Text>
       <Text className="text-white/40 text-sm mb-6">Unlock your full potential</Text>
 
-      {refreshing && <ActivityIndicator color="#EFBF04" className="mb-4" />}
+      {refreshing && <ActivityIndicator color="#EFBF04" style={{ marginBottom: 16 }} />}
 
       {PLANS.map((plan) => {
         const isCurrent = currentStatus === plan.id;
