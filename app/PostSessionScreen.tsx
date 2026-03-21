@@ -23,6 +23,7 @@ import type { WorkoutSession } from '../types/workout';
 import { ShareCardStats } from '../components/share/ShareCard';
 import ShareButton from '../components/share/ShareButton';
 import { hapticSuccess } from '../utils/haptics';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 async function maybeRequestReview(): Promise<void> {
   try {
@@ -260,6 +261,7 @@ const modalStyles = StyleSheet.create({
 export default function PostSessionScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const insets = useSafeAreaInsets();
+  const { trackSessionCompleted, trackPRDetected } = useAnalytics();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [saving, setSaving] = useState(true);
   const [detectedPRs, setDetectedPRs] = useState<PRResult[]>([]);
@@ -272,10 +274,17 @@ export default function PostSessionScreen({ route, navigation }: Props) {
         setSession(saved);
         await hapticSuccess();
         await maybeRequestReview();
+        const allSets = saved.exercises.flatMap((ex) => ex.sets);
+        const doneSets = allSets.filter((s) => s.completed);
+        trackSessionCompleted(
+          (saved.durationMinutes ?? 0) * 60,
+          doneSets.length,
+        );
         const prs = await checkPRs(saved);
         if (prs.length > 0) {
           setDetectedPRs(prs);
           setShowPRModal(true);
+          trackPRDetected(prs.length);
           await hapticSuccess();
         }
       })

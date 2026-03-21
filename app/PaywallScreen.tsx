@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import api from '../services/api';
 import type { UserProfile } from '../types/user';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 interface Plan {
   id: string;
@@ -39,9 +40,14 @@ const PLANS: Plan[] = [
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
+  const { trackPaywallViewed } = useAnalytics();
   const [currentStatus, setCurrentStatus] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    trackPaywallViewed();
+  }, []);
 
   useEffect(() => {
     api

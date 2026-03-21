@@ -60,7 +60,22 @@
         "android.permission.READ_MEDIA_IMAGES"
       ],
       "package": "com.ironeo.app",
-      "versionCode": 1
+      "versionCode": 1,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "ironeo"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -75,7 +90,15 @@
         }
       ],
       "expo-sharing",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      ["expo-build-properties", {
+        "ios": {
+          "deploymentTarget": "15.1"
+        },
+        "android": {
+          "minSdkVersion": 26
+        }
+      }]
     ],
     "updates": {
       "enabled": true,
