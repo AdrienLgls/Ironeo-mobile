@@ -12,6 +12,7 @@ import {
 import type { MuscleGroup } from '../../types/workout';
 import { createCustomExercise } from '../../services/workoutService';
 import { useToast } from '../../context/ToastContext';
+import { hapticSuccess } from '../../utils/haptics';
 
 const MUSCLE_GROUPS: MuscleGroup[] = [
   'Chest',
@@ -68,6 +69,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
         description: description.trim() || undefined,
       });
       toast.success('Exercice créé');
+      await hapticSuccess();
       reset();
       onCreated();
     } catch {
