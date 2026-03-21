@@ -165,7 +165,7 @@ export default function HeroCard({
         <TouchableOpacity
           onPress={onResumeSession}
           activeOpacity={0.85}
-          style={{ backgroundColor: '#f97316', borderRadius: 12, paddingVertical: 14, alignItems: 'center' }}
+          style={{ backgroundColor: '#EFBF04', borderRadius: 12, paddingVertical: 14, alignItems: 'center' }}
         >
           <Text className="text-white text-body font-heading">Reprendre</Text>
         </TouchableOpacity>
@@ -178,7 +178,7 @@ export default function HeroCard({
             <TouchableOpacity
               onPress={onLearn}
               activeOpacity={0.85}
-              style={{ backgroundColor: '#10b981', borderRadius: 12, paddingVertical: 14, alignItems: 'center' }}
+              style={{ backgroundColor: '#EFBF04', borderRadius: 12, paddingVertical: 14, alignItems: 'center' }}
             >
               <Text className="text-white text-body font-heading">Réviser {dueReviewsCount} quiz</Text>
             </TouchableOpacity>
