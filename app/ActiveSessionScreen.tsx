@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useKeepAwake } from 'expo-keep-awake';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,6 +21,7 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
 };
 
 export default function ActiveSessionScreen({ navigation, program }: Props) {
+  useKeepAwake();
   const insets = useSafeAreaInsets();
   const { trackSessionStarted } = useAnalytics();
   const { state, startSession, completeSet, currentExercise, currentSet, progress, completedSets, totalSets } =
