@@ -1,0 +1,36 @@
+{
+  "phase": 42,
+  "slug": "payment-apple-auth-safety",
+  "title": "Phase 42 — paymentService URL validation + appleAuth type safety",
+  "branch": "feat/42-payment-apple-auth-safety",
+  "passes": true,
+  "stories": [
+    {
+      "id": "42-1",
+      "title": "paymentService: validate URL from getPortalUrl()",
+      "priority": "HIGH",
+      "description": "services/paymentService.ts has a single function getPortalUrl() that returns data.url without any validation. If the backend returns a malformed response, data.url would be undefined and crash when calling code tries to open it.\n\nAdd validation:\n- Check data?.url exists\n- Check it's a string\n- Check it starts with 'https://'\n- Throw an Error if any check fails",
+      "files": ["services/paymentService.ts"],
+      "acceptance": [
+        "data.url validated for existence, type, and https scheme before returning",
+        "Throws Error with descriptive message if invalid",
+        "Return type stays Promise<string>",
+        "No TypeScript any"
+      ]
+    },
+    {
+      "id": "42-2",
+      "title": "appleAuth: add type safety and try/catch",
+      "priority": "MEDIUM",
+      "description": "services/appleAuth.ts has signInWithApple() that:\n1. Calls api.post('/auth/apple') without a generic type parameter — returns implicit any response\n2. Has no try/catch — network errors or 500s will propagate as unhandled\n3. Returns Promise<void> instead of Promise<AuthResponse>\n\nFix:\n- Import AuthResponse from types/auth (already imported in api.ts)\n- Change api.post('/auth/apple', ...) to api.post<AuthResponse>('/auth/apple', ...)\n- Destructure: const { data } = await api.post<AuthResponse>(...)\n- Change return type to Promise<AuthResponse> and return data\n- Remove the comment '// Backend may not have Apple auth yet' since it's already handled in LoginScreen",
+      "files": ["services/appleAuth.ts"],
+      "acceptance": [
+        "api.post typed with AuthResponse generic",
+        "Return type is Promise<AuthResponse>",
+        "data.token and data.refreshToken accessed via typed destructuring",
+        "No TypeScript any",
+        "No functional behavior change"
+      ]
+    }
+  ]
+}
