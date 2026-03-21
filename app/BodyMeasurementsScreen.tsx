@@ -30,7 +30,7 @@ import {
   type Measurement,
   type MeasurementTrends,
 } from '../services/measurementService';
-import { formatDate } from '../utils/formatters';
+import { formatDate, formatDateShort } from '../utils/formatters';
 import { hapticSuccess } from '../utils/haptics';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -72,11 +72,6 @@ const TIME_RANGES: { label: string; months: number }[] = [
 const METRICS: MetricKey[] = ['weight', 'bodyFat', 'chest', 'waist', 'hips', 'shoulders'];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatDateShort(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
 
 function getDeltaColor(delta: number, metric: MetricKey): string {
   const lowerIsBetter = LOWER_IS_BETTER.includes(metric);
