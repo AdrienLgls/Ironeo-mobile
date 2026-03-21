@@ -13,6 +13,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from './AuthNavigator';
 import { useNavigation } from '@react-navigation/native';
 import { forgotPassword } from '../services/authService';
+import { hapticSuccess } from '../utils/haptics';
 
 type ForgotPasswordNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'ForgotPassword'>;
 
@@ -34,6 +35,7 @@ export default function ForgotPasswordScreen() {
     setError(null);
     try {
       await forgotPassword(email.trim());
+      await hapticSuccess();
       setSuccess(true);
     } catch {
       setError('Something went wrong. Please try again.');
