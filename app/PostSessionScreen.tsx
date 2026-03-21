@@ -20,6 +20,7 @@ import { FadeInUp, StaggerChildren } from '../components/ui/FadeIn';
 import type { WorkoutSession } from '../types/workout';
 import { ShareCardStats } from '../components/share/ShareCard';
 import ShareButton from '../components/share/ShareButton';
+import { hapticSuccess } from '../utils/haptics';
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'PostSession'>;
 
@@ -249,10 +250,12 @@ export default function PostSessionScreen({ route, navigation }: Props) {
     updateWorkoutSession(sessionId, { completedAt: new Date().toISOString() })
       .then(async (saved) => {
         setSession(saved);
+        await hapticSuccess();
         const prs = await checkPRs(saved);
         if (prs.length > 0) {
           setDetectedPRs(prs);
           setShowPRModal(true);
+          await hapticSuccess();
         }
       })
       .catch(() => undefined)
