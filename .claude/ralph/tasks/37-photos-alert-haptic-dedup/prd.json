@@ -1,0 +1,51 @@
+{
+  "phase": 37,
+  "slug": "photos-alert-haptic-dedup",
+  "title": "Phase 37 — ProgressPhotos toast/haptic + getActivityDescription dedup",
+  "branch": "feat/37-photos-alert-haptic-dedup",
+  "passes": true,
+  "stories": [
+    {
+      "id": "37-1",
+      "title": "ProgressPhotosScreen: Alert.alert errors → toast.error",
+      "priority": "HIGH",
+      "description": "ProgressPhotosScreen has 4 Alert.alert() calls for network/API errors that should use the app-wide toast system instead. The permission alert (line 362) is intentional and stays.\n\nReplace:\n- load() catch: Alert.alert('Erreur', 'Impossible de charger les photos.')\n- onRefresh() catch: Alert.alert('Erreur', 'Impossible de charger les photos.')\n- handleUploadSave() catch: Alert.alert('Erreur', \"Impossible d'envoyer la photo.\")\n- handleDelete() catch: Alert.alert('Erreur', 'Impossible de supprimer la photo.')\n\nWith toast.error() equivalents. Remove Alert import if no longer used.",
+      "files": ["app/ProgressPhotosScreen.tsx"],
+      "acceptance": [
+        "4 Alert.alert() error calls replaced by toast.error()",
+        "Alert.alert('Permission requise', ...) at line ~362 stays untouched",
+        "useToast() imported from context/ToastContext",
+        "Alert import removed if unused"
+      ]
+    },
+    {
+      "id": "37-2",
+      "title": "ProgressPhotosScreen: haptic feedback on upload/delete success",
+      "priority": "MEDIUM",
+      "description": "After a successful photo upload (handleUploadSave) or photo deletion (handleDelete), no haptic feedback is given. Add hapticSuccess() after the successful operation in each function.\n\n- In handleUploadSave(): after `await uploadPhoto(...)`, before `setUploadUri(null)`\n- In handleDelete(): after `await deletePhoto(id)`, before `setLightboxIndex(null)`",
+      "files": ["app/ProgressPhotosScreen.tsx"],
+      "acceptance": [
+        "hapticSuccess() called after successful uploadPhoto()",
+        "hapticSuccess() called after successful deletePhoto()",
+        "Import from utils/haptics"
+      ]
+    },
+    {
+      "id": "37-3",
+      "title": "getActivityDescription: extract to utils and dedup",
+      "priority": "MEDIUM",
+      "description": "getActivityDescription() and getTypeIcon() are defined locally in ActivityFeedScreen.tsx. GroupDetailScreen.tsx has its own partial version of getActivityDescription() (only handles 'workout_completed').\n\nExtract both functions to utils/activityHelpers.ts and import in both files.\n\nNote: Check the exact type signature of ActivityItem used in each file before extracting. If the types differ, use a type that works for both or define a minimal shared interface.",
+      "files": [
+        "utils/activityHelpers.ts",
+        "components/social/ActivityFeedScreen.tsx",
+        "app/GroupDetailScreen.tsx"
+      ],
+      "acceptance": [
+        "New file utils/activityHelpers.ts exports getActivityDescription and getTypeIcon",
+        "ActivityFeedScreen imports from utils/activityHelpers (local functions removed)",
+        "GroupDetailScreen imports getActivityDescription from utils/activityHelpers (local function removed)",
+        "Behavior identical to before"
+      ]
+    }
+  ]
+}
