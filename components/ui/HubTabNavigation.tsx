@@ -14,6 +14,7 @@ interface Props {
 
 export default function HubTabNavigation({ tabs, activeTab, onTabChange }: Props) {
   const indicatorAnim = useRef(new Animated.Value(0)).current;
+  const translateOffset = useRef(new Animated.Value(8)).current;
   const containerWidth = useRef(0);
   const activeIndex = tabs.findIndex((t) => t.id === activeTab);
 
@@ -75,7 +76,7 @@ export default function HubTabNavigation({ tabs, activeTab, onTabChange }: Props
             width: indicatorBarWidth,
             backgroundColor: '#EFBF04',
             borderRadius: 1,
-            transform: [{ translateX: Animated.add(indicatorAnim, new Animated.Value(8)) }],
+            transform: [{ translateX: Animated.add(indicatorAnim, translateOffset) }],
           }}
         />
       )}
