@@ -23,6 +23,7 @@ import {
 } from '../services/groupService';
 import type { GroupDetail, GroupMember } from '../services/groupService';
 import type { ActivityItem } from '../services/socialService';
+import { getActivityDescription } from '../utils/activityHelpers';
 import { formatRelativeTime } from '../utils/formatters';
 
 // ─── Navigation types ────────────────────────────────────────────────────────
@@ -51,21 +52,6 @@ function getInitials(pseudo: string): string {
     .join('')
     .toUpperCase()
     .slice(0, 2);
-}
-
-function getActivityDescription(item: ActivityItem): string {
-  if (item.type === 'workout_completed') {
-    return 'A terminé une séance';
-  }
-  if (item.type === 'personal_record') {
-    const exerciseName = typeof item.data.exerciseName === 'string' ? item.data.exerciseName : '';
-    const weight = typeof item.data.weight === 'number' ? item.data.weight : null;
-    const parts = ['🏆 Nouveau record'];
-    if (exerciseName) parts.push(exerciseName);
-    if (weight !== null) parts.push(`${weight}kg`);
-    return parts.join(' — ');
-  }
-  return item.type.replace(/_/g, ' ');
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
