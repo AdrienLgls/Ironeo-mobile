@@ -17,8 +17,12 @@ import { useConfirm } from '../context/ConfirmContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import api from '../services/api';
-import { getUserStats, updateProfile, uploadAvatar } from '../services/userService';
+import { TOKEN_KEY, REFRESH_TOKEN_KEY } from '../services/api';
+import { getUserStats, updateProfile, uploadAvatar, deleteAccount } from '../services/userService';
 import { getPortalUrl } from '../services/paymentService';
 import {
   getNotifications,
@@ -71,7 +75,10 @@ function ProfileHomeScreen({
   const [loading, setLoading] = useState(true);
   const [exportLoading, setExportLoading] = useState<ExportKey | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const toast = useToast();
+  const confirm = useConfirm();
+  const rootNavigation = useNavigation();
 
   useEffect(() => {
     Promise.all([
@@ -111,6 +118,30 @@ function ProfileHomeScreen({
       toast.error('Impossible d\'ouvrir le portail d\'abonnement');
     } finally {
       setPortalLoading(false);
+    }
+  }
+
+  async function handleDeleteAccount(): Promise<void> {
+    const ok = await confirm({
+      title: 'Supprimer mon compte',
+      message: 'Cette action est irréversible. Toutes vos données seront supprimées définitivement.',
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (!ok) return;
+    setDeleteLoading(true);
+    try {
+      await deleteAccount();
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+      await AsyncStorage.clear();
+      rootNavigation.dispatch(
+        CommonActions.reset({ index: 0, routes: [{ name: 'Login' }] })
+      );
+    } catch {
+      toast.error('Impossible de supprimer le compte');
+    } finally {
+      setDeleteLoading(false);
     }
   }
 
@@ -311,6 +342,49 @@ function ProfileHomeScreen({
           )}
         </TouchableOpacity>
       ))}
+
+      {/* Légal */}
+      <Text className="text-white/40 text-overline font-body uppercase tracking-wider mt-6 mb-2">
+        Légal
+      </Text>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => Linking.openURL('https://ironeo.com/cgu')}
+        className="flex-row items-center gap-3 bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-body-sm font-body flex-1">Conditions d'utilisation</Text>
+        <Ionicons name="open-outline" size={16} color="rgba(255,255,255,0.3)" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => Linking.openURL('https://ironeo.com/politique-confidentialite')}
+        className="flex-row items-center gap-3 bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+      >
+        <Text className="text-white text-body-sm font-body flex-1">Politique de confidentialité</Text>
+        <Ionicons name="open-outline" size={16} color="rgba(255,255,255,0.3)" />
+      </TouchableOpacity>
+
+      {/* Suppression de compte */}
+      <Text className="text-white/40 text-overline font-body uppercase tracking-wider mt-6 mb-2">
+        Zone dangereuse
+      </Text>
+
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={handleDeleteAccount}
+        disabled={deleteLoading}
+        className="flex-row items-center justify-center bg-white/[0.04] rounded-2xl px-4 py-4"
+      >
+        {deleteLoading ? (
+          <ActivityIndicator color="#ef4444" size="small" />
+        ) : (
+          <Text style={{ color: '#ef4444', fontSize: 14, fontFamily: 'Rowan-Regular' }}>
+            Supprimer mon compte
+          </Text>
+        )}
+      </TouchableOpacity>
     </ScrollView>
   );
 }

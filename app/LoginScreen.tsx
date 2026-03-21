@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AuthStackParamList } from './AuthNavigator';
@@ -116,6 +117,16 @@ export default function LoginScreen() {
             <Text className="text-white text-body font-heading">Continue with Google</Text>
           )}
         </TouchableOpacity>
+
+        <Text className="text-white/30 text-caption font-body text-center mb-4">
+          En continuant, vous acceptez nos{' '}
+          <Text
+            style={{ color: '#EFBF04' }}
+            onPress={() => Linking.openURL('https://ironeo.com/cgu')}
+          >
+            Conditions d'utilisation
+          </Text>
+        </Text>
 
         <TouchableOpacity
           className="items-center py-2 mb-2"
