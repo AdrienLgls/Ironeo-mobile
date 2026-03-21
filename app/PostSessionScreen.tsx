@@ -378,7 +378,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
               Soyez alerté quand vous battez un record personnel 🏆 ou quand vos amis vous envoient un message.
             </Text>
             <TouchableOpacity
-              style={{ backgroundColor: '#EFBF04', borderRadius: 14, padding: 16, alignItems: 'center', marginBottom: 12 }}
+              style={{ backgroundColor: '#EFBF04', borderRadius: 16, padding: 16, alignItems: 'center', marginBottom: 12 }}
               onPress={async () => {
                 setShowPushModal(false);
                 await AsyncStorage.setItem('push_permission_asked', 'true');
