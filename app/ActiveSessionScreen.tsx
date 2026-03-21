@@ -9,6 +9,7 @@ import RestTimer from '../components/workout/RestTimer';
 import SetRow from '../components/workout/SetRow';
 import type { ProgramDetail } from '../types/workout';
 import { getPersonalRecord } from '../services/workoutService';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 const DRAFT_KEY = 'active_session_draft';
 
@@ -20,6 +21,7 @@ type Props = NativeStackScreenProps<WorkoutStackParamList, 'ActiveSession'> & {
 
 export default function ActiveSessionScreen({ navigation, program }: Props) {
   const insets = useSafeAreaInsets();
+  const { trackSessionStarted } = useAnalytics();
   const { state, startSession, completeSet, currentExercise, currentSet, progress, completedSets, totalSets } =
     useWorkoutSession(program);
   const [showRestTimer, setShowRestTimer] = useState(false);
@@ -63,6 +65,7 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
 
   useEffect(() => {
     startSession().catch(() => undefined);
+    trackSessionStarted(program.name);
     return () => {
       AsyncStorage.removeItem(DRAFT_KEY).catch(() => undefined);
     };
