@@ -1,0 +1,33 @@
+{
+  "phase": 40,
+  "slug": "bravo-toast-search-abort",
+  "title": "Phase 40 — Bravo failure toast + search AbortController",
+  "branch": "feat/40-bravo-toast-search-abort",
+  "passes": true,
+  "stories": [
+    {
+      "id": "40-1",
+      "title": "ActivityFeedScreen: toast.error on bravo failure",
+      "priority": "MEDIUM",
+      "description": "In ActivityFeedScreen.tsx, the handleBravoToggle function (~line 145) uses an optimistic update then reverts silently on failure. The user sees the UI revert but gets no explanation. Add a toast.error() call in the catch block before the revert.\n\nImport useToast from context/ToastContext. Call const { toast } = useToast() at component level. In the sendBravo catch: add toast.error(\"Impossible d'envoyer le bravo.\") before the revert logic.",
+      "files": ["components/social/ActivityFeedScreen.tsx"],
+      "acceptance": [
+        "useToast imported and called in the component",
+        "sendBravo catch calls toast.error() with a message before reverting",
+        "No change to existing revert logic"
+      ]
+    },
+    {
+      "id": "40-2",
+      "title": "FriendsScreen: AbortController on searchUsers to prevent race conditions",
+      "priority": "MEDIUM",
+      "description": "In FriendsScreen.tsx, the search useEffect (~line 268) fires on every debouncedQuery change without cancelling the previous request. If the user types quickly, earlier requests may resolve after later ones, overwriting correct results.\n\nAdd an AbortController to the search useEffect:\n- Create controller inside the effect\n- Pass the signal to searchUsers if the service supports it, OR use a request ID/version counter approach\n- In the cleanup function, call controller.abort()\n- In the .then(), ignore results if the request was aborted\n\nIf socialService.searchUsers doesn't accept an AbortSignal, use a simpler approach: track a requestId counter (ref) and only apply results if the requestId matches the current one at resolution time.",
+      "files": ["components/social/FriendsScreen.tsx"],
+      "acceptance": [
+        "Race condition prevented: results from stale requests are discarded",
+        "Loading state correctly cleared on abort/cancellation",
+        "No TypeScript any introduced"
+      ]
+    }
+  ]
+}
