@@ -1,0 +1,59 @@
+{
+  "branchName": "feat/22-text-radius-consistency",
+  "userStories": [
+    {
+      "id": "US-2201",
+      "title": "Uniformiser couleurs text sombre #0a0a0a + #000 → #121212",
+      "acceptanceCriteria": [
+        "app/PostSessionScreen.tsx lignes 257 et 584: color '#0a0a0a' → '#121212'",
+        "components/workout/PlateCalculator.tsx ligne ~173: vérifier context — si text sur fond coloré (correct), laisser. Si text sur fond sombre, corriger",
+        "Chercher et remplacer tous les color:'#000' et color:'#000000' sur boutons gold (text sur fond #EFBF04) par '#121212'",
+        "Fichiers concernés: PostSessionScreen, LearnScreen, SessionDetailScreen, YearInReviewScreen, HeroCard, SetRow",
+        "tsc --noEmit passe"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Audit Phase 22: couleurs de texte foncé incohérentes — certains #0a0a0a, certains #000, certains #121212. Standard: toujours #121212 pour le texte foncé (y compris text sur fond or #EFBF04). Grep: grep -rn \"color.*'#000'\|color.*'#0a0a0a'\" app/ components/ --include='*.tsx' 2>/dev/null"
+    },
+    {
+      "id": "US-2202",
+      "title": "Uniformiser borderRadius des boutons CTA primaires → 16",
+      "acceptanceCriteria": [
+        "app/YearInReviewScreen.tsx lignes ~313 et ~376: borderRadius 24 → 16 sur les CTA buttons",
+        "app/OnboardingScreen.tsx ligne ~194: borderRadius 12 → 16 sur le main CTA button",
+        "components/home/HeroCard.tsx: vérifier les 4 boutons avec backgroundColor '#EFBF04' et borderRadius 12 → 16 si ce sont des CTA (pas des badges/chips)",
+        "NE PAS modifier les badges/chips/circles (WorkoutScreen 'Perso' badge, SetRow checkbox circle)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Audit Phase 22: boutons CTA primaires (backgroundColor #EFBF04, pleine largeur ou large) avec borderRadius non-standard. YearInReviewScreen:313,376 → borderRadius:24 (trop grand), OnboardingScreen:194 → borderRadius:12. HeroCard a 4 boutons à borderRadius:12. Standard CTA: borderRadius:16."
+    },
+    {
+      "id": "US-2203",
+      "title": "Fix className='mt-8' sur ActivityIndicator ProfileScreen",
+      "acceptanceCriteria": [
+        "app/ProfileScreen.tsx ligne ~587: remplacer className='mt-8' par style={{ marginTop: 32 }} sur ActivityIndicator",
+        "Pattern identique aux phases 19 et 21",
+        "tsc --noEmit passe"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Audit Phase 22: ProfileScreen.tsx:587 — ActivityIndicator avec className='mt-8'. NativeWind n'applique pas les classes sur ActivityIndicator. Fix: style={{ marginTop: 32 }}."
+    },
+    {
+      "id": "US-2204",
+      "title": "Polish final Phase 22 — tsc clean + push + merge main",
+      "acceptanceCriteria": [
+        "0 console.log dans les fichiers Phase 22",
+        "tsc --noEmit retourne 0 erreurs",
+        "git push origin feat/22-text-radius-consistency",
+        "Merge feat/22-text-radius-consistency dans main",
+        "git push origin main"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Polish final."
+    }
+  ]
+}
