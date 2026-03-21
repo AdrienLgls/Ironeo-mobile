@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Dimensions,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -555,6 +556,13 @@ export default function BodyMeasurementsScreen({ onBack }: BodyMeasurementsScree
         styles.screenContent,
         { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 32 },
       ]}
+      refreshControl={
+        <RefreshControl
+          refreshing={loading}
+          onRefresh={() => load(selectedMonths)}
+          tintColor="#EFBF04"
+        />
+      }
     >
       {/* Header */}
       <View style={styles.header}>
