@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { hapticImpact } from '../../utils/haptics';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
 import { SkeletonBox, SkeletonText } from '../ui/Skeleton';
@@ -153,7 +154,7 @@ function JoinByCodeModal({ visible, onClose, onSuccess }: JoinModalProps) {
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>Rejoindre par code</Text>
             <TouchableOpacity onPress={handleClose} hitSlop={8}>
-              <Ionicons name="close" size={22} color="rgba(255,255,255,0.6)" />
+              <Ionicons name="close" size={22} color="#EFBF04" />
             </TouchableOpacity>
           </View>
 
@@ -180,7 +181,7 @@ function JoinByCodeModal({ visible, onClose, onSuccess }: JoinModalProps) {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color="#121212" />
+              <ActivityIndicator size="small" color="#EFBF04" />
             ) : (
               <Text style={[styles.btnText, styles.btnTextDark]}>Rejoindre</Text>
             )}
@@ -248,7 +249,7 @@ function CreateGroupModal({ visible, onClose, onSuccess }: CreateModalProps) {
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>Créer un groupe</Text>
             <TouchableOpacity onPress={handleClose} hitSlop={8}>
-              <Ionicons name="close" size={22} color="rgba(255,255,255,0.6)" />
+              <Ionicons name="close" size={22} color="#EFBF04" />
             </TouchableOpacity>
           </View>
 
@@ -302,7 +303,7 @@ function CreateGroupModal({ visible, onClose, onSuccess }: CreateModalProps) {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color="#121212" />
+              <ActivityIndicator size="small" color="#EFBF04" />
             ) : (
               <Text style={[styles.btnText, styles.btnTextDark]}>Créer</Text>
             )}
@@ -325,6 +326,7 @@ function DiscoverCard({ group, onRequestSent }: DiscoverCardProps) {
 
   async function handleRequest() {
     if (state !== 'idle') return;
+    hapticImpact().catch(() => undefined);
     setState('loading');
     try {
       await requestJoinGroup(group._id);
@@ -348,7 +350,7 @@ function DiscoverCard({ group, onRequestSent }: DiscoverCardProps) {
       disabled={state !== 'idle'}
     >
       {state === 'loading' ? (
-        <ActivityIndicator size="small" color="rgba(255,255,255,0.6)" />
+        <ActivityIndicator size="small" color="#EFBF04" />
       ) : (
         <Text style={[styles.btnText, styles.btnTextMuted]}>
           {state === 'sent' ? 'Demande envoyée' : 'Demander à rejoindre'}
@@ -397,7 +399,7 @@ export default function GroupsScreen({ onGroupPress }: GroupsScreenProps) {
           activeOpacity={0.7}
           onPress={() => setJoinModalVisible(true)}
         >
-          <Ionicons name="key-outline" size={14} color="rgba(255,255,255,0.6)" style={{ marginRight: 6 }} />
+          <Ionicons name="key-outline" size={14} color="#EFBF04" style={{ marginRight: 6 }} />
           <Text style={[styles.btnText, styles.btnTextMuted]}>Rejoindre par code</Text>
         </TouchableOpacity>
 
@@ -406,7 +408,7 @@ export default function GroupsScreen({ onGroupPress }: GroupsScreenProps) {
           activeOpacity={0.8}
           onPress={() => setCreateModalVisible(true)}
         >
-          <Ionicons name="add" size={15} color="#121212" style={{ marginRight: 4 }} />
+          <Ionicons name="add" size={15} color="#EFBF04" style={{ marginRight: 4 }} />
           <Text style={[styles.btnText, styles.btnTextDark]}>Créer un groupe</Text>
         </TouchableOpacity>
       </View>

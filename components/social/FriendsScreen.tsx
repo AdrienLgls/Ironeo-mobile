@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { hapticImpact } from '../../utils/haptics';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
 import { SkeletonCircle, SkeletonText } from '../ui/Skeleton';
@@ -73,6 +74,7 @@ function SearchCard({ user, isFriend, initialState, onSendRequest }: SearchCardP
 
   function handleAdd() {
     if (btnState !== 'add') return;
+    hapticImpact().catch(() => undefined);
     setBtnState('pending');
     onSendRequest(user._id, () => setBtnState('add'));
   }
@@ -131,6 +133,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
 
   async function handleAccept() {
     if (busy) return;
+    hapticImpact().catch(() => undefined);
     setBusy(true);
     try {
       await acceptFriendRequest(request.from._id);
@@ -143,6 +146,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
 
   async function handleReject() {
     if (busy) return;
+    hapticImpact().catch(() => undefined);
     setBusy(true);
     try {
       await rejectFriendRequest(request._id);
@@ -170,7 +174,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
           style={[styles.btn, styles.btnGold, styles.btnSm]}
         >
           {busy ? (
-            <ActivityIndicator size="small" color="#000" />
+            <ActivityIndicator size="small" color="#EFBF04" />
           ) : (
             <Text style={[styles.btnText, styles.btnTextDark]}>Accepter</Text>
           )}
@@ -197,6 +201,7 @@ interface FriendCardProps {
 
 function FriendCard({ friend, onRemove }: FriendCardProps) {
   async function handleRemove() {
+    hapticImpact().catch(() => undefined);
     try {
       await removeFriend(friend._id);
       onRemove(friend._id);

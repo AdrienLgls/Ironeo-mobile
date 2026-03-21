@@ -150,7 +150,7 @@ export default function NotificationSettingsScreen({ onBack }: Props) {
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator color="#000" size="small" />
+              <ActivityIndicator color="#EFBF04" size="small" />
             ) : (
               <Text className="text-black text-body font-heading">Enregistrer</Text>
             )}

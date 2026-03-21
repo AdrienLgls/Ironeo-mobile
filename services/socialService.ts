@@ -62,19 +62,35 @@ export async function getFriendRequests(): Promise<FriendRequest[]> {
 }
 
 export async function sendFriendRequest(userId: string): Promise<void> {
-  await api.post('/friends/request', { userId });
+  try {
+    await api.post('/friends/request', { userId });
+  } catch (e) {
+    throw e;
+  }
 }
 
 export async function acceptFriendRequest(userId: string): Promise<void> {
-  await api.post(`/friends/accept/${userId}`);
+  try {
+    await api.post(`/friends/accept/${userId}`);
+  } catch (e) {
+    throw e;
+  }
 }
 
 export async function rejectFriendRequest(userId: string): Promise<void> {
-  await api.delete(`/friends/reject/${userId}`);
+  try {
+    await api.delete(`/friends/reject/${userId}`);
+  } catch (e) {
+    throw e;
+  }
 }
 
 export async function removeFriend(userId: string): Promise<void> {
-  await api.delete(`/friends/${userId}`);
+  try {
+    await api.delete(`/friends/${userId}`);
+  } catch (e) {
+    throw e;
+  }
 }
 
 export async function searchUsers(query: string): Promise<Friend[]> {
@@ -124,13 +140,21 @@ export async function getActivityFeed(page?: number): Promise<ActivityItem[]> {
 }
 
 export async function sendBravo(activityId: string): Promise<void> {
-  await api.post(`/activity/${activityId}/bravo`);
+  try {
+    await api.post(`/activity/${activityId}/bravo`);
+  } catch (e) {
+    throw e;
+  }
 }
 
 export async function getLeaderboard(
   type: 'consistency' | 'volume' | 'power',
   period: 'weekly' | 'monthly' | 'alltime',
 ): Promise<LeaderboardResponse> {
-  const { data } = await api.get<LeaderboardResponse>(`/leaderboards/global/${type}/${period}`);
-  return data;
+  try {
+    const { data } = await api.get<LeaderboardResponse>(`/leaderboards/global/${type}/${period}`);
+    return data;
+  } catch (e) {
+    throw e;
+  }
 }

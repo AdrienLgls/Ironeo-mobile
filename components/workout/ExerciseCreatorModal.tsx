@@ -156,7 +156,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#000" size="small" />
+                <ActivityIndicator color="#EFBF04" size="small" />
               ) : (
                 <Text style={styles.createButtonText}>Créer</Text>
               )}
