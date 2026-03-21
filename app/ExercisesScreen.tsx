@@ -169,9 +169,11 @@ export default function ExercisesScreen({ navigation }: Props) {
         ListEmptyComponent={
           <View style={{ paddingHorizontal: 16 }}>
             {error ? (
-              <Text className="text-white/40 text-body-sm font-body text-center mt-8">
-                {error}
-              </Text>
+              <EmptyState
+                icon="⚠️"
+                title="Erreur de chargement"
+                description="Vérifiez votre connexion internet"
+              />
             ) : (
               <EmptyState
                 icon="🔍"
