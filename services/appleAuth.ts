@@ -1,8 +1,9 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import api, { TOKEN_KEY, REFRESH_TOKEN_KEY } from './api';
 import * as SecureStore from 'expo-secure-store';
+import { AuthResponse } from '../types/auth';
 
-export async function signInWithApple(): Promise<void> {
+export async function signInWithApple(): Promise<AuthResponse> {
   const credential = await AppleAuthentication.signInAsync({
     requestedScopes: [
       AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -10,14 +11,15 @@ export async function signInWithApple(): Promise<void> {
     ],
   });
 
-  const response = await api.post('/auth/apple', { // Backend may not have Apple auth yet
+  const { data } = await api.post<AuthResponse>('/auth/apple', {
     identityToken: credential.identityToken,
     authorizationCode: credential.authorizationCode,
     fullName: credential.fullName,
     email: credential.email,
   });
-  await SecureStore.setItemAsync(TOKEN_KEY, response.data.token);
-  if (response.data.refreshToken) {
-    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, response.data.refreshToken);
+  await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+  if (data.refreshToken) {
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, data.refreshToken);
   }
+  return data;
 }
