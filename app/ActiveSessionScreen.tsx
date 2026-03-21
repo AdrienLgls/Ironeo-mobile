@@ -11,6 +11,7 @@ import SetRow from '../components/workout/SetRow';
 import type { ProgramDetail } from '../types/workout';
 import { getPersonalRecord } from '../services/workoutService';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { hapticSuccess } from '../utils/haptics';
 
 const DRAFT_KEY = 'active_session_draft';
 
@@ -105,6 +106,7 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
   const exerciseProgress = `${state.currentExerciseIndex + 1} / ${state.exercises.length}`;
 
   async function handleSetComplete(weight: number, reps: number, rpe: number) {
+    await hapticSuccess();
     const ex = program.days[0]?.exercises[state.currentExerciseIndex];
     const rest = ex?.restSeconds ?? DEFAULT_REST_SECONDS;
     setRestDuration(rest);
