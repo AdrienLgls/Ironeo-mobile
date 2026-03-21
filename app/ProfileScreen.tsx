@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
+  RefreshControl,
   TouchableOpacity,
   Switch,
   TextInput,
@@ -76,6 +77,7 @@ function ProfileHomeScreen({
   const [unreadCount, setUnreadCount] = useState(0);
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [exportLoading, setExportLoading] = useState<ExportKey | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -83,7 +85,9 @@ function ProfileHomeScreen({
   const confirm = useConfirm();
   const rootNavigation = useNavigation();
 
-  useEffect(() => {
+  const loadProfile = useCallback((isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
     Promise.all([
       api.get<UserProfile>('/users/me').then(({ data }) => data),
       getUserStats().catch(() => null),
@@ -95,8 +99,13 @@ function ProfileHomeScreen({
         setUnreadCount(count);
       })
       .catch(() => undefined)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, []);
+
+  useEffect(() => { loadProfile(); }, [loadProfile]);
 
   async function handleExport(key: ExportKey): Promise<void> {
     setExportLoading(key);
@@ -157,7 +166,7 @@ function ProfileHomeScreen({
   }
 
   return (
-    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
+    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadProfile(true)} tintColor="#EFBF04" />}>
       {/* Header row with bell */}
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 8 }}>
         <TouchableOpacity

@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   FlatList,
+  RefreshControl,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -241,6 +242,7 @@ function ArticlesListScreen({
   const [activeCategory, setActiveCategory] = useState<string>('Tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('articles');
@@ -253,7 +255,9 @@ function ArticlesListScreen({
   const [parcoursList, setParcoursList] = useState<Parcours[]>([]);
   const [parcoursLoading, setParcoursLoading] = useState(false);
 
-  useEffect(() => {
+  const loadData = useCallback((isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
     Promise.allSettled([
       getArticles(),
       getDueReviews(),
@@ -274,8 +278,13 @@ function ArticlesListScreen({
         setMastered(mast);
         setLearnStats(stats);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
 
   useEffect(() => {
     if (activeTab !== 'parcours') return;
@@ -362,6 +371,7 @@ function ArticlesListScreen({
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
           showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} tintColor="#EFBF04" />}
           ListHeaderComponent={
             <View>
               {/* Search bar */}
