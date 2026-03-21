@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getStoredToken, logout as authLogout } from '../services/authService';
+import api from '../services/api';
+import type { UserProfile } from '../types/user';
 
 type AuthState =
   | { status: 'loading' }
@@ -8,6 +10,7 @@ type AuthState =
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   const checkToken = useCallback(async () => {
     const token = await getStoredToken();
@@ -22,8 +25,26 @@ export function useAuth() {
     checkToken();
   }, [checkToken]);
 
+  const refreshProfile = useCallback(async () => {
+    try {
+      const { data } = await api.get<UserProfile>('/users/me');
+      setProfile(data);
+    } catch {
+      // Silent fail — stale profile stays in place
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authState.status === 'authenticated') {
+      refreshProfile();
+    } else {
+      setProfile(null);
+    }
+  }, [authState.status, refreshProfile]);
+
   const logout = useCallback(async () => {
     await authLogout();
+    setProfile(null);
     setAuthState({ status: 'unauthenticated' });
   }, []);
 
@@ -31,5 +52,5 @@ export function useAuth() {
     setAuthState({ status: 'authenticated', token });
   }, []);
 
-  return { authState, logout, onAuthSuccess, refresh: checkToken };
+  return { authState, profile, logout, onAuthSuccess, refresh: checkToken, refreshProfile };
 }

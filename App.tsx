@@ -1,10 +1,17 @@
 import * as Sentry from '@sentry/react-native';
-import { SENTRY_DSN } from './constants/config';
+import { SENTRY_DSN, POSTHOG_API_KEY, POSTHOG_HOST } from './constants/config';
 
 Sentry.init({
   dsn: SENTRY_DSN,
   enabled: !!SENTRY_DSN && !__DEV__,
   tracesSampleRate: 0.2,
+});
+
+import PostHog, { PostHogProvider } from 'posthog-react-native';
+
+const posthog = new PostHog(POSTHOG_API_KEY, {
+  host: POSTHOG_HOST,
+  disabled: !POSTHOG_API_KEY || __DEV__,
 });
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,7 +24,7 @@ import * as Updates from 'expo-updates';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 import { CommonActions } from '@react-navigation/native';
-import { AuthProvider } from './hooks/AuthContext';
+import { AuthProvider, useAuthContext } from './hooks/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ConfirmProvider } from './context/ConfirmContext';
 import RootNavigator, { navigationRef } from './app/RootNavigator';
@@ -49,6 +56,23 @@ function handleNotificationTap(data: NotificationData): void {
     navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Profile' }));
     navigationRef.current?.dispatch(CommonActions.navigate({ name: 'Notifications' }));
   }
+}
+
+function ForegroundSubscriptionRefresh() {
+  const { refreshProfile } = useAuthContext();
+  const prevState = useRef<AppStateStatus>(AppState.currentState);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (prevState.current.match(/background|inactive/) && next === 'active') {
+        refreshProfile();
+      }
+      prevState.current = next;
+    });
+    return () => sub.remove();
+  }, [refreshProfile]);
+
+  return null;
 }
 
 export default function App() {
@@ -134,28 +158,31 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <NetworkBanner />
-      <AuthProvider>
-        <ToastProvider>
-          <ConfirmProvider>
-            <StatusBar style="light" />
-            <RootNavigator />
-            <Modal visible={isLocked} transparent animationType="fade">
-              <View style={{ flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 18, fontFamily: 'Quilon-Medium', marginBottom: 24 }}>
-                  Ironeo verrouillé
-                </Text>
-                <TouchableOpacity onPress={authenticate}>
-                  <Text style={{ color: '#EFBF04', fontSize: 16, fontFamily: 'Rowan-Regular' }}>
-                    Déverrouiller
+    <PostHogProvider client={posthog}>
+      <ErrorBoundary>
+        <NetworkBanner />
+        <AuthProvider>
+          <ForegroundSubscriptionRefresh />
+          <ToastProvider>
+            <ConfirmProvider>
+              <StatusBar style="light" />
+              <RootNavigator />
+              <Modal visible={isLocked} transparent animationType="fade">
+                <View style={{ flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ color: '#fff', fontSize: 18, fontFamily: 'Quilon-Medium', marginBottom: 24 }}>
+                    Ironeo verrouillé
                   </Text>
-                </TouchableOpacity>
-              </View>
-            </Modal>
-          </ConfirmProvider>
-        </ToastProvider>
-      </AuthProvider>
-    </ErrorBoundary>
+                  <TouchableOpacity onPress={authenticate}>
+                    <Text style={{ color: '#EFBF04', fontSize: 16, fontFamily: 'Rowan-Regular' }}>
+                      Déverrouiller
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+            </ConfirmProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    </PostHogProvider>
   );
 }

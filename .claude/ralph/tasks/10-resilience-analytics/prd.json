@@ -1,0 +1,83 @@
+{
+  "branchName": "feat/10-resilience-analytics",
+  "userStories": [
+    {
+      "id": "US-1001",
+      "title": "Persister la session active pendant un workout (crash-safe)",
+      "acceptanceCriteria": [
+        "ActiveSessionScreen écrit l'état courant dans AsyncStorage à chaque set complété",
+        "Au démarrage de l'app, si un draft de session existe → proposer de reprendre ou supprimer",
+        "Après sauvegarde/abandon de session, le draft est supprimé",
+        "tsc --noEmit passe"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Clé AsyncStorage: 'active_session_draft'. Format JSON: { programId, programName, startedAt, sets: [{exerciseId, exerciseName, reps, weight, completedAt}] }. Vérifier le draft dans HomeScreen au mount (ou dans App.tsx) → si présent et < 24h, montrer une bannière 'Reprendre votre séance?' avec bouton Navigate vers ActiveSession avec les données."
+    },
+    {
+      "id": "US-1002",
+      "title": "Android intentFilters pour deep links ironeo://",
+      "acceptanceCriteria": [
+        "app.json android.intentFilters configuré pour le scheme ironeo://",
+        "Deep links fonctionnels sur Android (group_message, friend_request, notification types)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Ajouter dans app.json sous expo.android: intentFilters: [{ action: 'VIEW', autoVerify: true, data: [{ scheme: 'ironeo' }], category: ['BROWSABLE', 'DEFAULT'] }]"
+    },
+    {
+      "id": "US-1003",
+      "title": "expo-build-properties — deploymentTarget iOS et minSdkVersion Android",
+      "acceptanceCriteria": [
+        "expo-build-properties installé",
+        "app.json plugins inclut expo-build-properties avec ios.deploymentTarget '15.1' et android.minSdkVersion 26",
+        "tsc --noEmit passe"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "iOS 15.1 = minimum pour Expo SDK 55. Android minSdkVersion 26 = Android 8.0 Oreo (2017). Commande: npx expo install expo-build-properties"
+    },
+    {
+      "id": "US-1004",
+      "title": "Rafraîchir le statut subscription au foreground",
+      "acceptanceCriteria": [
+        "AppState change background→active déclenche un refresh du profil user",
+        "Le contexte auth/profil est mis à jour avec le nouveau subscriptionStatus",
+        "PaywallScreen affiche le bon statut sans avoir à redémarrer l'app",
+        "tsc --noEmit passe"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Dans App.tsx ou dans un hook useSubscriptionSync: écouter AppState 'active', appeler GET /profile/me, mettre à jour le contexte global. Utile si l'user souscrit via le web portail LemonSqueezy et revient dans l'app."
+    },
+    {
+      "id": "US-1005",
+      "title": "PostHog analytics mobile — tracking des actions clés",
+      "acceptanceCriteria": [
+        "posthog-react-native installé",
+        "PostHogProvider configuré dans App.tsx (API key placeholder)",
+        "constants/config.ts contient POSTHOG_API_KEY placeholder",
+        "Events trackés: session_started, session_completed, pr_detected, paywall_viewed, subscription_started",
+        "tsc --noEmit passe"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "API key placeholder dans constants/config.ts: POSTHOG_API_KEY. Host: 'https://eu.posthog.com'. Tracker dans: ActiveSessionScreen (session_started), PostSessionScreen (session_completed, pr_detected si PRs > 0), PaywallScreen (paywall_viewed). Ne pas envoyer PII (emails, noms)."
+    },
+    {
+      "id": "US-1006",
+      "title": "Polish final Phase 10 — tsc clean + push + merge main",
+      "acceptanceCriteria": [
+        "0 console.log dans les fichiers Phase 10",
+        "tsc --noEmit retourne 0 erreurs",
+        "git push origin feat/10-resilience-analytics",
+        "Merge feat/10-resilience-analytics dans main",
+        "git push origin main"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Polish final. Vérifier tous les fichiers touchés dans cette phase. Merge --no-ff dans main."
+    }
+  ]
+}
