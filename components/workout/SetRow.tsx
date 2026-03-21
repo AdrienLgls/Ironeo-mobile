@@ -35,6 +35,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
   const typeLabel = SET_TYPE_LABELS[type];
 
   function handleComplete() {
+    Keyboard.dismiss();
     const w = parseFloat(weight) || 0;
     const r = parseInt(reps, 10) || 0;
     hapticImpact().catch(() => undefined);

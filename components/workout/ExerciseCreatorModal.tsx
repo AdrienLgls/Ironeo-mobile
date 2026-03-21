@@ -94,7 +94,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
             </TouchableOpacity>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
             <Text style={styles.label}>Nom *</Text>
             <TextInput
               style={styles.input}

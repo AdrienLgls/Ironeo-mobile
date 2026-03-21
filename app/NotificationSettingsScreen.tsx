@@ -97,7 +97,7 @@ export default function NotificationSettingsScreen({ onBack }: Props) {
       </Text>
 
       {loading ? (
-        <ActivityIndicator color="#EFBF04" className="mt-8" />
+        <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
       ) : (
         <>
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-4">
