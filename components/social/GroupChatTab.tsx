@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import api from '../../services/api';
+import { formatChatTimestamp } from '../../utils/formatters';
 import {
   deleteMessage,
   getMessages,
@@ -25,21 +26,6 @@ import type { UserProfile } from '../../types/user';
 
 const REACTION_EMOJIS = ['👍', '💪', '🔥', '👏', '❤️'];
 const POLL_INTERVAL_MS = 30_000;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatTimestamp(isoDate: string): string {
-  const date = new Date(isoDate);
-  const now = new Date();
-  const hhmm = date.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
-
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterdayMidnight = new Date(todayMidnight.getTime() - 86_400_000);
-
-  if (date >= todayMidnight) return hhmm;
-  if (date >= yesterdayMidnight) return `Hier ${hhmm}`;
-  return `${date.toLocaleDateString('fr-CA', { day: '2-digit', month: '2-digit' })} ${hhmm}`;
-}
 
 // ─── ReplyBar ─────────────────────────────────────────────────────────────────
 
@@ -137,7 +123,7 @@ function MessageBubble({ message, isOwn, onLongPress, onReactionPress }: Message
       </TouchableOpacity>
 
       <Text style={[styles.timestamp, isOwn ? styles.timestampOwn : styles.timestampOther]}>
-        {formatTimestamp(message.createdAt)}
+        {formatChatTimestamp(message.createdAt)}
       </Text>
 
       {message.reactions && message.reactions.length > 0 && (

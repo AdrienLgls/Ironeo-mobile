@@ -1,15 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import { formatDate } from '../../utils/formatters';
 import type { RecentSession } from '../../types/user';
 
 interface Props {
   session: RecentSession;
   onPress: () => void;
-}
-
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
 export default function RecentSessionCard({ session, onPress }: Props) {

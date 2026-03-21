@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { View, Text, Dimensions } from 'react-native';
+import { formatDateShort } from '../../utils/formatters';
 import Svg, {
   Defs,
   LinearGradient,
@@ -18,10 +19,6 @@ const FILL_COLOR = '#10b981';
 const MUTED_COLOR = '#a0a0a0';
 const CHART_MARGINS = { top: 10, right: 10, left: 40, bottom: 24 };
 
-function formatDateLabel(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
 
 interface ExerciseHistoryChartProps {
   data: ExerciseHistoryEntry[];
@@ -35,7 +32,7 @@ const ExerciseHistoryChart = memo(function ExerciseHistoryChart({
   const chartData = useMemo(() => {
     const last6 = data.slice(-6);
     return last6.map((entry) => ({
-      name: formatDateLabel(entry.date),
+      name: formatDateShort(entry.date),
       weight: entry.maxWeight,
     }));
   }, [data]);

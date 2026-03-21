@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { View, Text, Dimensions } from 'react-native';
+import { formatDateShort } from '../../utils/formatters';
 import Svg, { Rect, Text as SvgText } from 'react-native-svg';
 
 // Matches web SessionsBarChart: bar chart, max bar is blue (#3b82f6), others faded
@@ -10,10 +11,6 @@ const SESSIONS_FADED = 'rgba(59, 130, 246, 0.2)';
 const MUTED_COLOR = '#a0a0a0';
 const CHART_MARGINS = { top: 10, right: 10, left: 24, bottom: 24 };
 
-function formatWeekLabel(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
 
 interface WeekData {
   weekStart: string;
@@ -29,7 +26,7 @@ const SessionsBarChart = memo(function SessionsBarChart({ data, height = 180 }: 
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
     return data.map((week) => ({
-      name: formatWeekLabel(week.weekStart),
+      name: formatDateShort(week.weekStart),
       sessions: week.sessions || 0,
     }));
   }, [data]);

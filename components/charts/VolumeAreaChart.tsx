@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { View, Text, Dimensions } from 'react-native';
+import { formatDateShort } from '../../utils/formatters';
 import Svg, {
   Defs,
   LinearGradient,
@@ -26,10 +27,6 @@ function formatVolumeShort(value: number): string {
   return `${Math.round(value)}`;
 }
 
-function formatWeekLabel(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-}
 
 interface WeekData {
   weekStart: string;
@@ -45,7 +42,7 @@ const VolumeAreaChart = memo(function VolumeAreaChart({ data, height = 180 }: Vo
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
     return data.map((week) => ({
-      name: formatWeekLabel(week.weekStart),
+      name: formatDateShort(week.weekStart),
       volume: Math.round(week.totalVolume || 0),
     }));
   }, [data]);
