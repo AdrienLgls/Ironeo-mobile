@@ -165,7 +165,7 @@ export default function HeroCard({
         <TouchableOpacity
           onPress={onResumeSession}
           activeOpacity={0.85}
-          style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+          style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
         >
           <Text className="text-white text-body font-heading">Reprendre</Text>
         </TouchableOpacity>
@@ -178,7 +178,7 @@ export default function HeroCard({
             <TouchableOpacity
               onPress={onLearn}
               activeOpacity={0.85}
-              style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+              style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
             >
               <Text className="text-white text-body font-heading">Réviser {dueReviewsCount} quiz</Text>
             </TouchableOpacity>
@@ -186,7 +186,7 @@ export default function HeroCard({
             <TouchableOpacity
               onPress={onLearn}
               activeOpacity={0.85}
-              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
             >
               <Text style={{ color: '#fafafa', fontSize: 16, fontWeight: '500' }}>Continuer à apprendre</Text>
             </TouchableOpacity>
@@ -210,7 +210,7 @@ export default function HeroCard({
           <TouchableOpacity
             onPress={onStartWorkout}
             activeOpacity={0.85}
-            style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 14, paddingHorizontal: 32, alignItems: 'center' }}
+            style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 16, paddingHorizontal: 32, alignItems: 'center' }}
           >
             <Text style={{ color: '#121212', fontSize: 16, fontWeight: '700' }}>Démarrer la séance</Text>
           </TouchableOpacity>
@@ -224,7 +224,7 @@ export default function HeroCard({
             <TouchableOpacity
               onPress={onLearn}
               activeOpacity={0.85}
-              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
             >
               <Text style={{ color: '#fafafa', fontSize: 16, fontWeight: '500' }}>Réviser {dueReviewsCount} quiz</Text>
             </TouchableOpacity>
@@ -232,7 +232,7 @@ export default function HeroCard({
             <TouchableOpacity
               onPress={onLearn}
               activeOpacity={0.85}
-              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
             >
               <Text style={{ color: '#fafafa', fontSize: 16, fontWeight: '500' }}>Continuer à apprendre</Text>
             </TouchableOpacity>
@@ -246,14 +246,14 @@ export default function HeroCard({
           <TouchableOpacity
             onPress={onStartWorkout}
             activeOpacity={0.85}
-            style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+            style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
           >
             <Text style={{ color: '#121212', fontSize: 16, fontWeight: '700' }}>Programmes Ironeo</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={onStartWorkout}
             activeOpacity={0.85}
-            style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 14, alignItems: 'center' }}
+            style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
           >
             <Text style={{ color: '#fafafa', fontSize: 16, fontWeight: '500' }}>Séance libre</Text>
           </TouchableOpacity>
