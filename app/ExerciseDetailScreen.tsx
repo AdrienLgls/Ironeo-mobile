@@ -7,13 +7,10 @@ import { getExerciseById, getExerciseHistory } from '../services/workoutService'
 import type { ExerciseHistoryEntry } from '../services/workoutService';
 import type { Exercise } from '../types/workout';
 import ExerciseHistoryChart from '../components/charts/ExerciseHistoryChart';
+import EmptyState from '../components/ui/EmptyState';
+import { formatVolume } from '../utils/formatters';
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'ExerciseDetail'>;
-
-function formatVolume(kg: number): string {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
-  return `${Math.round(kg)}kg`;
-}
 
 export default function ExerciseDetailScreen({ route, navigation }: Props) {
   const { exerciseId } = route.params;
@@ -47,7 +44,7 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
   if (error || !exercise) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>{error ?? 'Exercice introuvable'}</Text>
+        <EmptyState type="error" title={error ?? 'Exercice introuvable'} compact />
       </View>
     );
   }
@@ -124,7 +121,6 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: '#121212' },
   content: { paddingHorizontal: 16, paddingBottom: 40 },
   center: { flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: '#a0a0a0', fontFamily: 'Rowan-Regular', fontSize: 15 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 20 },
   backArrow: { fontSize: 20, color: '#EFBF04' },
   backLabel: { fontFamily: 'Rowan-Regular', fontSize: 14, color: '#a0a0a0' },
