@@ -19,6 +19,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 import api from '../services/api';
 import { TOKEN_KEY, REFRESH_TOKEN_KEY } from '../services/api';
@@ -613,6 +614,8 @@ function NotificationSettingsScreen({
 
 // --- Settings ---
 
+const BIOMETRIC_KEY = 'biometric_lock_enabled';
+
 function SettingsScreen({
   navigation,
 }: NativeStackScreenProps<ProfileStackParamList, 'Settings'>) {
@@ -620,6 +623,34 @@ function SettingsScreen({
   const { logout } = useAuthContext();
   const toast = useToast();
   const confirm = useConfirm();
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+
+  useEffect(() => {
+    SecureStore.getItemAsync(BIOMETRIC_KEY)
+      .then((val) => setBiometricEnabled(val === 'true'))
+      .catch(() => undefined);
+  }, []);
+
+  async function handleBiometricToggle(value: boolean): Promise<void> {
+    if (value) {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      if (!hasHardware) {
+        toast.error('Biométrie non disponible sur cet appareil');
+        return;
+      }
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Confirmer pour activer le verrouillage',
+        cancelLabel: 'Annuler',
+        fallbackLabel: 'Utiliser le code',
+      });
+      if (!result.success) return;
+      await SecureStore.setItemAsync(BIOMETRIC_KEY, 'true');
+      setBiometricEnabled(true);
+    } else {
+      await SecureStore.setItemAsync(BIOMETRIC_KEY, 'false');
+      setBiometricEnabled(false);
+    }
+  }
 
   async function handleLogout() {
     const ok = await confirm({
@@ -654,6 +685,16 @@ function SettingsScreen({
       </TouchableOpacity>
 
       <Text className="text-white text-h2 font-heading mb-6">Settings</Text>
+
+      <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2">
+        <Text className="text-white text-body-sm font-body">Verrouillage Face ID / Touch ID</Text>
+        <Switch
+          value={biometricEnabled}
+          onValueChange={handleBiometricToggle}
+          trackColor={{ true: '#EFBF04', false: 'rgba(255,255,255,0.1)' }}
+          thumbColor="#fff"
+        />
+      </View>
 
       <TouchableOpacity
         activeOpacity={0.7}

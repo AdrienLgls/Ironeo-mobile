@@ -141,6 +141,18 @@ export default function App() {
           <ConfirmProvider>
             <StatusBar style="light" />
             <RootNavigator />
+            <Modal visible={isLocked} transparent animationType="fade">
+              <View style={{ flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: '#fff', fontSize: 18, fontFamily: 'Quilon-Medium', marginBottom: 24 }}>
+                  Ironeo verrouillé
+                </Text>
+                <TouchableOpacity onPress={authenticate}>
+                  <Text style={{ color: '#EFBF04', fontSize: 16, fontFamily: 'Rowan-Regular' }}>
+                    Déverrouiller
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Modal>
           </ConfirmProvider>
         </ToastProvider>
       </AuthProvider>
