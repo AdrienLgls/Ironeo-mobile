@@ -1,0 +1,35 @@
+{
+  "phase": 41,
+  "slug": "toast-timer-cleanup-notif-type",
+  "title": "Phase 41 — ToastContext timer cleanup + NotificationData type safety",
+  "branch": "feat/41-toast-timer-cleanup-notif-type",
+  "passes": true,
+  "stories": [
+    {
+      "id": "41-1",
+      "title": "ToastContext: track and cleanup setTimeout timers",
+      "priority": "MEDIUM",
+      "description": "In context/ToastContext.tsx, setTimeout() is called in addToast() but the timer ID is not stored. Two issues:\n1. If ToastProvider unmounts (edge case), timers keep running and call setToasts on unmounted component.\n2. When user manually dismisses a toast via the ✕ button, the auto-dismiss timer still fires later (wasteful).\n\nFix:\n- Add a timerRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map()) in ToastProvider\n- In addToast(), store the timer: timerRef.current.set(id, setTimeout(...))\n- In removeToast(), clear the timer first: clearTimeout(timerRef.current.get(id)); timerRef.current.delete(id)\n- Add a useEffect that returns () => { timerRef.current.forEach(clearTimeout); timerRef.current.clear(); } for cleanup on unmount",
+      "files": ["context/ToastContext.tsx"],
+      "acceptance": [
+        "timerRef tracks all active auto-dismiss timers",
+        "removeToast() clears the timer before removing from state",
+        "useEffect cleanup clears all timers on unmount",
+        "No change to toast UI or animation behavior",
+        "No TypeScript any introduced"
+      ]
+    },
+    {
+      "id": "41-2",
+      "title": "App.tsx: tighten NotificationData type",
+      "priority": "LOW",
+      "description": "In App.tsx, the NotificationData union type has a catch-all `| { type: string }` member that makes the entire type equivalent to `{ type: string; groupId?: string }`, defeating type safety.\n\nRemove the catch-all and add an explicit fallback type for unknown notification types:\n```ts\ntype NotificationData =\n  | { type: 'group_message'; groupId: string }\n  | { type: 'friend_request' }\n  | { type: 'notification' }\n  | { type: string; [key: string]: unknown };  // structured catch-all\n```\n\nActually, the cleanest fix is to just remove `| { type: string }` entirely and ensure the switch/if-else in handleNotificationTap has an exhaustive else clause (which it already does — the else navigates to Profile/Notifications). All incoming notification types that aren't explicitly handled fall into the else branch.",
+      "files": ["App.tsx"],
+      "acceptance": [
+        "| { type: string } catch-all removed from NotificationData",
+        "handleNotificationTap still compiles without TypeScript errors",
+        "The else clause in handleNotificationTap handles unknown types"
+      ]
+    }
+  ]
+}
