@@ -125,7 +125,7 @@
         "Merge feat/09-appstore-ready dans main et git push origin main"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "SETUP.md documente: Google OAuth client IDs (console.cloud.google.com), Sentry DSN (sentry.io), EAS project ID (expo.dev). Polish final: tsc clean, 0 console.log, push et merge dans main."
     }
   ]
