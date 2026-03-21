@@ -285,6 +285,7 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
   const [group, setGroup] = useState<GroupDetail | null>(null);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [activeTab, setActiveTab] = useState('activite');
 
@@ -298,6 +299,22 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
         toast.error('Impossible de charger le groupe. Réessayez.');
       })
       .finally(() => setLoading(false));
+  }, [groupId, toast]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const [groupData, activityData] = await Promise.all([
+        getGroupDetail(groupId),
+        getGroupActivity(groupId),
+      ]);
+      setGroup(groupData);
+      setActivity(activityData);
+    } catch {
+      toast.error('Impossible de rafraîchir le groupe. Réessayez.');
+    } finally {
+      setRefreshing(false);
+    }
   }, [groupId, toast]);
 
   const handleLeave = useCallback(async () => {
@@ -391,6 +408,9 @@ export default function GroupDetailScreen({ route, navigation }: Props) {
             paddingHorizontal: 16,
             paddingBottom: insets.bottom + 80,
           }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />
+          }
         >
           {/* Group header card */}
           <View
