@@ -505,7 +505,7 @@ function EditProfileScreen({
           value={pseudo}
           onChangeText={setPseudo}
           placeholder="Ton pseudo"
-          placeholderTextColor="rgba(255,255,255,0.2)"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           autoCapitalize="none"
           style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular' }}
         />
@@ -518,7 +518,7 @@ function EditProfileScreen({
           value={bio}
           onChangeText={setBio}
           placeholder="Parle de toi..."
-          placeholderTextColor="rgba(255,255,255,0.2)"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           multiline
           numberOfLines={4}
           style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular', height: 100, textAlignVertical: 'top' }}

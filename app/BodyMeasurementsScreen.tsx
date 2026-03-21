@@ -411,7 +411,7 @@ function AddMeasurementForm({ onSaved }: AddMeasurementFormProps) {
             value={form[key as keyof AddFormState]}
             onChangeText={(v) => handleChange(key as keyof AddFormState, v)}
             placeholder="–"
-            placeholderTextColor="rgba(255,255,255,0.2)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             keyboardType="numeric"
             style={styles.formInput}
           />

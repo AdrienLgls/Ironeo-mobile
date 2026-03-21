@@ -161,7 +161,7 @@ function JoinByCodeModal({ visible, onClose, onSuccess }: JoinModalProps) {
           <TextInput
             style={styles.input}
             placeholder="Code d'invitation (6 car.)"
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             value={code}
             onChangeText={(v) => {
               setCode(v.toUpperCase().slice(0, 6));
@@ -256,7 +256,7 @@ function CreateGroupModal({ visible, onClose, onSuccess }: CreateModalProps) {
           <TextInput
             style={styles.input}
             placeholder="Nom du groupe"
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             value={name}
             onChangeText={(v) => {
               setName(v);
@@ -269,7 +269,7 @@ function CreateGroupModal({ visible, onClose, onSuccess }: CreateModalProps) {
           <TextInput
             style={[styles.input, styles.inputMultiline]}
             placeholder="Description (optionnel)"
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             value={description}
             onChangeText={setDescription}
             multiline

@@ -379,7 +379,7 @@ function ArticlesListScreen({
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   placeholder="Rechercher un article…"
-                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  placeholderTextColor="rgba(255,255,255,0.4)"
                   style={{
                     flex: 1,
                     marginLeft: 8,
@@ -555,8 +555,8 @@ function ArticleDetailScreen({
           style={{
             marginTop: 24,
             backgroundColor: '#EFBF04',
-            borderRadius: 14,
-            paddingVertical: 14,
+            borderRadius: 16,
+            paddingVertical: 16,
             alignItems: 'center',
           }}
         >
@@ -720,8 +720,8 @@ function QuizScreen({
             style={{
               marginTop: 16,
               backgroundColor: '#EFBF04',
-              borderRadius: 14,
-              paddingVertical: 14,
+              borderRadius: 16,
+              paddingVertical: 16,
               alignItems: 'center',
             }}
           >
@@ -736,8 +736,8 @@ function QuizScreen({
           style={{
             marginTop: isMastered ? 10 : 16,
             backgroundColor: 'rgba(255,255,255,0.06)',
-            borderRadius: 14,
-            paddingVertical: 14,
+            borderRadius: 16,
+            paddingVertical: 16,
             alignItems: 'center',
           }}
         >

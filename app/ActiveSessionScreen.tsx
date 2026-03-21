@@ -223,7 +223,7 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
             fontSize: 13,
           }}
           placeholder="Note pour cet exercice..."
-          placeholderTextColor="#a0a0a0"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           multiline
           value={exerciseNotes[currentExerciseId] ?? ''}
           onChangeText={(text) =>

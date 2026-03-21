@@ -120,7 +120,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
             returnKeyType="done"
             onSubmitEditing={() => Keyboard.dismiss()}
             placeholder="—"
-            placeholderTextColor="rgba(255,255,255,0.2)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
           />
         </View>
         <View style={{ flex: 1 }}>
@@ -149,7 +149,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
             returnKeyType="done"
             onSubmitEditing={() => Keyboard.dismiss()}
             placeholder="—"
-            placeholderTextColor="rgba(255,255,255,0.2)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
           />
         </View>
       </View>

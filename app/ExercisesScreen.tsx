@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
+  RefreshControl,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
@@ -33,12 +34,18 @@ export default function ExercisesScreen({ navigation }: Props) {
   const [activeGroup, setActiveGroup] = useState<string>('Tous');
   const [selectedEquipment, setSelectedEquipment] = useState<string>('Tous');
 
-  useEffect(() => {
+  const loadExercises = useCallback(() => {
+    setLoading(true);
+    setError(null);
     getExercises()
       .then((data) => setExercises(data))
       .catch(() => setError('Unable to load exercises'))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    loadExercises();
+  }, [loadExercises]);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
@@ -76,6 +83,7 @@ export default function ExercisesScreen({ navigation }: Props) {
         numColumns={2}
         columnWrapperStyle={{ paddingHorizontal: 12 }}
         contentContainerStyle={{ paddingBottom: 24 }}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={loadExercises} tintColor="#EFBF04" />}
         ListHeaderComponent={
           <View style={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 8 }}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 12 }}>
@@ -89,7 +97,7 @@ export default function ExercisesScreen({ navigation }: Props) {
               <TextInput
                 style={styles.searchInput}
                 placeholder="Rechercher un exercice..."
-                placeholderTextColor="#a0a0a0"
+                placeholderTextColor="rgba(255,255,255,0.4)"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 clearButtonMode="while-editing"

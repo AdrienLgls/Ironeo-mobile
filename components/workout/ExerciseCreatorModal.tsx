@@ -99,7 +99,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
             <TextInput
               style={styles.input}
               placeholder="Ex: Curl marteau incliné"
-              placeholderTextColor="rgba(255,255,255,0.3)"
+              placeholderTextColor="rgba(255,255,255,0.4)"
               value={name}
               onChangeText={setName}
             />
@@ -132,7 +132,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
             <TextInput
               style={styles.input}
               placeholder="Ex: Haltères, Barre, Machine…"
-              placeholderTextColor="rgba(255,255,255,0.3)"
+              placeholderTextColor="rgba(255,255,255,0.4)"
               value={equipment}
               onChangeText={setEquipment}
             />
@@ -141,7 +141,7 @@ export default function ExerciseCreatorModal({ visible, onClose, onCreated }: Pr
             <TextInput
               style={[styles.input, styles.inputMultiline]}
               placeholder="Notes, conseils d'exécution…"
-              placeholderTextColor="rgba(255,255,255,0.3)"
+              placeholderTextColor="rgba(255,255,255,0.4)"
               value={description}
               onChangeText={setDescription}
               multiline
