@@ -6,29 +6,32 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from './HomeScreen';
 import WorkoutScreen from './WorkoutScreen';
 import LearnScreen from './LearnScreen';
+import SocialScreen from './SocialScreen';
 import ProfileScreen from './ProfileScreen';
 
 export type TabParamList = {
   Home: undefined;
   Workout: undefined;
   Learn: undefined;
+  Social: undefined;
   Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SLOT_WIDTH = SCREEN_WIDTH / 5;
+const SLOT_WIDTH = SCREEN_WIDTH / 6;
 const INDICATOR_WIDTH = 40;
 const TAB_HEIGHT = 60;
 
-// Maps tab index (0-3) to 5-slot position: Home→0, Workout→1, (FAB→2), Learn→3, Profile→4
-const TAB_SLOT: Record<number, number> = { 0: 0, 1: 1, 2: 3, 3: 4 };
+// Maps tab index (0-4) to 6-slot position: Home→0, Workout→1, (FAB→2), Learn→3, Social→4, Profile→5
+const TAB_SLOT: Record<number, number> = { 0: 0, 1: 1, 2: 3, 3: 4, 4: 5 };
 
 const TAB_ICONS: Record<keyof TabParamList, string> = {
   Home: '🏠',
   Workout: '💪',
   Learn: '📚',
+  Social: '👥',
   Profile: '👤',
 };
 
@@ -157,7 +160,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           </TouchableOpacity>
         </View>
 
-        {/* Right tabs: Learn, Profile */}
+        {/* Right tabs: Learn, Social, Profile */}
         {state.routes.slice(2).map((route, index) => {
           const actualIndex = index + 2;
           const { options } = descriptors[route.key];
@@ -204,6 +207,7 @@ export default function TabNavigator() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Workout" component={WorkoutScreen} />
       <Tab.Screen name="Learn" component={LearnScreen} />
+      <Tab.Screen name="Social" component={SocialScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
