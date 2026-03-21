@@ -18,6 +18,7 @@ import type { WorkoutSession } from '../types/workout';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
 import { formatDate, formatVolume } from '../utils/formatters';
+import EmptyState from '../components/ui/EmptyState';
 
 // Matches web SessionDetail: date, duration, volume, per-exercise sets breakdown
 
@@ -130,10 +131,16 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
   if (error || !session) {
     return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
-        <Text style={styles.errorText}>{error ?? 'Erreur'}</Text>
-        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtnText}>← Retour</Text>
-        </TouchableOpacity>
+        <EmptyState
+          type="error"
+          title={error ?? 'Séance introuvable'}
+          compact
+          cta={
+            <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+              <Text style={styles.backBtnText}>← Retour</Text>
+            </TouchableOpacity>
+          }
+        />
       </View>
     );
   }
@@ -305,7 +312,6 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: '#121212' },
   content: { paddingHorizontal: 16, paddingBottom: 40 },
   center: { flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' },
-  errorText: { color: '#a0a0a0', fontFamily: 'Rowan-Regular', fontSize: 15, marginBottom: 16 },
   topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   backArrow: { fontSize: 20, color: '#EFBF04' },
