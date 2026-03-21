@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   timestamp: {
     fontFamily: 'Rowan-Regular',
     fontSize: 11,
-    color: '#666',
+    color: 'rgba(255,255,255,0.4)',
     flexShrink: 0,
     marginTop: 2,
   },
