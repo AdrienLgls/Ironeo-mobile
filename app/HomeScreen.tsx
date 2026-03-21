@@ -1,9 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { TabParamList } from './TabNavigator';
+
+const DRAFT_KEY = 'active_session_draft';
+
+interface SessionDraft {
+  programId: string;
+  programName: string;
+  startedAt: string;
+  completedSets: number;
+}
 import {
   getUserStats,
   getRecentSessions,
@@ -49,6 +59,22 @@ export default function HomeScreen() {
   const [dueReviews, setDueReviews] = useState<DueReview[]>([]);
   const [followedPrograms, setFollowedPrograms] = useState<FollowedProgram[]>([]);
   const [pointsData, setPointsData] = useState<PointsData | null>(null);
+  const [sessionDraft, setSessionDraft] = useState<SessionDraft | null>(null);
+
+  useEffect(() => {
+    async function checkDraft() {
+      const raw = await AsyncStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as SessionDraft;
+      const ageMs = Date.now() - new Date(draft.startedAt).getTime();
+      if (ageMs < 24 * 60 * 60 * 1000) {
+        setSessionDraft(draft);
+      } else {
+        await AsyncStorage.removeItem(DRAFT_KEY);
+      }
+    }
+    checkDraft().catch(() => undefined);
+  }, []);
 
   const loadData = useCallback(() =>
     Promise.all([
@@ -104,6 +130,60 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       {error && (
         <Text className="text-red-400 text-body-sm font-body text-center mb-4">{error}</Text>
+      )}
+
+      {/* Session draft recovery banner */}
+      {sessionDraft !== null && (
+        <View
+          style={{
+            backgroundColor: 'rgba(239,191,4,0.12)',
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 16,
+            borderWidth: 1,
+            borderColor: 'rgba(239,191,4,0.3)',
+          }}
+        >
+          <Text style={{ color: '#EFBF04', fontFamily: 'Rowan-Regular', fontSize: 13, marginBottom: 4 }}>
+            Séance en cours • {sessionDraft.completedSets} sets complétés • Reprendre ?
+          </Text>
+          <Text style={{ color: 'rgba(239,191,4,0.7)', fontFamily: 'Rowan-Regular', fontSize: 11, marginBottom: 12 }}>
+            {sessionDraft.programName}
+          </Text>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Workout')}
+              style={{
+                flex: 1,
+                backgroundColor: '#EFBF04',
+                borderRadius: 10,
+                paddingVertical: 8,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ color: '#121212', fontFamily: 'Rowan-Regular', fontSize: 13, fontWeight: '600' }}>
+                Reprendre
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                AsyncStorage.removeItem(DRAFT_KEY).catch(() => undefined);
+                setSessionDraft(null);
+              }}
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(255,255,255,0.06)',
+                borderRadius: 10,
+                paddingVertical: 8,
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'Rowan-Regular', fontSize: 13 }}>
+                Supprimer
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
 
       {/* HeroCard: context-aware greeting + XP bar */}

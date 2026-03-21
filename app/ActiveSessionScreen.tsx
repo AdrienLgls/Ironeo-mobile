@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
@@ -8,6 +9,8 @@ import RestTimer from '../components/workout/RestTimer';
 import SetRow from '../components/workout/SetRow';
 import type { ProgramDetail } from '../types/workout';
 import { getPersonalRecord } from '../services/workoutService';
+
+const DRAFT_KEY = 'active_session_draft';
 
 const DEFAULT_REST_SECONDS = 90;
 
@@ -25,6 +28,7 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
   // Session timer
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTime = useRef(Date.now());
+  const sessionStartTime = useRef(new Date().toISOString());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,10 +63,28 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
 
   useEffect(() => {
     startSession().catch(() => undefined);
+    return () => {
+      AsyncStorage.removeItem(DRAFT_KEY).catch(() => undefined);
+    };
   }, []);
+
+  // Persist draft after every set change
+  useEffect(() => {
+    if (completedSets === 0) return;
+    AsyncStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        programId: program.id,
+        programName: program.name,
+        startedAt: sessionStartTime.current,
+        completedSets,
+      }),
+    ).catch(() => undefined);
+  }, [completedSets, program.id, program.name]);
 
   useEffect(() => {
     if (state.isComplete) {
+      AsyncStorage.removeItem(DRAFT_KEY).catch(() => undefined);
       navigation.replace('PostSession', { sessionId: state.sessionId ?? '' });
     }
   }, [state.isComplete]);
@@ -104,7 +126,13 @@ export default function ActiveSessionScreen({ navigation, program }: Props) {
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       {/* Header */}
-      <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
+      <TouchableOpacity
+        onPress={() => {
+          AsyncStorage.removeItem(DRAFT_KEY).catch(() => undefined);
+          navigation.goBack();
+        }}
+        className="mb-6"
+      >
         <Text className="text-accent text-body-sm font-body">✕ Terminer la séance</Text>
       </TouchableOpacity>
 
