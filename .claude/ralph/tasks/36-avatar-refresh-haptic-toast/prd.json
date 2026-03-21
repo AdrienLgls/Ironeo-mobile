@@ -1,0 +1,80 @@
+{
+  "phase": 36,
+  "slug": "avatar-refresh-haptic-toast",
+  "title": "Phase 36 — Avatar dedup, pull-to-refresh social, haptic set, toast/contrast",
+  "branch": "feat/36-avatar-refresh-haptic-toast",
+  "passes": true,
+  "stories": [
+    {
+      "id": "36-1",
+      "title": "PostSessionScreen: Alert → toast.error",
+      "priority": "HIGH",
+      "description": "In the catch block at PostSessionScreen.tsx:292-297, replace Alert.alert('Séance non sauvegardée', ...) with toast.error(). This aligns with the app-wide pattern of using non-blocking toasts for errors instead of modal alerts.",
+      "files": ["app/PostSessionScreen.tsx"],
+      "acceptance": [
+        "No Alert.alert() call in PostSessionScreen",
+        "toast.error() called with a brief message when save fails",
+        "useToast() imported from context/ToastContext"
+      ]
+    },
+    {
+      "id": "36-2",
+      "title": "LeaderboardScreen + GroupsScreen: add pull-to-refresh",
+      "priority": "HIGH",
+      "description": "LeaderboardScreen and GroupsScreen both have data-loading via useEffect but no RefreshControl. Add pull-to-refresh using the same pattern as FriendsScreen: refreshing state, loadData(isRefresh) function, RefreshControl with tintColor='#EFBF04' on the main FlatList/ScrollView.",
+      "files": [
+        "components/social/LeaderboardScreen.tsx",
+        "components/social/GroupsScreen.tsx"
+      ],
+      "acceptance": [
+        "LeaderboardScreen has refreshing state and RefreshControl on FlatList",
+        "GroupsScreen has refreshing state and RefreshControl on FlatList/ScrollView",
+        "Both use tintColor='#EFBF04'",
+        "Initial loading (loading && !refreshing) still shows full-screen ActivityIndicator",
+        "Pull-to-refresh only shows RefreshControl indicator"
+      ]
+    },
+    {
+      "id": "36-3",
+      "title": "ActiveSessionScreen: haptic feedback on set complete",
+      "priority": "HIGH",
+      "description": "handleSetComplete() in ActiveSessionScreen.tsx triggers completeSet() and shows RestTimer but gives no haptic feedback. Add hapticSuccess() from utils/haptics.ts at the start of handleSetComplete to provide physical confirmation that the set was logged.",
+      "files": ["app/ActiveSessionScreen.tsx"],
+      "acceptance": [
+        "hapticSuccess() (or hapticImpact()) called inside handleSetComplete()",
+        "Import from utils/haptics or wherever the haptic helpers live",
+        "No other changes to handleSetComplete logic"
+      ]
+    },
+    {
+      "id": "36-4",
+      "title": "ActivityFeedScreen: timestamp contrast fix",
+      "priority": "MEDIUM",
+      "description": "The timestamp style in ActivityFeedScreen.tsx uses color: '#666' which has insufficient contrast ratio against the dark background #121212. Change to 'rgba(255,255,255,0.4)' to match the app's standard for secondary text on dark.",
+      "files": ["components/social/ActivityFeedScreen.tsx"],
+      "acceptance": [
+        "timestamp style changed from '#666' to 'rgba(255,255,255,0.4)'",
+        "No other style changes"
+      ]
+    },
+    {
+      "id": "36-5",
+      "title": "AvatarCircle: extract shared component",
+      "priority": "MEDIUM",
+      "description": "AvatarCircle is defined as a local component in both FriendsScreen.tsx and LeaderboardScreen.tsx, with a third inline avatar in ActivityFeedScreen.tsx. Extract a shared AvatarCircle component to components/ui/AvatarCircle.tsx that supports optional size (default 40) and borderColor props. Update all three files to use the shared component.",
+      "files": [
+        "components/ui/AvatarCircle.tsx",
+        "components/social/FriendsScreen.tsx",
+        "components/social/LeaderboardScreen.tsx",
+        "components/social/ActivityFeedScreen.tsx"
+      ],
+      "acceptance": [
+        "New file components/ui/AvatarCircle.tsx exports AvatarCircle with props { pseudo: string; size?: number; borderColor?: string }",
+        "FriendsScreen: local AvatarCircle function removed, imports from components/ui/AvatarCircle",
+        "LeaderboardScreen: local AvatarCircle memo removed, imports from components/ui/AvatarCircle",
+        "ActivityFeedScreen: inline avatar View replaced with <AvatarCircle pseudo={...} />",
+        "Visual output identical to before — initials displayed, correct background/size/border"
+      ]
+    }
+  ]
+}
