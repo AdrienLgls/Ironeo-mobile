@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   createButton: {
     backgroundColor: '#EFBF04',
-    borderRadius: 14,
+    borderRadius: 16,
     paddingVertical: 16,
     alignItems: 'center',
     marginTop: 24,
