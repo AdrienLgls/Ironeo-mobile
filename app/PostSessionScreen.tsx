@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   ctaSecondary: {
     backgroundColor: 'rgba(255,255,255,0.06)',
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
     alignItems: 'center',
   },
   ctaSecondaryText: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#fafafa' },
