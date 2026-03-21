@@ -100,6 +100,10 @@ export async function getParcours(): Promise<Parcours[]> {
 }
 
 export async function getParcoursDetail(slug: string): Promise<ParcoursDetailType> {
-  const { data } = await api.get<RawParcoursDetail>(`/parcours/${slug}`);
-  return mapParcoursDetail(data);
+  try {
+    const { data } = await api.get<RawParcoursDetail>(`/parcours/${slug}`);
+    return mapParcoursDetail(data);
+  } catch (err) {
+    throw err;
+  }
 }

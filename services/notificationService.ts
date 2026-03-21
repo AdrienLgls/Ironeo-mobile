@@ -20,11 +20,19 @@ export async function getNotifications(): Promise<Notification[]> {
 }
 
 export async function markAsRead(notifId: string): Promise<void> {
-  await api.put(`/notifications/${notifId}/read`);
+  try {
+    await api.put(`/notifications/${notifId}/read`);
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function markAllAsRead(): Promise<void> {
-  await api.put('/notifications/read-all');
+  try {
+    await api.put('/notifications/read-all');
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function getUnreadCount(): Promise<number> {
