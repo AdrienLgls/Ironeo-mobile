@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useConfirm } from '../../context/ConfirmContext';
 import { useToast } from '../../context/ToastContext';
 import { hapticImpact } from '../../utils/haptics';
+import AvatarCircle from '../ui/AvatarCircle';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
 import { SkeletonCircle, SkeletonText } from '../ui/Skeleton';
@@ -27,17 +28,6 @@ import {
   type Friend,
   type FriendRequest,
 } from '../../services/socialService';
-
-// ─── Avatar ─────────────────────────────────────────────────────────────────
-
-function AvatarCircle({ pseudo }: { pseudo: string }) {
-  const initials = pseudo.slice(0, 2).toUpperCase();
-  return (
-    <View style={styles.avatar}>
-      <Text style={styles.avatarText}>{initials}</Text>
-    </View>
-  );
-}
 
 // ─── Skeleton row ────────────────────────────────────────────────────────────
 
@@ -82,7 +72,7 @@ function SearchCard({ user, isFriend, initialState, onSendRequest }: SearchCardP
 
   return (
     <View style={styles.card}>
-      <AvatarCircle pseudo={user.pseudo} />
+      <AvatarCircle pseudo={user.pseudo} size={48} />
       <View style={styles.userInfo}>
         <Text style={styles.pseudo}>{user.pseudo}</Text>
         {user.level !== undefined && (
@@ -161,7 +151,7 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
 
   return (
     <View style={styles.card}>
-      <AvatarCircle pseudo={request.from.pseudo} />
+      <AvatarCircle pseudo={request.from.pseudo} size={48} />
       <View style={styles.userInfo}>
         <Text style={styles.pseudo}>{request.from.pseudo}</Text>
         {request.from.level !== undefined && (
@@ -209,7 +199,7 @@ function FriendCard({ friend, onRemove }: FriendCardProps) {
 
   return (
     <View style={styles.card}>
-      <AvatarCircle pseudo={friend.pseudo} />
+      <AvatarCircle pseudo={friend.pseudo} size={48} />
       <View style={styles.userInfo}>
         <Text style={styles.pseudo}>{friend.pseudo}</Text>
         {friend.level !== undefined && (
@@ -507,6 +497,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 10,
+    gap: 12,
   },
   skeletonRow: {
     gap: 12,
@@ -514,21 +505,6 @@ const styles = StyleSheet.create({
   skeletonInfo: {
     flex: 1,
     justifyContent: 'center',
-  },
-  // Avatar
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    fontFamily: 'Quilon-Medium',
-    fontSize: 16,
-    color: '#fafafa',
   },
   // User info
   userInfo: {

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityItem, getActivityFeed, sendBravo } from '../../services/socialService';
+import AvatarCircle from '../ui/AvatarCircle';
 import EmptyState from '../ui/EmptyState';
 import { SkeletonBox } from '../ui/Skeleton';
 import { formatRelativeTime } from '../../utils/formatters';
@@ -100,15 +101,12 @@ interface ActivityCardProps {
 
 function ActivityCard({ item, onBravoToggle }: ActivityCardProps) {
   const icon = getTypeIcon(item.type);
-  const initials = item.userPseudo.slice(0, 2).toUpperCase();
 
   return (
     <View style={styles.card}>
       {/* Top row: avatar + pseudo + timestamp */}
       <View style={styles.cardHeader}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{initials}</Text>
-        </View>
+        <AvatarCircle pseudo={item.userPseudo} />
         <View style={styles.cardHeaderMiddle}>
           <Text style={styles.pseudo}>{item.userPseudo}</Text>
           {/* Activity description row */}
@@ -318,20 +316,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: 10,
     marginBottom: 8,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(239,191,4,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  avatarText: {
-    fontFamily: 'Quilon-Medium',
-    fontSize: 14,
-    color: '#EFBF04',
   },
   cardHeaderMiddle: {
     flex: 1,

@@ -11,6 +11,7 @@ import {
 import { hapticSelection } from '../../utils/haptics';
 import { getLeaderboard } from '../../services/socialService';
 import type { LeaderboardEntry } from '../../services/socialService';
+import AvatarCircle from '../ui/AvatarCircle';
 import { SkeletonBox, SkeletonCircle, SkeletonText } from '../ui/Skeleton';
 import { FadeIn, FadeInUp } from '../ui/FadeIn';
 import EmptyState from '../ui/EmptyState';
@@ -82,37 +83,6 @@ const Pill = memo(function Pill({
         {label}
       </Text>
     </TouchableOpacity>
-  );
-});
-
-// ─── Avatar ───────────────────────────────────────────────────────────────────
-
-const AvatarCircle = memo(function AvatarCircle({
-  pseudo,
-  size = 40,
-  borderColor,
-}: {
-  pseudo: string;
-  size?: number;
-  borderColor?: string;
-}) {
-  return (
-    <View
-      style={[
-        styles.avatar,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          borderColor: borderColor ?? 'transparent',
-          borderWidth: borderColor ? 2 : 0,
-        },
-      ]}
-    >
-      <Text style={[styles.avatarText, { fontSize: size * 0.4 }]}>
-        {pseudo.charAt(0).toUpperCase()}
-      </Text>
-    </View>
   );
 });
 
@@ -451,16 +421,6 @@ const styles = StyleSheet.create({
   regularScore: {
     color: 'rgba(255,255,255,0.7)',
     fontSize: 13,
-    fontFamily: 'Quilon-Medium',
-  },
-  // Avatar
-  avatar: {
-    backgroundColor: 'rgba(239,191,4,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    color: GOLD,
     fontFamily: 'Quilon-Medium',
   },
   // Skeleton
