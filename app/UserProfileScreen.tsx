@@ -17,6 +17,7 @@ import { SkeletonCircle, SkeletonText, SkeletonBox } from '../components/ui/Skel
 import api from '../services/api';
 import type { SocialStackParamList } from './SocialScreen';
 import type { UserProfile } from '../types/user';
+import { useConfirm } from '../context/ConfirmContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -90,6 +91,7 @@ export default function UserProfileScreen({
 }: NativeStackScreenProps<SocialStackParamList, 'UserProfile'>) {
   const { userId } = route.params as UserProfileParams;
   const insets = useSafeAreaInsets();
+  const confirm = useConfirm();
 
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,6 +133,13 @@ export default function UserProfileScreen({
 
   async function handleRemoveFriend() {
     if (!profile) return;
+    const ok = await confirm({
+      title: "Supprimer l'ami ?",
+      message: 'Cette action est irréversible.',
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (!ok) return;
     setActionLoading(true);
     try {
       await removeFriend(profile._id);
