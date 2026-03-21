@@ -12,8 +12,14 @@ let activeNotificationId: string | null = null;
 
 // Background task — reads end time from storage and updates notification
 TaskManager.defineTask(TASK_NAME, async () => {
-  const endTimeStr = await AsyncStorage.getItem(STORAGE_KEY_END_TIME);
-  const exercise = (await AsyncStorage.getItem(STORAGE_KEY_EXERCISE)) ?? 'Workout';
+  let endTimeStr: string | null = null;
+  let exercise = 'Workout';
+  try {
+    endTimeStr = await AsyncStorage.getItem(STORAGE_KEY_END_TIME);
+    exercise = (await AsyncStorage.getItem(STORAGE_KEY_EXERCISE)) ?? 'Workout';
+  } catch {
+    return;
+  }
   if (!endTimeStr) return;
 
   const remaining = Math.max(0, Math.floor((Number(endTimeStr) - Date.now()) / 1000));
@@ -67,8 +73,12 @@ export async function startTimerNotification(
   exerciseName: string
 ): Promise<void> {
   const endTime = Date.now() + durationSeconds * 1000;
-  await AsyncStorage.setItem(STORAGE_KEY_END_TIME, String(endTime));
-  await AsyncStorage.setItem(STORAGE_KEY_EXERCISE, exerciseName);
+  try {
+    await AsyncStorage.setItem(STORAGE_KEY_END_TIME, String(endTime));
+    await AsyncStorage.setItem(STORAGE_KEY_EXERCISE, exerciseName);
+  } catch {
+    // Silent fail — notification still works without persistent storage
+  }
 
   const id = await Notifications.scheduleNotificationAsync({
     content: {
@@ -113,8 +123,12 @@ export async function stopTimerNotification(): Promise<void> {
     await Notifications.dismissNotificationAsync(activeNotificationId);
     activeNotificationId = null;
   }
-  await AsyncStorage.removeItem(STORAGE_KEY_END_TIME);
-  await AsyncStorage.removeItem(STORAGE_KEY_EXERCISE);
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEY_END_TIME);
+    await AsyncStorage.removeItem(STORAGE_KEY_EXERCISE);
+  } catch {
+    // Silent fail — cleanup best-effort
+  }
 
   const isRegistered = await TaskManager.isTaskRegisteredAsync(TASK_NAME);
   if (isRegistered) {
