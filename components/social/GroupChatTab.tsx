@@ -24,7 +24,7 @@ import type { UserProfile } from '../../types/user';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const REACTION_EMOJIS = ['👍', '💪', '🔥', '👏', '❤️'];
-const POLL_INTERVAL_MS = 10_000;
+const POLL_INTERVAL_MS = 30_000;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -181,6 +181,12 @@ export default function GroupChatTab({ groupId }: Props) {
     }
   }, [groupId]);
 
+  // Keep ref in sync so the polling interval always calls the latest version
+  const loadMessagesRef = useRef(loadMessages);
+  useEffect(() => {
+    loadMessagesRef.current = loadMessages;
+  }, [loadMessages]);
+
   // Load current user once
   useEffect(() => {
     api
@@ -189,12 +195,12 @@ export default function GroupChatTab({ groupId }: Props) {
       .catch(() => undefined);
   }, []);
 
-  // Initial load + polling
+  // Initial load + polling — interval created once, never recreated
   useEffect(() => {
-    loadMessages();
-    const interval = setInterval(loadMessages, POLL_INTERVAL_MS);
+    loadMessagesRef.current();
+    const interval = setInterval(() => loadMessagesRef.current(), POLL_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [loadMessages]);
+  }, []);
 
   // Auto-scroll when messages arrive
   useEffect(() => {
