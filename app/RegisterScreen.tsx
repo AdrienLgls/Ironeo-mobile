@@ -69,7 +69,7 @@ export default function RegisterScreen() {
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-3 text-base"
           placeholder="Full name"
-          placeholderTextColor="#666"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           autoCapitalize="words"
           value={name}
           onChangeText={setName}
@@ -77,7 +77,7 @@ export default function RegisterScreen() {
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-3 text-base"
           placeholder="Email"
-          placeholderTextColor="#666"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           autoCapitalize="none"
           keyboardType="email-address"
           value={email}
@@ -86,7 +86,7 @@ export default function RegisterScreen() {
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-6 text-base"
           placeholder="Password (min. 8 characters)"
-          placeholderTextColor="#666"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           secureTextEntry
           value={password}
           onChangeText={setPassword}

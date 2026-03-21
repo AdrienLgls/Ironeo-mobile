@@ -75,7 +75,7 @@ export default function ResetPasswordScreen() {
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-3 text-base"
           placeholder="Nouveau mot de passe"
-          placeholderTextColor="#666"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
@@ -83,7 +83,7 @@ export default function ResetPasswordScreen() {
         <TextInput
           className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-6 text-base"
           placeholder="Confirmer le mot de passe"
-          placeholderTextColor="#666"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
