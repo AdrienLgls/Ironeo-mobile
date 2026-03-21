@@ -29,6 +29,8 @@ import {
 } from '../services/progressPhotoService';
 import { formatDate } from '../utils/formatters';
 import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
+import { hapticSuccess } from '../utils/haptics';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CELL_SIZE = (SCREEN_WIDTH - 32 - 4) / 3; // 16px side padding, 2px gaps
@@ -317,6 +319,7 @@ interface ProgressPhotosScreenProps {
 export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScreenProps) {
   const insets = useSafeAreaInsets();
   const confirm = useConfirm();
+  const { toast } = useToast();
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -333,7 +336,7 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
       const data = await getPhotos(cat);
       setPhotos(data);
     } catch {
-      Alert.alert('Erreur', 'Impossible de charger les photos.');
+      toast.error('Impossible de charger les photos.');
     } finally {
       setLoading(false);
     }
@@ -346,7 +349,7 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
       const data = await getPhotos(cat);
       setPhotos(data);
     } catch {
-      Alert.alert('Erreur', 'Impossible de charger les photos.');
+      toast.error('Impossible de charger les photos.');
     } finally {
       setRefreshing(false);
     }
@@ -380,10 +383,11 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
     setUploading(true);
     try {
       await uploadPhoto(uploadUri, category, weight, notes);
+      await hapticSuccess();
       setUploadUri(null);
       await load();
     } catch {
-      Alert.alert('Erreur', "Impossible d'envoyer la photo.");
+      toast.error("Impossible d'envoyer la photo.");
     } finally {
       setUploading(false);
     }
@@ -399,10 +403,11 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
     if (!ok) return;
     try {
       await deletePhoto(id);
+      await hapticSuccess();
       setLightboxIndex(null);
       await load();
     } catch {
-      Alert.alert('Erreur', 'Impossible de supprimer la photo.');
+      toast.error('Impossible de supprimer la photo.');
     }
   }
 
