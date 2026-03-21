@@ -424,7 +424,7 @@ export default function GroupsScreen({ onGroupPress }: GroupsScreenProps) {
       ) : (
         <FlatList
           data={[]}
-          keyExtractor={() => ''}
+          keyExtractor={(_, index) => index.toString()}
           renderItem={null}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}

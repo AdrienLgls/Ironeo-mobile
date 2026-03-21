@@ -602,8 +602,8 @@ function QuizScreen({
   function handleNext() {
     if (selected === null) return;
     const newAnswers = [...answers, selected];
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const currentQuiz: Quiz = quiz!;
+    if (!quiz) return;
+    const currentQuiz: Quiz = quiz;
 
     if (isLast) {
       setAnswers(newAnswers);
