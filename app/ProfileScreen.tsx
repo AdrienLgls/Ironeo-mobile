@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -711,6 +712,12 @@ function SettingsScreen({
       >
         <Text className="text-red-400 text-body-sm font-body">Delete account</Text>
       </TouchableOpacity>
+
+      <View style={{ paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' }}>
+        <Text style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, fontFamily: 'Rowan-Regular' }}>
+          Ironeo v{Constants.expoConfig?.version ?? '1.0.0'}
+        </Text>
+      </View>
     </ScrollView>
   );
 }
