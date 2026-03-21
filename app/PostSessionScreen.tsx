@@ -9,7 +9,6 @@ import {
   Modal,
   Animated,
   Easing,
-  Alert,
 } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,6 +25,7 @@ import { ShareCardStats } from '../components/share/ShareCard';
 import ShareButton from '../components/share/ShareButton';
 import { hapticSuccess } from '../utils/haptics';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { useToast } from '../context/ToastContext';
 import { formatVolume, formatDuration } from '../utils/formatters';
 
 async function maybeRequestReview(): Promise<void> {
@@ -250,6 +250,7 @@ const modalStyles = StyleSheet.create({
 export default function PostSessionScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const insets = useSafeAreaInsets();
+  const { toast } = useToast();
   const { trackSessionCompleted, trackPRDetected } = useAnalytics();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [saving, setSaving] = useState(true);
@@ -290,11 +291,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
           await hapticSuccess();
         }
       } catch {
-        Alert.alert(
-          'Séance non sauvegardée',
-          "La séance n'a pas pu être enregistrée. Tu peux réessayer depuis l'historique.",
-          [{ text: 'OK' }]
-        );
+        toast.error('Séance non sauvegardée');
         // NE PAS bloquer la navigation — l'utilisateur doit pouvoir continuer
       } finally {
         setSaving(false);
