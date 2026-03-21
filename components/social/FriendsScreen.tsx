@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useConfirm } from '../../context/ConfirmContext';
 import { hapticImpact } from '../../utils/haptics';
 import EmptyState from '../ui/EmptyState';
 import { FadeIn } from '../ui/FadeIn';
@@ -196,18 +197,13 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
 
 interface FriendCardProps {
   friend: Friend;
-  onRemove: (friendId: string) => void;
+  onRemove: (friendId: string) => Promise<void>;
 }
 
 function FriendCard({ friend, onRemove }: FriendCardProps) {
   async function handleRemove() {
     hapticImpact().catch(() => undefined);
-    try {
-      await removeFriend(friend._id);
-      onRemove(friend._id);
-    } catch {
-      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
-    }
+    await onRemove(friend._id);
   }
 
   return (
@@ -233,6 +229,7 @@ interface FriendsScreenProps {
 }
 
 export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScreenProps) {
+  const confirm = useConfirm();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [requests, setRequests] = useState<FriendRequest[]>([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -312,9 +309,21 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
     setRequests((prev) => prev.filter((r) => r._id !== requestId));
   }, []);
 
-  const handleRemoveFriend = useCallback((friendId: string) => {
-    setFriends((prev) => prev.filter((f) => f._id !== friendId));
-  }, []);
+  const handleRemoveFriend = useCallback(async (friendId: string) => {
+    const ok = await confirm({
+      title: "Supprimer l'ami ?",
+      message: 'Cette action est irréversible.',
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await removeFriend(friendId);
+      setFriends((prev) => prev.filter((f) => f._id !== friendId));
+    } catch {
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+    }
+  }, [confirm]);
 
   // ── Derived ──────────────────────────────────────────────────────────────────
   const isSearching = debouncedQuery.length >= 2 || searchQuery.length >= 2;
