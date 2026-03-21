@@ -429,7 +429,7 @@ function ArticlesListScreen({
           ListEmptyComponent={
             <View>
               {searchLoading ? (
-                <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
+                <ActivityIndicator size="large" color="#EFBF04" style={{ marginTop: 32 }} />
               ) : error !== null ? (
                 <EmptyState icon="⚠️" type="error" title="Impossible de charger les articles" description={error} />
               ) : (

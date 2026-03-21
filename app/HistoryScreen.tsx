@@ -86,7 +86,7 @@ export default function HistoryScreen() {
       ListFooterComponent={
         loadingMore && !refreshing ? (
           <View style={styles.footer}>
-            <ActivityIndicator color="#EFBF04" />
+            <ActivityIndicator size="large" color="#EFBF04" />
           </View>
         ) : null
       }

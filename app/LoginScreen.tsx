@@ -126,7 +126,7 @@ export default function LoginScreen() {
           activeOpacity={0.8}
         >
           {loading ? (
-            <ActivityIndicator color="#EFBF04" />
+            <ActivityIndicator size="small" color="#EFBF04" />
           ) : (
             <Text className="text-background text-body font-heading">Connexion</Text>
           )}
@@ -139,7 +139,7 @@ export default function LoginScreen() {
           activeOpacity={0.8}
         >
           {googleLoading ? (
-            <ActivityIndicator color="#EFBF04" />
+            <ActivityIndicator size="small" color="#EFBF04" />
           ) : (
             <Text className="text-white text-body font-heading">Continuer avec Google</Text>
           )}

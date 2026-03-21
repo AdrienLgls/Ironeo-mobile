@@ -584,7 +584,7 @@ function NotificationSettingsScreen({
       <Text className="text-white text-h2 font-heading mb-6">Notifications</Text>
 
       {loading ? (
-        <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
+        <ActivityIndicator size="large" color="#EFBF04" style={{ marginTop: 32 }} />
       ) : (
         <>
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2">

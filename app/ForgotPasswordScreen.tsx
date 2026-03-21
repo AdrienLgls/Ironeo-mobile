@@ -86,7 +86,7 @@ export default function ForgotPasswordScreen() {
               activeOpacity={0.8}
             >
               {loading ? (
-                <ActivityIndicator color="#EFBF04" />
+                <ActivityIndicator size="small" color="#EFBF04" />
               ) : (
                 <Text className="text-background text-body font-heading">
                   Envoyer le lien de réinitialisation

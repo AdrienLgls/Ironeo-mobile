@@ -266,7 +266,7 @@ function BeforeAfterView({ category }: BeforeAfterProps) {
   }, [effectiveCategory]);
 
   if (loading) {
-    return <ActivityIndicator color="#EFBF04" style={{ marginTop: 40 }} />;
+    return <ActivityIndicator size="large" color="#EFBF04" style={{ marginTop: 40 }} />;
   }
 
   if (!compare?.first || !compare?.latest) {
