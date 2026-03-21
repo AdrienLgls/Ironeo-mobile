@@ -382,7 +382,7 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
         /* Normal mode — requests + friends */
         <FlatList
           data={[]}
-          keyExtractor={() => ''}
+          keyExtractor={(_, index) => index.toString()}
           renderItem={null}
           contentContainerStyle={styles.section}
           showsVerticalScrollIndicator={false}

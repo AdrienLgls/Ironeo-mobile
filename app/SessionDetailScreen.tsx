@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -46,7 +47,8 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
   const [draftRpe, setDraftRpe] = useState<number | undefined>(undefined);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const loadSession = useCallback(() => {
+    setLoading(true);
     getSessionById(sessionId)
       .then((s) => {
         setSession(s);
@@ -56,6 +58,13 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
       .catch(() => setError('Séance introuvable'))
       .finally(() => setLoading(false));
   }, [sessionId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSession();
+      return () => {};
+    }, [loadSession]),
+  );
 
   function handleToggleEdit() {
     if (editMode) {

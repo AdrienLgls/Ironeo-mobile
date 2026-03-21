@@ -1,0 +1,84 @@
+{
+  "branchName": "feat/16-chart-formatters-focus-polish",
+  "userStories": [
+    {
+      "id": "US-1601",
+      "title": "Date formatters dans les composants charts + RecentSessionCard",
+      "acceptanceCriteria": [
+        "components/charts/VolumeAreaChart.tsx: utilise formatDate depuis utils/formatters.ts (fr-FR)",
+        "components/charts/ExerciseHistoryChart.tsx: utilise formatDate depuis utils/formatters.ts",
+        "components/charts/SessionsBarChart.tsx: utilise formatDate depuis utils/formatters.ts",
+        "components/home/RecentSessionCard.tsx: utilise formatDate depuis utils/formatters.ts (remplace en-US)",
+        "components/social/GroupChatTab.tsx: utilise formatRelativeTime depuis utils/formatters.ts (remplace fr-CA)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Audit cycle 5: 7 occurrences de locales différentes dans les charts et composants. VolumeAreaChart/ExerciseHistoryChart/SessionsBarChart utilisent fr-FR mais leurs propres implémentations. RecentSessionCard utilise en-US (anglais!). GroupChatTab utilise fr-CA. Tout doit passer par utils/formatters.ts."
+    },
+    {
+      "id": "US-1602",
+      "title": "Fix GroupChatTab polling interval instable",
+      "acceptanceCriteria": [
+        "GroupChatTab: le setInterval ne se recrée pas si loadMessages change (stable reference)",
+        "Cleanup correct au unmount",
+        "Interval de polling raisonnable (30s minimum pour éviter throttle API)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "components/social/GroupChatTab.tsx:195 — useEffect dépend de loadMessages qui peut changer. Pattern: utiliser useRef pour stabiliser loadMessages, ou useCallback avec deps correctes. POLL_INTERVAL_MS = 10_000 est trop court → passer à 30_000."
+    },
+    {
+      "id": "US-1603",
+      "title": "useFocusEffect sur UserProfileScreen + SessionDetailScreen",
+      "acceptanceCriteria": [
+        "UserProfileScreen: useFocusEffect(() => { loadProfile(); }) pour rafraîchir quand on revient",
+        "SessionDetailScreen: useFocusEffect pour rafraîchir les données si la session a été modifiée",
+        "Pattern: import { useFocusEffect } from '@react-navigation/native'",
+        "tsc --noEmit passe"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Audit: 0 useFocusEffect dans tout le projet. UserProfileScreen et SessionDetailScreen peuvent afficher des données obsolètes si l'utilisateur navigue back après une modification. useFocusEffect(useCallback(() => { load(); }, [])) est le pattern standard."
+    },
+    {
+      "id": "US-1604",
+      "title": "Fix non-null assertion quiz! + FlatList empty keyExtractor",
+      "acceptanceCriteria": [
+        "LearnScreen.tsx: remplacer quiz! par un check null explicite (if (!quiz) return null)",
+        "FriendsScreen ou GroupsScreen: supprimer les FlatList avec data=[] et keyExtractor={() => ''} ou les corriger",
+        "tsc --noEmit passe"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "LearnScreen.tsx ligne ~605: const currentQuiz: Quiz = quiz! — non-null assertion sans guard. FriendsScreen.tsx:385 et/ou GroupsScreen.tsx:427: FlatList avec keyExtractor vide."
+    },
+    {
+      "id": "US-1605",
+      "title": "placeholderTextColor sur tous les TextInputs",
+      "acceptanceCriteria": [
+        "Tous les TextInput dans LoginScreen, RegisterScreen, ForgotPasswordScreen, ResetPasswordScreen ont placeholderTextColor='rgba(255,255,255,0.4)'",
+        "Vérifier aussi NotificationSettingsScreen, SessionDetailScreen, LearnScreen",
+        "tsc --noEmit passe"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Audit: 15+ TextInputs sans placeholderTextColor. Sur fond dark #121212, le placeholder par défaut peut être illisible. Standard de l'app: rgba(255,255,255,0.4)."
+    },
+    {
+      "id": "US-1606",
+      "title": "Polish final Phase 16 — tsc clean + push + merge main",
+      "acceptanceCriteria": [
+        "0 console.log dans les fichiers Phase 16",
+        "tsc --noEmit retourne 0 erreurs",
+        "git push origin feat/16-chart-formatters-focus-polish",
+        "Merge feat/16-chart-formatters-focus-polish dans main",
+        "git push origin main"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Polish final."
+    }
+  ]
+}

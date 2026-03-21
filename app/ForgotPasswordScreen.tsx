@@ -70,7 +70,7 @@ export default function ForgotPasswordScreen() {
             <TextInput
               className="bg-white/[0.06] text-white rounded-xl px-4 py-4 mb-6 text-base"
               placeholder="Email"
-              placeholderTextColor="#666"
+              placeholderTextColor="rgba(255,255,255,0.4)"
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}

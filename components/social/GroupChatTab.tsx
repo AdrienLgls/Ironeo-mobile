@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import api from '../../services/api';
+import { formatChatTimestamp } from '../../utils/formatters';
 import {
   deleteMessage,
   getMessages,
@@ -24,22 +25,7 @@ import type { UserProfile } from '../../types/user';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const REACTION_EMOJIS = ['👍', '💪', '🔥', '👏', '❤️'];
-const POLL_INTERVAL_MS = 10_000;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function formatTimestamp(isoDate: string): string {
-  const date = new Date(isoDate);
-  const now = new Date();
-  const hhmm = date.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
-
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterdayMidnight = new Date(todayMidnight.getTime() - 86_400_000);
-
-  if (date >= todayMidnight) return hhmm;
-  if (date >= yesterdayMidnight) return `Hier ${hhmm}`;
-  return `${date.toLocaleDateString('fr-CA', { day: '2-digit', month: '2-digit' })} ${hhmm}`;
-}
+const POLL_INTERVAL_MS = 30_000;
 
 // ─── ReplyBar ─────────────────────────────────────────────────────────────────
 
@@ -137,7 +123,7 @@ function MessageBubble({ message, isOwn, onLongPress, onReactionPress }: Message
       </TouchableOpacity>
 
       <Text style={[styles.timestamp, isOwn ? styles.timestampOwn : styles.timestampOther]}>
-        {formatTimestamp(message.createdAt)}
+        {formatChatTimestamp(message.createdAt)}
       </Text>
 
       {message.reactions && message.reactions.length > 0 && (
@@ -181,6 +167,12 @@ export default function GroupChatTab({ groupId }: Props) {
     }
   }, [groupId]);
 
+  // Keep ref in sync so the polling interval always calls the latest version
+  const loadMessagesRef = useRef(loadMessages);
+  useEffect(() => {
+    loadMessagesRef.current = loadMessages;
+  }, [loadMessages]);
+
   // Load current user once
   useEffect(() => {
     api
@@ -189,12 +181,12 @@ export default function GroupChatTab({ groupId }: Props) {
       .catch(() => undefined);
   }, []);
 
-  // Initial load + polling
+  // Initial load + polling — interval created once, never recreated
   useEffect(() => {
-    loadMessages();
-    const interval = setInterval(loadMessages, POLL_INTERVAL_MS);
+    loadMessagesRef.current();
+    const interval = setInterval(() => loadMessagesRef.current(), POLL_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [loadMessages]);
+  }, []);
 
   // Auto-scroll when messages arrive
   useEffect(() => {
