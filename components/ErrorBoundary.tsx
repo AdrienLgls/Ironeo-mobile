@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Sentry from '@sentry/react-native';
 
 type Props = {
   children: React.ReactNode;
@@ -19,6 +20,10 @@ class ErrorBoundaryInner extends React.Component<Props & { insets: { top: number
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    Sentry.captureException(error, { extra: { errorInfo } });
   }
 
   handleReset = (): void => {
