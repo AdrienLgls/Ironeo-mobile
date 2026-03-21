@@ -66,7 +66,13 @@ export default function HomeScreen() {
     async function checkDraft() {
       const raw = await AsyncStorage.getItem(DRAFT_KEY);
       if (!raw) return;
-      const draft = JSON.parse(raw) as SessionDraft;
+      let draft: SessionDraft;
+      try {
+        draft = JSON.parse(raw) as SessionDraft;
+      } catch {
+        await AsyncStorage.removeItem(DRAFT_KEY);
+        return;
+      }
       const ageMs = Date.now() - new Date(draft.startedAt).getTime();
       if (ageMs < 24 * 60 * 60 * 1000) {
         setSessionDraft(draft);
