@@ -129,3 +129,31 @@ export async function updateSession(id: string, patch: SessionPatch): Promise<Wo
 export async function deleteSession(id: string): Promise<void> {
   await api.delete(`/sessions/${id}`);
 }
+
+export interface ExerciseHistoryEntry {
+  date: string;
+  maxWeight: number;
+  totalVolume: number;
+  sets: number;
+}
+
+export async function getExerciseHistory(exerciseId: string): Promise<ExerciseHistoryEntry[]> {
+  try {
+    const { data } = await api.get<{
+      chartData: { topSet: Array<{ date: string; weight: number; reps: number }> };
+      entries: Array<{ date: string; totalVolume: number; sets: Array<{ completed: boolean }> }>;
+    }>(`/sessions/exercise/${exerciseId}/history?limit=50`);
+
+    const topSetData = data.chartData?.topSet ?? [];
+    const entries = data.entries ?? [];
+
+    return topSetData.map((point, i) => ({
+      date: point.date,
+      maxWeight: point.weight,
+      totalVolume: entries[i]?.totalVolume ?? 0,
+      sets: (entries[i]?.sets ?? []).filter((s) => s.completed).length,
+    }));
+  } catch {
+    return [];
+  }
+}

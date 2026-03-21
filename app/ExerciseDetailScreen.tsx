@@ -1,30 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
-import { getExerciseById } from '../services/workoutService';
+import { getExerciseById, getExerciseHistory } from '../services/workoutService';
+import type { ExerciseHistoryEntry } from '../services/workoutService';
 import type { Exercise } from '../types/workout';
+import ExerciseHistoryChart from '../components/charts/ExerciseHistoryChart';
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'ExerciseDetail'>;
+
+function formatVolume(kg: number): string {
+  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
+  return `${Math.round(kg)}kg`;
+}
 
 export default function ExerciseDetailScreen({ route, navigation }: Props) {
   const { exerciseId } = route.params;
   const insets = useSafeAreaInsets();
   const [exercise, setExercise] = useState<Exercise | null>(null);
+  const [history, setHistory] = useState<ExerciseHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getExerciseById(exerciseId)
-      .then(setExercise)
-      .catch(() => setError('Unable to load exercise'))
+    Promise.all([
+      getExerciseById(exerciseId),
+      getExerciseHistory(exerciseId),
+    ])
+      .then(([ex, hist]) => {
+        setExercise(ex);
+        setHistory(hist);
+      })
+      .catch(() => setError('Exercice introuvable'))
       .finally(() => setLoading(false));
   }, [exerciseId]);
 
   if (loading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
+      <View style={styles.center}>
         <ActivityIndicator color="#EFBF04" size="large" />
       </View>
     );
@@ -32,43 +46,109 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
 
   if (error || !exercise) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-red-400 text-body-sm font-body">{error ?? 'Exercise not found'}</Text>
+      <View style={styles.center}>
+        <Text style={styles.errorText}>{error ?? 'Exercice introuvable'}</Text>
       </View>
     );
   }
 
+  const allTimeMax = history.length > 0 ? Math.max(...history.map((h) => h.maxWeight)) : null;
+  const totalVolume = history.reduce((sum, h) => sum + h.totalVolume, 0);
+  const sessionCount = history.length;
+
   return (
-    <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
-      <TouchableOpacity onPress={() => navigation.goBack()} className="mb-4">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+    <ScrollView
+      style={styles.scroll}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}
+    >
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backRow}>
+        <Text style={styles.backArrow}>←</Text>
+        <Text style={styles.backLabel}>Retour</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-h2 font-heading mb-2">{exercise.name}</Text>
+      <Text style={styles.title}>{exercise.name}</Text>
 
       {exercise.muscleGroups.length > 0 && (
-        <View className="flex-row flex-wrap gap-2 mb-6">
+        <View style={styles.tagsRow}>
           {exercise.muscleGroups.map((group) => (
-            <View key={group} className="bg-accent/20 rounded-full px-3 py-1">
-              <Text className="text-accent text-caption font-body capitalize">{group}</Text>
+            <View key={group} style={styles.tag}>
+              <Text style={styles.tagText}>{group}</Text>
             </View>
           ))}
         </View>
       )}
 
-      {exercise.instructions && (
-        <View className="mb-6">
-          <Text className="text-white/60 text-overline font-body uppercase tracking-wider mb-2">Instructions</Text>
-          <Text className="text-white/80 text-body-sm font-body leading-relaxed">{exercise.instructions}</Text>
+      {exercise.instructions != null && exercise.instructions.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Instructions</Text>
+          <Text style={styles.sectionBody}>{exercise.instructions}</Text>
         </View>
       )}
 
-      {exercise.tips && (
-        <View className="bg-white/[0.04] rounded-2xl p-4">
-          <Text className="text-accent text-overline font-body uppercase tracking-wider mb-2">Tips</Text>
-          <Text className="text-white/70 text-body-sm font-body leading-relaxed">{exercise.tips}</Text>
+      {exercise.tips != null && exercise.tips.length > 0 && (
+        <View style={styles.tipsCard}>
+          <Text style={styles.tipsLabel}>Tips</Text>
+          <Text style={styles.tipsBody}>{exercise.tips}</Text>
         </View>
       )}
+
+      {/* Performance section */}
+      <View style={styles.perfSection}>
+        <Text style={styles.perfTitle}>Performance</Text>
+
+        {allTimeMax !== null && (
+          <View style={styles.statsRow}>
+            <View style={styles.statChip}>
+              <Text style={styles.statChipVal}>{allTimeMax}kg</Text>
+              <Text style={styles.statChipLabel}>max all-time</Text>
+            </View>
+            <View style={styles.statChip}>
+              <Text style={styles.statChipVal}>{formatVolume(totalVolume)}</Text>
+              <Text style={styles.statChipLabel}>volume total</Text>
+            </View>
+            <View style={styles.statChip}>
+              <Text style={styles.statChipVal}>{sessionCount}</Text>
+              <Text style={styles.statChipLabel}>séances</Text>
+            </View>
+          </View>
+        )}
+
+        <ExerciseHistoryChart data={history} height={180} />
+      </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  scroll: { flex: 1, backgroundColor: '#121212' },
+  content: { paddingHorizontal: 16, paddingBottom: 40 },
+  center: { flex: 1, backgroundColor: '#121212', alignItems: 'center', justifyContent: 'center' },
+  errorText: { color: '#a0a0a0', fontFamily: 'Rowan-Regular', fontSize: 15 },
+  backRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 20 },
+  backArrow: { fontSize: 20, color: '#EFBF04' },
+  backLabel: { fontFamily: 'Rowan-Regular', fontSize: 14, color: '#a0a0a0' },
+  title: { fontFamily: 'Quilon-Medium', fontSize: 24, color: '#fafafa', marginBottom: 12 },
+  tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+  tag: { backgroundColor: 'rgba(239,191,4,0.15)', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 },
+  tagText: { fontFamily: 'Rowan-Regular', fontSize: 12, color: '#EFBF04' },
+  section: { marginBottom: 20 },
+  sectionLabel: { fontFamily: 'Quilon-Medium', fontSize: 12, color: '#a0a0a0', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
+  sectionBody: { fontFamily: 'Rowan-Regular', fontSize: 14, color: 'rgba(255,255,255,0.8)', lineHeight: 22 },
+  tipsCard: { backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, padding: 16, marginBottom: 24 },
+  tipsLabel: { fontFamily: 'Quilon-Medium', fontSize: 12, color: '#EFBF04', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 },
+  tipsBody: { fontFamily: 'Rowan-Regular', fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 22 },
+  perfSection: { backgroundColor: 'rgba(255,255,255,0.04)', borderRadius: 16, padding: 16, marginTop: 8 },
+  perfTitle: { fontFamily: 'Quilon-Medium', fontSize: 16, color: '#fafafa', marginBottom: 16 },
+  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 20 },
+  statChip: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  statChipVal: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#EFBF04' },
+  statChipLabel: { fontFamily: 'Rowan-Regular', fontSize: 11, color: '#a0a0a0', marginTop: 2 },
+});

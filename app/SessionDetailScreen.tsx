@@ -38,6 +38,12 @@ function formatVolume(kg: number): string {
 const RPE_MIN = 1;
 const RPE_MAX = 10;
 
+function calcOneRM(weight: number, reps: number): number | null {
+  if (reps < 1 || reps > 10 || weight <= 0) return null;
+  const raw = weight * 36 / (37 - reps);
+  return Math.round(raw * 2) / 2;
+}
+
 export default function SessionDetailScreen({ route, navigation }: Props) {
   const { sessionId } = route.params;
   const insets = useSafeAreaInsets();
@@ -260,11 +266,23 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
       {session.exercises.map((ex, i) => {
         const doneSets = ex.sets.filter((s) => s.completed);
         const exVol = doneSets.reduce((sum, s) => sum + (s.weight || 0) * (s.reps || 0), 0);
+        const bestOneRM = doneSets.reduce<number | null>((best, s) => {
+          const orm = s.weight && s.reps ? calcOneRM(s.weight, s.reps) : null;
+          if (orm === null) return best;
+          return best === null || orm > best ? orm : best;
+        }, null);
         return (
           <View key={i} style={styles.exCard}>
             <View style={styles.exHeader}>
               <Text style={styles.exName}>{ex.exerciseName ?? `Exercice ${i + 1}`}</Text>
-              {exVol > 0 && <Text style={styles.exVol}>{formatVolume(exVol)}</Text>}
+              <View style={styles.exHeaderRight}>
+                {bestOneRM !== null && (
+                  <View style={styles.ormBadge}>
+                    <Text style={styles.ormBadgeText}>1RM ~{bestOneRM}kg</Text>
+                  </View>
+                )}
+                {exVol > 0 && <Text style={styles.exVol}>{formatVolume(exVol)}</Text>}
+              </View>
             </View>
             {doneSets.map((s, j) => (
               <View key={j} style={styles.setRow}>
@@ -384,6 +402,14 @@ const styles = StyleSheet.create({
   },
   exHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   exName: { fontFamily: 'Quilon-Medium', fontSize: 15, color: '#fafafa', flex: 1 },
+  exHeaderRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  ormBadge: {
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  ormBadgeText: { fontFamily: 'Rowan-Regular', fontSize: 12, color: 'rgba(255,255,255,0.5)' },
   exVol: { fontFamily: 'Quilon-Medium', fontSize: 13, color: '#EFBF04' },
   setRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.04)' },
   setNum: { fontFamily: 'Rowan-Regular', fontSize: 13, color: '#a0a0a0' },
