@@ -98,6 +98,12 @@
         "android": {
           "minSdkVersion": 26
         }
+      }],
+      ["expo-font", {
+        "fonts": [
+          "./assets/fonts/Quilon-Medium.otf",
+          "./assets/fonts/Rowan-Regular.otf"
+        ]
       }]
     ],
     "updates": {
@@ -105,6 +111,7 @@
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0
     },
+    "runtimeVersion": { "policy": "appVersion" },
     "scheme": "ironeo",
     "extra": {
       "googleAndroidClientId": "",
