@@ -15,6 +15,7 @@ import AvatarCircle from '../ui/AvatarCircle';
 import EmptyState from '../ui/EmptyState';
 import { SkeletonBox } from '../ui/Skeleton';
 import { formatRelativeTime } from '../../utils/formatters';
+import { useToast } from '../../context/ToastContext';
 
 // ---------------------------------------------------------------------------
 // BravoButton
@@ -96,6 +97,7 @@ function ActivityCard({ item, onBravoToggle }: ActivityCardProps) {
 // ---------------------------------------------------------------------------
 
 export default function ActivityFeedScreen() {
+  const { toast } = useToast();
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -155,6 +157,7 @@ export default function ActivityFeedScreen() {
       })
     );
     sendBravo(id).catch(() => {
+      toast.error("Impossible d'envoyer le bravo.");
       // Revert optimistic update on failure
       setItems(prev =>
         prev.map(item => {
