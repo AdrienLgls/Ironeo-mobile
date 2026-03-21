@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#EFBF04',
     paddingHorizontal: 32,
-    paddingVertical: 14,
-    borderRadius: 8,
+    paddingVertical: 16,
+    borderRadius: 16,
   },
   buttonText: {
     fontFamily: 'Quilon-Medium',
