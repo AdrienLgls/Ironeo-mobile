@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
   useRef,
+  useEffect,
 } from 'react';
 import {
   View,
@@ -87,8 +88,14 @@ function ToastItem({
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const insets = useSafeAreaInsets();
+  const timersRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
 
   const removeToast = useCallback((id: number) => {
+    const timer = timersRef.current.get(id);
+    if (timer !== undefined) {
+      clearTimeout(timer);
+      timersRef.current.delete(id);
+    }
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
@@ -97,11 +104,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       const id = Date.now() + Math.random();
       setToasts((prev) => [...prev, { id, type, message }]);
       if (duration > 0) {
-        setTimeout(() => removeToast(id), duration);
+        const timer = setTimeout(() => removeToast(id), duration);
+        timersRef.current.set(id, timer);
       }
     },
     [removeToast]
   );
+
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timer) => clearTimeout(timer));
+      timersRef.current.clear();
+    };
+  }, []);
 
   const toast = useMemo(
     () => ({
