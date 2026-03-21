@@ -12,20 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ActivityItem, getActivityFeed, sendBravo } from '../../services/socialService';
 import EmptyState from '../ui/EmptyState';
 import { SkeletonBox } from '../ui/Skeleton';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatRelativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `il y a ${minutes}min`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `il y a ${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `il y a ${days}j`;
-}
+import { formatRelativeTime } from '../../utils/formatters';
 
 function getActivityDescription(item: ActivityItem): string {
   const d = item.data;

@@ -6,25 +6,13 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { getWorkoutSessions } from '../services/workoutService';
 import type { WorkoutSession } from '../types/workout';
 import type { WorkoutStackParamList } from './WorkoutScreen';
+import { formatDate, formatVolume } from '../utils/formatters';
 
 // Matches web SessionDetail link list — date fr-FR, durée, volume, exercices
 
 type HistoryNav = NativeStackNavigationProp<WorkoutStackParamList, 'History'>;
 
 const PAGE_SIZE = 20;
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-function formatVolume(kg: number): string {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
-  return `${Math.round(kg)}kg`;
-}
 
 export default function HistoryScreen() {
   const insets = useSafeAreaInsets();
