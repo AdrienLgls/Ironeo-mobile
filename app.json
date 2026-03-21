@@ -15,6 +15,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.ironeo.app",
       "buildNumber": "1",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Ironeo utilise la caméra pour prendre vos photos de progression.",
         "NSPhotoLibraryUsageDescription": "Ironeo accède à vos photos pour vos photos de progression.",
@@ -73,7 +74,8 @@
           "sounds": []
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-apple-authentication"
     ],
     "updates": {
       "enabled": true,
