@@ -13,6 +13,8 @@ import {
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ViewShot from 'react-native-view-shot';
+import * as StoreReview from 'expo-store-review';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { updateWorkoutSession } from '../services/workoutService';
 import { checkPRs, type PRResult } from '../services/prService';
@@ -21,6 +23,24 @@ import type { WorkoutSession } from '../types/workout';
 import { ShareCardStats } from '../components/share/ShareCard';
 import ShareButton from '../components/share/ShareButton';
 import { hapticSuccess } from '../utils/haptics';
+
+async function maybeRequestReview(): Promise<void> {
+  try {
+    const alreadyRequested = await AsyncStorage.getItem('review_requested');
+    if (alreadyRequested === 'true') return;
+
+    const countStr = await AsyncStorage.getItem('sessions_completed_count');
+    const count = parseInt(countStr ?? '0', 10) + 1;
+    await AsyncStorage.setItem('sessions_completed_count', String(count));
+
+    if (count >= 5 && await StoreReview.hasAction()) {
+      await AsyncStorage.setItem('review_requested', 'true');
+      await StoreReview.requestReview();
+    }
+  } catch {
+    // Silent fail
+  }
+}
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'PostSession'>;
 
@@ -251,6 +271,7 @@ export default function PostSessionScreen({ route, navigation }: Props) {
       .then(async (saved) => {
         setSession(saved);
         await hapticSuccess();
+        await maybeRequestReview();
         const prs = await checkPRs(saved);
         if (prs.length > 0) {
           setDetectedPRs(prs);
