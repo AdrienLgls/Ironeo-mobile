@@ -1,9 +1,22 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { useAuthContext } from '../hooks/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import TabNavigator from './TabNavigator';
+
+export type RootParamList = {
+  Login: undefined;
+  Register: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { token: string };
+  Home: undefined;
+  Workout: undefined;
+  Learn: undefined;
+  Profile: undefined;
+};
+
+export const navigationRef = createNavigationContainerRef<RootParamList>();
 
 export default function RootNavigator() {
   const { authState } = useAuthContext();
@@ -17,7 +30,7 @@ export default function RootNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {authState.status === 'authenticated' ? <TabNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
