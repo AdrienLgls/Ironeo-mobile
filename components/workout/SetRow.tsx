@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Keyboard } from 'react-native';
 import type { WorkoutSet, SetType } from '../../types/workout';
+import { hapticImpact } from '../../utils/haptics';
 
 interface Props {
   set: WorkoutSet;
@@ -36,6 +37,7 @@ export default function SetRow({ set, index, isCurrent, onComplete, onUpdate }: 
   function handleComplete() {
     const w = parseFloat(weight) || 0;
     const r = parseInt(reps, 10) || 0;
+    hapticImpact().catch(() => undefined);
     onComplete(w, r, selectedRpe);
   }
 
