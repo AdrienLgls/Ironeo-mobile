@@ -334,7 +334,7 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
         <TextInput
           style={styles.searchInput}
           placeholder="Rechercher un utilisateur..."
-          placeholderTextColor="rgba(255,255,255,0.3)"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           value={searchQuery}
           onChangeText={setSearchQuery}
           clearButtonMode="while-editing"

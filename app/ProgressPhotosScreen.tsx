@@ -213,7 +213,7 @@ function UploadModal({ imageUri, onCancel, onSave, saving }: UploadModalProps) {
             value={weightText}
             onChangeText={setWeightText}
             placeholder="ex: 82.5"
-            placeholderTextColor="rgba(255,255,255,0.2)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             keyboardType="decimal-pad"
             style={styles.uploadInput}
           />
@@ -223,7 +223,7 @@ function UploadModal({ imageUri, onCancel, onSave, saving }: UploadModalProps) {
             value={notes}
             onChangeText={setNotes}
             placeholder="Commentaires..."
-            placeholderTextColor="rgba(255,255,255,0.2)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             style={[styles.uploadInput, { height: 72, textAlignVertical: 'top' }]}
             multiline
           />

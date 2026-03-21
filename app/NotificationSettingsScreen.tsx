@@ -123,7 +123,7 @@ export default function NotificationSettingsScreen({ onBack }: Props) {
                     onChangeText={setHour}
                     keyboardType="numeric"
                     maxLength={2}
-                    placeholderTextColor="rgba(255,255,255,0.2)"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
                     className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm text-center"
                   />
                 </View>
@@ -135,7 +135,7 @@ export default function NotificationSettingsScreen({ onBack }: Props) {
                     onChangeText={setMinute}
                     keyboardType="numeric"
                     maxLength={2}
-                    placeholderTextColor="rgba(255,255,255,0.2)"
+                    placeholderTextColor="rgba(255,255,255,0.4)"
                     className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm text-center"
                   />
                 </View>

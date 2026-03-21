@@ -197,7 +197,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
             style={styles.notesInput}
             multiline
             placeholder="Ajouter des notes sur cette séance…"
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor="rgba(255,255,255,0.4)"
             value={draftNotes}
             onChangeText={setDraftNotes}
             textAlignVertical="top"

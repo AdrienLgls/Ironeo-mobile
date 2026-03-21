@@ -307,7 +307,7 @@ export default function GroupChatTab({ groupId }: Props) {
           value={inputText}
           onChangeText={setInputText}
           placeholder="Message..."
-          placeholderTextColor="rgba(255,255,255,0.25)"
+          placeholderTextColor="rgba(255,255,255,0.4)"
           multiline
           maxLength={500}
           onSubmitEditing={handleSend}
