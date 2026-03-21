@@ -24,11 +24,12 @@ Backend commun : ironeo.com/api (Express 5, MongoDB, ne pas toucher)
 - Toasts : feedback visuel léger, pas de modals lourds
 
 ## Navigation mobile
-Bottom Tab Navigator — 4 onglets :
+Bottom Tab Navigator — 5 onglets :
 1. **Home** — dashboard, stats rapides
 2. **Workout** — sessions, programmes, exercices, timer actif
-3. **Learn** — articles, quiz, parcours
-4. **Profile** — compte, social, settings
+3. **Social** — classements, badges, amis
+4. **Learn** — articles, quiz, parcours
+5. **Profile** — compte, social, settings
 
 ## Auth
 - JWT via ironeo.com/api/auth

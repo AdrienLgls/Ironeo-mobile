@@ -1,0 +1,110 @@
+{
+  "branchName": "feat/11-polish-performance",
+  "userStories": [
+    {
+      "id": "US-1101",
+      "title": "useKeepAwake + enableScreens + GestureHandlerRootView",
+      "acceptanceCriteria": [
+        "useKeepAwake() appelé dans ActiveSessionScreen (écran reste allumé pendant le workout)",
+        "enableScreens() appelé dans App.tsx avant tout rendu (react-native-screens)",
+        "GestureHandlerRootView wrapping le root dans App.tsx",
+        "tsc --noEmit passe"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "3 fixes critiques: (1) import { useKeepAwake } from 'expo-keep-awake'; et appeler useKeepAwake() dans ActiveSessionScreen. (2) import { enableScreens } from 'react-native-screens'; enableScreens(); en dehors du composant dans App.tsx (avant tout import React Navigation). (3) import { GestureHandlerRootView } from 'react-native-gesture-handler'; wrapper le root render dans App.tsx avec <GestureHandlerRootView style={{ flex: 1 }}>."
+    },
+    {
+      "id": "US-1102",
+      "title": "EAS projectId + expo-font plugin dans app.json",
+      "acceptanceCriteria": [
+        "eas.json contient extra.eas.projectId (placeholder si pas encore créé)",
+        "app.json plugins inclut expo-font avec les 2 fonts (Quilon-Medium, Rowan-Regular)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "eas.json: ajouter 'extra': { 'eas': { 'projectId': 'YOUR_EAS_PROJECT_ID' } }. app.json plugins: ajouter ['expo-font', { 'fonts': ['./assets/fonts/Quilon-Medium.otf', './assets/fonts/Rowan-Regular.otf'] }]. Le projectId réel doit être créé sur expo.dev — mettre un placeholder pour l'instant."
+    },
+    {
+      "id": "US-1103",
+      "title": "Demande de permission push avec contexte (pas à froid)",
+      "acceptanceCriteria": [
+        "La permission push n'est plus demandée au démarrage immédiat",
+        "Un modal/bottom sheet explique pourquoi avant de demander la permission",
+        "Déclenché après la 1ère séance complétée OU depuis les Settings notifications",
+        "AsyncStorage flag 'push_permission_asked' pour ne demander qu'une fois",
+        "tsc --noEmit passe"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Retirer registerForPushNotifications() du boot de App.tsx. Le déplacer dans PostSessionScreen après la 1ère séance (si 'push_permission_asked' absent). Avant d'appeler registerForPushNotifications(), montrer un Modal de contexte: 'Ironeo peut vous alerter quand vous battez un record 🏆'. Bouton 'Activer' → déclenche la vraie permission iOS. Bouton 'Plus tard' → set flag quand même pour ne pas re-demander à chaque séance."
+    },
+    {
+      "id": "US-1104",
+      "title": "Pagination HistoryScreen (lazy loading 20 sessions)",
+      "acceptanceCriteria": [
+        "HistoryScreen charge 20 sessions par page (page param dans workoutService)",
+        "Scroll jusqu'en bas charge la page suivante (onEndReached)",
+        "Indicateur de chargement en bas de liste pendant le fetch",
+        "Plus de chargement infini si toutes les sessions sont chargées",
+        "tsc --noEmit passe"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Modifier workoutService.getWorkoutSessions(page, limit=20) → GET /sessions?page=X&limit=20. HistoryScreen: state pages, hasMore, loadingMore. FlatList onEndReached={() => loadMore()} avec onEndReachedThreshold={0.3}. Footer avec ActivityIndicator si loadingMore. Si résultats < 20 → hasMore = false."
+    },
+    {
+      "id": "US-1105",
+      "title": "Sentry navigation integration + version app dans Settings",
+      "acceptanceCriteria": [
+        "Sentry.reactNavigationIntegration() configuré avec navigationRef dans App.tsx",
+        "Version de l'app affichée dans ProfileScreen Settings (expo-constants Application.nativeAppVersion)",
+        "tsc --noEmit passe"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Sentry navigation: import { Sentry } from '@sentry/react-native'; const routingInstrumentation = new Sentry.ReactNavigationInstrumentation(); Sentry.init({ integrations: [new Sentry.ReactNativeTracing({ routingInstrumentation })] }); Puis dans NavigationContainer: <NavigationContainer ref={navigationRef} onReady={() => routingInstrumentation.registerNavigationContainer(navigationRef)}>. Version app: import Constants from 'expo-constants'; Constants.expoConfig?.version dans ProfileScreen Settings section."
+    },
+    {
+      "id": "US-1106",
+      "title": "Badge de messages non-lus sur l'onglet Social",
+      "acceptanceCriteria": [
+        "TabNavigator affiche un badge rouge sur l'onglet Social si pending friend requests",
+        "Service socialService.getUnreadCount() → GET /social/unread-count ou /friends/requests/pending",
+        "Badge disparaît quand l'user ouvre l'onglet Social",
+        "tsc --noEmit passe"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Dans TabNavigator, ajouter un hook useSocialBadge() qui poll toutes les 30s GET /friends/requests/pending (count). Si count > 0, afficher un badge rouge sur l'onglet Social. Utiliser le même pattern que le badge de notifications. Badge disparaît (reset count local) quand Social tab est focusé (useIsFocused ou onTabFocus)."
+    },
+    {
+      "id": "US-1107",
+      "title": "KeyboardAvoidingView + keyboardType numérique dans ActiveSessionScreen",
+      "acceptanceCriteria": [
+        "ActiveSessionScreen enveloppé dans KeyboardAvoidingView (behavior='padding' iOS, 'height' Android)",
+        "Tous les inputs de poids/reps ont keyboardType='numeric' et returnKeyType='done'",
+        "Tapping 'done' ferme le clavier",
+        "tsc --noEmit passe"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "KeyboardAvoidingView behavior: Platform.OS === 'ios' ? 'padding' : 'height'. Les inputs SetRow (reps, weight) doivent avoir keyboardType='numeric', returnKeyType='done', onSubmitEditing={() => Keyboard.dismiss()}. Vérifier SetRow.tsx dans components/workout/."
+    },
+    {
+      "id": "US-1108",
+      "title": "Polish final Phase 11 — tsc clean + push + merge main",
+      "acceptanceCriteria": [
+        "0 console.log dans les fichiers Phase 11",
+        "tsc --noEmit retourne 0 erreurs",
+        "git push origin feat/11-polish-performance",
+        "Merge feat/11-polish-performance dans main",
+        "git push origin main"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "Polish final. Scan console.log, tsc clean, push, merge --no-ff dans main."
+    }
+  ]
+}
