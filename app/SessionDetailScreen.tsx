@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
   StyleSheet,
   TextInput,
 } from 'react-native';
@@ -132,6 +133,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
     return (
       <View style={[styles.center, { paddingTop: insets.top }]}>
         <EmptyState
+          icon="⚠️"
           type="error"
           title={error ?? 'Séance introuvable'}
           compact

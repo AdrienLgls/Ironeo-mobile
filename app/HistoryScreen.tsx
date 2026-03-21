@@ -77,9 +77,9 @@ export default function HistoryScreen() {
       ListEmptyComponent={
         !loadingMore ? (
           error !== null ? (
-            <EmptyState type="error" title="Impossible de charger l'historique" description={error} />
+            <EmptyState icon="⚠️" type="error" title="Impossible de charger l'historique" description={error} />
           ) : (
-            <EmptyState title="Aucune séance" description="Lance ton premier entraînement !" />
+            <EmptyState icon="💪" title="Aucune séance" description="Lance ton premier entraînement !" />
           )
         ) : null
       }

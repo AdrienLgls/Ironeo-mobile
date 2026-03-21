@@ -136,7 +136,7 @@ export default function HomeScreen() {
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
       {error !== null && (
-        <EmptyState type="error" title="Impossible de charger les données" description={error} />
+        <EmptyState icon="⚠️" type="error" title="Impossible de charger les données" description={error} />
       )}
 
       {/* Session draft recovery banner */}

@@ -431,9 +431,9 @@ function ArticlesListScreen({
               {searchLoading ? (
                 <ActivityIndicator color="#EFBF04" style={{ marginTop: 32 }} />
               ) : error !== null ? (
-                <EmptyState type="error" title="Impossible de charger les articles" description={error} />
+                <EmptyState icon="⚠️" type="error" title="Impossible de charger les articles" description={error} />
               ) : (
-                <EmptyState title="Aucun article disponible" />
+                <EmptyState icon="📖" title="Aucun article disponible" />
               )}
             </View>
           }
@@ -512,7 +512,7 @@ function ArticleDetailScreen({
   if (error !== null || !article) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <EmptyState type="error" title="Impossible de charger l'article" description={error ?? 'Article introuvable'} />
+        <EmptyState icon="⚠️" type="error" title="Impossible de charger l'article" description={error ?? 'Article introuvable'} />
       </View>
     );
   }

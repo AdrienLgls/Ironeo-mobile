@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, StyleSheet } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { getExerciseById, getExerciseHistory } from '../services/workoutService';
@@ -18,9 +18,13 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [history, setHistory] = useState<ExerciseHistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadData = useCallback((isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
     Promise.all([
       getExerciseById(exerciseId),
       getExerciseHistory(exerciseId),
@@ -30,10 +34,15 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
         setHistory(hist);
       })
       .catch(() => setError('Exercice introuvable'))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, [exerciseId]);
 
-  if (loading) {
+  useEffect(() => { loadData(); }, [loadData]);
+
+  if (loading && !refreshing) {
     return (
       <View style={styles.center}>
         <ActivityIndicator color="#EFBF04" size="large" />
@@ -44,7 +53,7 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
   if (error || !exercise) {
     return (
       <View style={styles.center}>
-        <EmptyState type="error" title={error ?? 'Exercice introuvable'} compact />
+        <EmptyState icon="⚠️" type="error" title={error ?? 'Exercice introuvable'} compact />
       </View>
     );
   }
@@ -58,6 +67,7 @@ export default function ExerciseDetailScreen({ route, navigation }: Props) {
       style={styles.scroll}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadData(true)} tintColor="#EFBF04" />}
     >
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backRow}>
         <Text style={styles.backArrow}>←</Text>
