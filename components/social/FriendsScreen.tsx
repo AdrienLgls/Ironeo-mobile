@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -63,7 +64,7 @@ interface SearchCardProps {
   user: Friend;
   isFriend: boolean;
   initialState: SearchButtonState;
-  onSendRequest: (userId: string) => void;
+  onSendRequest: (userId: string, onError: () => void) => void;
 }
 
 function SearchCard({ user, isFriend, initialState, onSendRequest }: SearchCardProps) {
@@ -72,7 +73,7 @@ function SearchCard({ user, isFriend, initialState, onSendRequest }: SearchCardP
   function handleAdd() {
     if (btnState !== 'add') return;
     setBtnState('pending');
-    onSendRequest(user._id);
+    onSendRequest(user._id, () => setBtnState('add'));
   }
 
   return (
@@ -130,15 +131,25 @@ function RequestCard({ request, onAccept, onReject }: RequestCardProps) {
   async function handleAccept() {
     if (busy) return;
     setBusy(true);
-    await acceptFriendRequest(request.from._id).catch(() => null);
-    onAccept(request.from._id, request._id);
+    try {
+      await acceptFriendRequest(request.from._id);
+      onAccept(request.from._id, request._id);
+    } catch {
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      setBusy(false);
+    }
   }
 
   async function handleReject() {
     if (busy) return;
     setBusy(true);
-    await rejectFriendRequest(request._id).catch(() => null);
-    onReject(request._id);
+    try {
+      await rejectFriendRequest(request._id);
+      onReject(request._id);
+    } catch {
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+      setBusy(false);
+    }
   }
 
   return (
@@ -185,8 +196,12 @@ interface FriendCardProps {
 
 function FriendCard({ friend, onRemove }: FriendCardProps) {
   async function handleRemove() {
-    await removeFriend(friend._id).catch(() => null);
-    onRemove(friend._id);
+    try {
+      await removeFriend(friend._id);
+      onRemove(friend._id);
+    } catch {
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
+    }
   }
 
   return (
@@ -255,10 +270,12 @@ export default function FriendsScreen({ onUserPress: _onUserPress }: FriendsScre
   // ── Handlers ─────────────────────────────────────────────────────────────────
   const friendIds = new Set(friends.map((f) => f._id));
 
-  const handleSendRequest = useCallback((userId: string) => {
+  const handleSendRequest = useCallback((userId: string, onError: () => void) => {
     sentRequests.current.add(userId);
     sendFriendRequest(userId).catch(() => {
       sentRequests.current.delete(userId);
+      onError();
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
     });
   }, []);
 

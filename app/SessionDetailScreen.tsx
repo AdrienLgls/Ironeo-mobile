@@ -16,24 +16,11 @@ import { getSessionById, updateSession, deleteSession } from '../services/workou
 import type { WorkoutSession } from '../types/workout';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
+import { formatDate, formatVolume } from '../utils/formatters';
 
 // Matches web SessionDetail: date, duration, volume, per-exercise sets breakdown
 
 type Props = NativeStackScreenProps<WorkoutStackParamList, 'SessionDetail'>;
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-function formatVolume(kg: number): string {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(1)}t`;
-  return `${Math.round(kg)}kg`;
-}
 
 const RPE_MIN = 1;
 const RPE_MAX = 10;

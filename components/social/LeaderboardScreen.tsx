@@ -216,17 +216,17 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
-    setError(false);
+    setError(null);
     try {
       const response = await getLeaderboard(selectedType, selectedPeriod);
       setEntries(response.entries ?? []);
       setMyRank(response.myRank ?? null);
     } catch {
-      setError(true);
+      setError('Impossible de charger le classement');
     } finally {
       setLoading(false);
     }
@@ -278,11 +278,11 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
       <View style={styles.listArea}>
         {loading ? (
           <LeaderboardSkeleton />
-        ) : error ? (
+        ) : error !== null ? (
           <EmptyState
             icon="⚠️"
             title="Erreur de chargement"
-            description="Impossible de récupérer le classement."
+            description={error}
             type="error"
             compact
           />
@@ -310,7 +310,7 @@ export default function LeaderboardScreen({ isPremium }: LeaderboardScreenProps)
       </View>
 
       {/* My Rank fixed bottom */}
-      {myRank != null && !loading && !error && (
+      {myRank != null && !loading && error === null && (
         <FadeInUp delay={200}>
           <MyRankCard entry={myRank} />
         </FadeInUp>

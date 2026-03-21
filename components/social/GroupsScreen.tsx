@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Modal,
   ScrollView,
@@ -331,6 +332,7 @@ function DiscoverCard({ group, onRequestSent }: DiscoverCardProps) {
       onRequestSent(group._id);
     } catch {
       setState('idle');
+      Alert.alert('Erreur', 'Une erreur est survenue. Réessaie.');
     }
   }
 

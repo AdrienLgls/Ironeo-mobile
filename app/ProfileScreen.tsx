@@ -577,7 +577,7 @@ function NotificationSettingsScreen({
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
 
       <Text className="text-white text-h2 font-heading mb-6">Notifications</Text>
@@ -587,7 +587,7 @@ function NotificationSettingsScreen({
       ) : (
         <>
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2">
-            <Text className="text-white text-body-sm font-body">Workout reminders</Text>
+            <Text className="text-white text-body-sm font-body">Rappels d'entraînement</Text>
             <Switch
               value={settings.workoutReminders}
               onValueChange={() => toggle('workoutReminders')}
@@ -598,7 +598,7 @@ function NotificationSettingsScreen({
           </View>
 
           <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4">
-            <Text className="text-white text-body-sm font-body">Rest day reminders</Text>
+            <Text className="text-white text-body-sm font-body">Rappels jours de repos</Text>
             <Switch
               value={settings.restDayReminders}
               onValueChange={() => toggle('restDayReminders')}
@@ -655,9 +655,9 @@ function SettingsScreen({
 
   async function handleLogout() {
     const ok = await confirm({
-      title: 'Log out',
-      message: 'Are you sure you want to log out?',
-      confirmText: 'Log out',
+      title: 'Déconnexion',
+      message: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+      confirmText: 'Déconnexion',
       destructive: true,
     });
     if (ok) logout();
@@ -665,9 +665,9 @@ function SettingsScreen({
 
   async function handleDeleteAccount() {
     const ok = await confirm({
-      title: 'Delete account',
-      message: 'This will permanently delete your account and all data. This cannot be undone.',
-      confirmText: 'Delete',
+      title: 'Supprimer le compte',
+      message: 'Cette action supprimera définitivement votre compte et toutes vos données. Cette action est irréversible.',
+      confirmText: 'Supprimer',
       destructive: true,
     });
     if (!ok) return;
@@ -675,17 +675,17 @@ function SettingsScreen({
       await api.delete('/users/me');
       await logout();
     } catch {
-      toast.error('Unable to delete account');
+      toast.error('Impossible de supprimer le compte');
     }
   }
 
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-h2 font-heading mb-6">Settings</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Paramètres</Text>
 
       <View className="flex-row items-center justify-between bg-white/[0.04] rounded-2xl px-4 py-4 mb-2">
         <Text className="text-white text-body-sm font-body">Verrouillage Face ID / Touch ID</Text>
@@ -702,7 +702,7 @@ function SettingsScreen({
         onPress={handleLogout}
         className="bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
       >
-        <Text className="text-white text-body-sm font-body">Log out</Text>
+        <Text className="text-white text-body-sm font-body">Déconnexion</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -710,7 +710,7 @@ function SettingsScreen({
         onPress={handleDeleteAccount}
         className="bg-white/[0.04] rounded-2xl px-4 py-4"
       >
-        <Text className="text-red-400 text-body-sm font-body">Delete account</Text>
+        <Text className="text-red-400 text-body-sm font-body">Supprimer le compte</Text>
       </TouchableOpacity>
 
       <View style={{ paddingHorizontal: 16, paddingVertical: 12, alignItems: 'center' }}>

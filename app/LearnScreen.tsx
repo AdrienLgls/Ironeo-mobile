@@ -260,14 +260,19 @@ function ArticlesListScreen({
   const [parcoursLoading, setParcoursLoading] = useState(false);
 
   useEffect(() => {
-    Promise.all([
+    Promise.allSettled([
       getArticles(),
       getDueReviews(),
       getInProgressArticles(),
       getMasteredArticles(),
       getLearnStats(),
     ])
-      .then(([arts, reviews, inProg, mast, stats]) => {
+      .then((results) => {
+        const arts = results[0].status === 'fulfilled' ? results[0].value : [];
+        const reviews = results[1].status === 'fulfilled' ? results[1].value : [];
+        const inProg = results[2].status === 'fulfilled' ? results[2].value : [];
+        const mast = results[3].status === 'fulfilled' ? results[3].value : [];
+        const stats = results[4].status === 'fulfilled' ? results[4].value : null;
         setArticles(arts);
         setFiltered(arts);
         setDueReviews(reviews);
@@ -275,7 +280,6 @@ function ArticlesListScreen({
         setMastered(mast);
         setLearnStats(stats);
       })
-      .catch(() => setError('Unable to load data'))
       .finally(() => setLoading(false));
   }, []);
 

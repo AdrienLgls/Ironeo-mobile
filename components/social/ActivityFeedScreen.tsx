@@ -12,20 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ActivityItem, getActivityFeed, sendBravo } from '../../services/socialService';
 import EmptyState from '../ui/EmptyState';
 import { SkeletonBox } from '../ui/Skeleton';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatRelativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `il y a ${minutes}min`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `il y a ${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `il y a ${days}j`;
-}
+import { formatRelativeTime } from '../../utils/formatters';
 
 function getActivityDescription(item: ActivityItem): string {
   const d = item.data;
@@ -157,22 +144,30 @@ export default function ActivityFeedScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadFeed = useCallback(async (nextPage: number, replace: boolean) => {
     if (nextPage === 0) {
       replace ? setRefreshing(true) : setLoading(true);
+      setError(null);
     } else {
       setLoadingMore(true);
     }
 
-    const fetched = await getActivityFeed(nextPage);
-
-    setItems(prev => (replace || nextPage === 0 ? fetched : [...prev, ...fetched]));
-    setHasMore(fetched.length > 0);
-    setPage(nextPage);
-    setLoading(false);
-    setRefreshing(false);
-    setLoadingMore(false);
+    try {
+      const fetched = await getActivityFeed(nextPage);
+      setItems(prev => (replace || nextPage === 0 ? fetched : [...prev, ...fetched]));
+      setHasMore(fetched.length > 0);
+      setPage(nextPage);
+    } catch {
+      if (nextPage === 0) {
+        setError("Impossible de charger l'activité de tes amis");
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+      setLoadingMore(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -242,6 +237,19 @@ export default function ActivityFeedScreen() {
     );
   }
 
+  if (error !== null) {
+    return (
+      <View style={styles.errorContainer}>
+        <EmptyState
+          icon="⚠️"
+          title="Erreur de chargement"
+          description={error}
+          type="error"
+        />
+      </View>
+    );
+  }
+
   return (
     <FlatList
       data={items}
@@ -277,6 +285,12 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
     gap: 10,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
   },
   emptyContainer: {
     flexGrow: 1,
