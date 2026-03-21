@@ -2,8 +2,12 @@ import api from './api';
 import type { Article, Quiz } from '../types/learn';
 
 export async function getArticles(): Promise<Article[]> {
-  const { data } = await api.get<Article[]>('/articles');
-  return data;
+  try {
+    const { data } = await api.get<Article[]>('/articles');
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getArticleById(id: string): Promise<Article> {
@@ -62,17 +66,25 @@ export async function getLearnStats(): Promise<{ totalRead: number; avgScore: nu
 }
 
 export async function searchArticles(query: string, category?: string): Promise<Article[]> {
-  const params: Record<string, string> = { search: query };
-  if (category && category !== 'Tous') {
-    params.category = category.toLowerCase();
+  try {
+    const params: Record<string, string> = { search: query };
+    if (category && category !== 'Tous') {
+      params.category = category.toLowerCase();
+    }
+    const { data } = await api.get<Article[]>('/articles', { params });
+    return data ?? [];
+  } catch {
+    return [];
   }
-  const { data } = await api.get<Article[]>('/articles', { params });
-  return data;
 }
 
 export async function getFavorites(): Promise<Article[]> {
-  const { data } = await api.get<Article[]>('/articles/user/favorites');
-  return data;
+  try {
+    const { data } = await api.get<Article[]>('/articles/user/favorites');
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export async function toggleFavorite(articleId: string): Promise<void> {

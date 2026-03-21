@@ -91,8 +91,12 @@ function mapParcoursDetail(raw: RawParcoursDetail): ParcoursDetailType {
 }
 
 export async function getParcours(): Promise<Parcours[]> {
-  const { data } = await api.get<RawParcoursItem[]>('/parcours');
-  return (data ?? []).map(mapParcours);
+  try {
+    const { data } = await api.get<RawParcoursItem[]>('/parcours');
+    return (data ?? []).map(mapParcours);
+  } catch {
+    return [];
+  }
 }
 
 export async function getParcoursDetail(slug: string): Promise<ParcoursDetailType> {
