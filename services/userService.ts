@@ -137,6 +137,10 @@ export async function updateProfile(payload: UpdateProfilePayload): Promise<void
   await api.put('/profile/me', payload);
 }
 
+export async function deleteAccount(): Promise<void> {
+  await api.delete('/profile/me');
+}
+
 export async function uploadAvatar(uri: string): Promise<void> {
   const formData = new FormData();
   const filename = uri.split('/').pop() ?? 'avatar.jpg';

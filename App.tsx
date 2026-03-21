@@ -10,6 +10,8 @@ import { ConfirmProvider } from './context/ConfirmContext';
 import RootNavigator, { navigationRef } from './app/RootNavigator';
 import { initNotifications, requestNotificationPermissions } from './services/timerNotificationService';
 import { configurePushNotifications, registerForPushNotifications } from './services/pushNotificationService';
+import ErrorBoundary from './components/ErrorBoundary';
+import NetworkBanner from './components/NetworkBanner';
 
 SplashScreen.preventAutoHideAsync();
 configurePushNotifications();
@@ -71,13 +73,16 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <ConfirmProvider>
-          <StatusBar style="light" />
-          <RootNavigator />
-        </ConfirmProvider>
-      </ToastProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <NetworkBanner />
+      <AuthProvider>
+        <ToastProvider>
+          <ConfirmProvider>
+            <StatusBar style="light" />
+            <RootNavigator />
+          </ConfirmProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

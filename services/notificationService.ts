@@ -1,3 +1,4 @@
+import * as Notifications from 'expo-notifications';
 import api from './api';
 
 export interface Notification {
@@ -29,7 +30,9 @@ export async function markAllAsRead(): Promise<void> {
 export async function getUnreadCount(): Promise<number> {
   try {
     const { data } = await api.get<{ count: number }>('/notifications/unread-count');
-    return data.count;
+    const count = data.count;
+    await Notifications.setBadgeCountAsync(count);
+    return count;
   } catch {
     return 0;
   }

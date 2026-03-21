@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { hapticWarning } from '../utils/haptics';
 
 interface ConfirmOptions {
   title: string;
@@ -45,6 +46,9 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
       opacity.setValue(0);
       scale.setValue(0.95);
       translateY.setValue(20);
+      if (options.destructive) {
+        hapticWarning().catch(() => undefined);
+      }
       setPending({ options, resolve });
       Animated.parallel([
         Animated.timing(opacity, {
