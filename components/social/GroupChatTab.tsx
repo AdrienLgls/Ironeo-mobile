@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     flexDirection: 'row',
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#121212',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 14,
