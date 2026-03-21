@@ -127,3 +127,23 @@ export async function getYearInReview(): Promise<YearInReview | null> {
     return null;
   }
 }
+
+export interface UpdateProfilePayload {
+  pseudo?: string;
+  bio?: string;
+}
+
+export async function updateProfile(payload: UpdateProfilePayload): Promise<void> {
+  await api.put('/profile/me', payload);
+}
+
+export async function uploadAvatar(uri: string): Promise<void> {
+  const formData = new FormData();
+  const filename = uri.split('/').pop() ?? 'avatar.jpg';
+  const match = /\.(\w+)$/.exec(filename);
+  const type = match ? `image/${match[1]}` : 'image/jpeg';
+  formData.append('image', { uri, name: filename, type } as unknown as Blob);
+  await api.post('/upload/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+}

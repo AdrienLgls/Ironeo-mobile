@@ -3,6 +3,8 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar?: string;
+  pseudo?: string;
+  bio?: string;
   weight?: number;
   height?: number;
   goal?: string;

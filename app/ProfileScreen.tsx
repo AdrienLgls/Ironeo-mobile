@@ -8,14 +8,18 @@ import {
   TextInput,
   ActivityIndicator,
   FlatList,
+  Linking,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../services/api';
-import { getUserStats } from '../services/userService';
+import { getUserStats, updateProfile, uploadAvatar } from '../services/userService';
+import { getPortalUrl } from '../services/paymentService';
 import {
   getNotifications,
   markAllAsRead,
@@ -66,6 +70,7 @@ function ProfileHomeScreen({
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [exportLoading, setExportLoading] = useState<ExportKey | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -94,6 +99,18 @@ function ProfileHomeScreen({
       toast.error('Échec de l\'export');
     } finally {
       setExportLoading(null);
+    }
+  }
+
+  async function handlePortal(): Promise<void> {
+    setPortalLoading(true);
+    try {
+      const url = await getPortalUrl();
+      await Linking.openURL(url);
+    } catch {
+      toast.error('Impossible d\'ouvrir le portail d\'abonnement');
+    } finally {
+      setPortalLoading(false);
     }
   }
 
@@ -214,6 +231,23 @@ function ProfileHomeScreen({
         <Text className="text-white/30 text-body-sm font-body">›</Text>
       </TouchableOpacity>
 
+      {(profile?.subscriptionStatus === 'premium' || profile?.subscriptionStatus === 'premium_plus') && (
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handlePortal}
+          disabled={portalLoading}
+          className="flex-row items-center gap-3 bg-white/[0.04] rounded-2xl px-4 py-4 mb-2"
+        >
+          <Ionicons name="card-outline" size={18} color="#EFBF04" />
+          <Text className="text-white text-body-sm font-body flex-1">Gérer mon abonnement</Text>
+          {portalLoading ? (
+            <ActivityIndicator color="#EFBF04" size="small" />
+          ) : (
+            <Text className="text-white/30 text-body-sm font-body">›</Text>
+          )}
+        </TouchableOpacity>
+      )}
+
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => navigation.navigate('Settings')}
@@ -289,9 +323,10 @@ function EditProfileScreen({
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const [name, setName] = useState('');
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
-  const [goal, setGoal] = useState('');
+  const [pseudo, setPseudo] = useState('');
+  const [bio, setBio] = useState('');
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
+  const [existingAvatar, setExistingAvatar] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -299,66 +334,130 @@ function EditProfileScreen({
       .get<UserProfile>('/users/me')
       .then(({ data }) => {
         setName(data.name ?? '');
-        setWeight(data.weight != null ? String(data.weight) : '');
-        setHeight(data.height != null ? String(data.height) : '');
-        setGoal(data.goal ?? '');
+        setPseudo(data.pseudo ?? '');
+        setBio(data.bio ?? '');
+        setExistingAvatar(data.avatar);
       })
       .catch(() => undefined);
   }, []);
 
-  async function handleSave() {
+  async function handlePickAvatar(): Promise<void> {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets[0]) {
+      setAvatarUri(result.assets[0].uri);
+    }
+  }
+
+  async function handleSave(): Promise<void> {
     setSaving(true);
     try {
-      await api.patch('/users/me', {
-        name,
-        weight: weight ? Number(weight) : undefined,
-        height: height ? Number(height) : undefined,
-        goal: goal || undefined,
-      });
+      await updateProfile({ pseudo: pseudo || undefined, bio: bio || undefined });
+      if (avatarUri) {
+        await uploadAvatar(avatarUri);
+      }
+      toast.success('Profil mis à jour');
       navigation.goBack();
     } catch {
-      toast.error('Unable to save profile');
+      toast.error('Impossible de sauvegarder le profil');
     } finally {
       setSaving(false);
     }
   }
 
+  const displayUri = avatarUri ?? existingAvatar;
+  const initials = name.charAt(0).toUpperCase() || '?';
+
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 32 }}>
       <TouchableOpacity onPress={() => navigation.goBack()} className="mb-6">
-        <Text className="text-accent text-body-sm font-body">← Back</Text>
+        <Text className="text-accent text-body-sm font-body">← Retour</Text>
       </TouchableOpacity>
 
-      <Text className="text-white text-h2 font-heading mb-6">Edit profile</Text>
+      <Text className="text-white text-h2 font-heading mb-6">Modifier le profil</Text>
 
-      {([
-        { label: 'Name', value: name, setter: setName, placeholder: 'Your name' },
-        { label: 'Weight (kg)', value: weight, setter: setWeight, placeholder: '75', keyboard: 'numeric' as const },
-        { label: 'Height (cm)', value: height, setter: setHeight, placeholder: '175', keyboard: 'numeric' as const },
-        { label: 'Goal', value: goal, setter: setGoal, placeholder: 'e.g. lose weight, build muscle' },
-      ] as const).map(({ label, value, setter, placeholder }) => (
-        <View key={label} className="mb-4">
-          <Text className="text-white/50 text-overline font-body mb-1 uppercase tracking-wider">{label}</Text>
-          <TextInput
-            value={value}
-            onChangeText={setter as (v: string) => void}
-            placeholder={placeholder}
-            placeholderTextColor="rgba(255,255,255,0.2)"
-            className="bg-white/[0.06] rounded-xl px-4 py-3 text-white text-sm"
-          />
-        </View>
-      ))}
+      {/* Avatar picker */}
+      <View className="items-center mb-8">
+        <TouchableOpacity onPress={handlePickAvatar} activeOpacity={0.8} style={{ position: 'relative' }}>
+          <View
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 40,
+              backgroundColor: 'rgba(239,191,4,0.2)',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+            }}
+          >
+            {displayUri ? (
+              <Image
+                source={{ uri: displayUri }}
+                style={{ width: 80, height: 80, borderRadius: 40 }}
+              />
+            ) : (
+              <Text style={{ color: '#EFBF04', fontSize: 28, fontFamily: 'Quilon-Medium' }}>{initials}</Text>
+            )}
+          </View>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              right: 0,
+              width: 26,
+              height: 26,
+              borderRadius: 13,
+              backgroundColor: '#EFBF04',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Ionicons name="camera" size={14} color="#121212" />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Pseudo */}
+      <View className="mb-4">
+        <Text className="text-white/50 text-overline font-body mb-1 uppercase tracking-wider">Pseudo</Text>
+        <TextInput
+          value={pseudo}
+          onChangeText={setPseudo}
+          placeholder="Ton pseudo"
+          placeholderTextColor="rgba(255,255,255,0.2)"
+          autoCapitalize="none"
+          style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular' }}
+        />
+      </View>
+
+      {/* Bio */}
+      <View className="mb-6">
+        <Text className="text-white/50 text-overline font-body mb-1 uppercase tracking-wider">Bio</Text>
+        <TextInput
+          value={bio}
+          onChangeText={setBio}
+          placeholder="Parle de toi..."
+          placeholderTextColor="rgba(255,255,255,0.2)"
+          multiline
+          numberOfLines={4}
+          style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, color: '#fff', fontSize: 14, fontFamily: 'Rowan-Regular', height: 100, textAlignVertical: 'top' }}
+        />
+      </View>
 
       <TouchableOpacity
-        className="bg-accent rounded-2xl py-4 items-center mt-2"
+        style={{ backgroundColor: '#EFBF04', borderRadius: 16, paddingVertical: 16, alignItems: 'center' }}
         activeOpacity={0.8}
         onPress={handleSave}
         disabled={saving}
       >
         {saving ? (
-          <ActivityIndicator color="#000" size="small" />
+          <ActivityIndicator color="#121212" size="small" />
         ) : (
-          <Text className="text-black text-body font-heading">Save</Text>
+          <Text style={{ color: '#121212', fontSize: 16, fontFamily: 'Quilon-Medium' }}>Enregistrer</Text>
         )}
       </TouchableOpacity>
     </ScrollView>
