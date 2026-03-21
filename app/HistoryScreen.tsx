@@ -7,6 +7,7 @@ import { getWorkoutSessions } from '../services/workoutService';
 import type { WorkoutSession } from '../types/workout';
 import type { WorkoutStackParamList } from './WorkoutScreen';
 import { formatDate, formatVolume } from '../utils/formatters';
+import EmptyState from '../components/ui/EmptyState';
 
 // Matches web SessionDetail link list — date fr-FR, durée, volume, exercices
 
@@ -75,7 +76,11 @@ export default function HistoryScreen() {
       }
       ListEmptyComponent={
         !loadingMore ? (
-          <Text style={styles.empty}>{error ?? "Aucune séance pour l'instant"}</Text>
+          error !== null ? (
+            <EmptyState type="error" title="Impossible de charger l'historique" description={error} />
+          ) : (
+            <EmptyState title="Aucune séance" description="Lance ton premier entraînement !" />
+          )
         ) : null
       }
       ListFooterComponent={
@@ -144,7 +149,6 @@ const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: '#121212' },
   content: { paddingHorizontal: 16, paddingBottom: 24 },
   title: { fontFamily: 'Quilon-Medium', fontSize: 25, color: '#fafafa', marginBottom: 16 },
-  empty: { fontFamily: 'Rowan-Regular', fontSize: 14, color: '#a0a0a0', textAlign: 'center', marginTop: 32 },
   footer: { paddingVertical: 16, alignItems: 'center' },
   card: {
     backgroundColor: 'rgba(255,255,255,0.04)',

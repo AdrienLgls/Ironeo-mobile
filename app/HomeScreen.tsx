@@ -38,6 +38,7 @@ import RecentSessionCard from '../components/home/RecentSessionCard';
 import NextWorkoutCard from '../components/home/NextWorkoutCard';
 import ProgressWidget from '../components/home/ProgressWidget';
 import type { UserStats, RecentSession, NextWorkout, UserProfile } from '../types/user';
+import EmptyState from '../components/ui/EmptyState';
 
 type HomeNav = BottomTabNavigationProp<TabParamList, 'Home'>;
 
@@ -128,8 +129,8 @@ export default function HomeScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EFBF04" />} contentContainerStyle={{ paddingTop: insets.top + 16, paddingHorizontal: 16, paddingBottom: 24 }}>
-      {error && (
-        <Text className="text-red-400 text-body-sm font-body text-center mb-4">{error}</Text>
+      {error !== null && (
+        <EmptyState type="error" title="Impossible de charger les données" description={error} />
       )}
 
       {/* Session draft recovery banner */}
