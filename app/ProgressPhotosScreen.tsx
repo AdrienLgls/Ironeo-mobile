@@ -28,6 +28,7 @@ import {
   type ProgressPhoto,
 } from '../services/progressPhotoService';
 import { formatDate } from '../utils/formatters';
+import { useConfirm } from '../context/ConfirmContext';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CELL_SIZE = (SCREEN_WIDTH - 32 - 4) / 3; // 16px side padding, 2px gaps
@@ -315,6 +316,7 @@ interface ProgressPhotosScreenProps {
 
 export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScreenProps) {
   const insets = useSafeAreaInsets();
+  const confirm = useConfirm();
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -388,6 +390,13 @@ export default function ProgressPhotosScreen({ navigation }: ProgressPhotosScree
   }
 
   async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: 'Supprimer la photo ?',
+      message: 'Cette action est irréversible.',
+      confirmText: 'Supprimer',
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await deletePhoto(id);
       setLightboxIndex(null);
