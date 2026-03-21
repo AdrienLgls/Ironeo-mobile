@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { ProgramDetail, SessionExercise, WorkoutSet } from '../types/workout';
 import { createWorkoutSession, updateWorkoutSession } from '../services/workoutService';
 
@@ -33,12 +33,17 @@ export function useWorkoutSession(program: ProgramDetail) {
     isComplete: false,
   });
 
+  const sessionIdRef = useRef<string | null>(null);
+
   const startSession = useCallback(async () => {
     const session = await createWorkoutSession(program.id);
+    sessionIdRef.current = session.id;
     setState((prev) => ({ ...prev, sessionId: session.id }));
   }, [program.id]);
 
   const completeSet = useCallback(async () => {
+    let updatedExercises: SessionExercise[] = [];
+
     setState((prev) => {
       const exercises = prev.exercises.map((ex, exIdx) => {
         if (exIdx !== prev.currentExerciseIndex) return ex;
@@ -49,6 +54,8 @@ export function useWorkoutSession(program: ProgramDetail) {
           ),
         };
       });
+
+      updatedExercises = exercises;
 
       const currentEx = exercises[prev.currentExerciseIndex];
       const nextSetIdx = prev.currentSetIndex + 1;
@@ -75,12 +82,12 @@ export function useWorkoutSession(program: ProgramDetail) {
       };
     });
 
-    if (state.sessionId) {
-      await updateWorkoutSession(state.sessionId, {
-        exercises: state.exercises,
+    if (sessionIdRef.current) {
+      await updateWorkoutSession(sessionIdRef.current, {
+        exercises: updatedExercises,
       }).catch(() => undefined);
     }
-  }, [state.sessionId, state.exercises]);
+  }, []);
 
   const currentExercise = state.exercises[state.currentExerciseIndex] ?? null;
   const currentSet = currentExercise?.sets[state.currentSetIndex] ?? null;

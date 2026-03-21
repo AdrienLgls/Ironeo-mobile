@@ -38,6 +38,7 @@ export default function HistoryScreen() {
 
   async function loadSessions(pageNum: number, replace = false) {
     if (loadingMore && !replace) return;
+    setError(null);
     setLoadingMore(true);
     try {
       const data = await getWorkoutSessions(pageNum, PAGE_SIZE);
